@@ -62,3 +62,4 @@ set_location_assignment PIN_C14 -to tft_dc
 set_location_assignment PIN_C15 -to tft_mosi
 set_location_assignment PIN_E15 -to tft_rst
 set_global_assignment -name VERILOG_FILE output_files/tft_spi.v
+set_location_assignment PIN_B14 -to DEBUG_OUT1
