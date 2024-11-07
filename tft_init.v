@@ -53,14 +53,14 @@ assign init_sequence[1+32] = {WAIT, 8'hff};
 
 assign init_sequence[1+33] = {COMM, 8'h2a};
 assign init_sequence[1+34] = {DATA, 8'h00};
-assign init_sequence[1+35] = {DATA, 8'h10};
+assign init_sequence[1+35] = {DATA, 8'h30};
 assign init_sequence[1+36] = {DATA, 8'h00};
-assign init_sequence[1+37] = {DATA, 8'h20};
+assign init_sequence[1+37] = {DATA, 8'h45};
 assign init_sequence[1+38] = {COMM, 8'h2b};
 assign init_sequence[1+39] = {DATA, 8'h00};
 assign init_sequence[1+40] = {DATA, 8'h10};
 assign init_sequence[1+41] = {DATA, 8'h00};
-assign init_sequence[1+42] = {DATA, 8'h20};
+assign init_sequence[1+42] = {DATA, 8'h25};
 assign init_sequence[1+43] = {COMM, 8'h2c};
 
 assign init_sequence[1+44] = {DATA, 8'hff};
