@@ -1,5 +1,5 @@
 Fitter report for Maze
-Thu Nov  7 12:27:53 2024
+Thu Nov  7 13:10:45 2024
 Quartus Prime Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
 
 
@@ -55,14 +55,14 @@ https://fpgasoftware.intel.com/eula.
 +------------------------------------------------------------------------+
 ; Fitter Summary                                                         ;
 +-----------------------+------------------------------------------------+
-; Fitter Status         ; Successful - Thu Nov  7 12:27:53 2024          ;
+; Fitter Status         ; Successful - Thu Nov  7 13:10:45 2024          ;
 ; Quartus Prime Version ; 23.1std.1 Build 993 05/14/2024 SC Lite Edition ;
 ; Revision Name         ; Maze                                           ;
 ; Top-level Entity Name ; Maze                                           ;
 ; Family                ; MAX V                                          ;
 ; Device                ; 5M570ZF256C5                                   ;
 ; Timing Models         ; Final                                          ;
-; Total logic elements  ; 8 / 570 ( 1 % )                                ;
+; Total logic elements  ; 4 / 570 ( < 1 % )                              ;
 ; Total pins            ; 7 / 159 ( 4 % )                                ;
 ; Total virtual pins    ; 0                                              ;
 ; UFM blocks            ; 0 / 1 ( 0 % )                                  ;
@@ -147,27 +147,27 @@ The pin-out file can be found in /home/vlad/Documents/Quartus/Maze/output_files/
 +---------------------------------------------+--------------------+
 ; Resource                                    ; Usage              ;
 +---------------------------------------------+--------------------+
-; Total logic elements                        ; 8 / 570 ( 1 % )    ;
-;     -- Combinational with no register       ; 3                  ;
+; Total logic elements                        ; 4 / 570 ( < 1 % )  ;
+;     -- Combinational with no register       ; 1                  ;
 ;     -- Register only                        ; 0                  ;
-;     -- Combinational with a register        ; 5                  ;
+;     -- Combinational with a register        ; 3                  ;
 ;                                             ;                    ;
 ; Logic element usage by number of LUT inputs ;                    ;
-;     -- 4 input functions                    ; 4                  ;
-;     -- 3 input functions                    ; 2                  ;
-;     -- 2 input functions                    ; 2                  ;
+;     -- 4 input functions                    ; 1                  ;
+;     -- 3 input functions                    ; 3                  ;
+;     -- 2 input functions                    ; 0                  ;
 ;     -- 1 input functions                    ; 0                  ;
 ;     -- 0 input functions                    ; 0                  ;
 ;                                             ;                    ;
 ; Logic elements by mode                      ;                    ;
-;     -- normal mode                          ; 8                  ;
+;     -- normal mode                          ; 4                  ;
 ;     -- arithmetic mode                      ; 0                  ;
 ;     -- qfbk mode                            ; 0                  ;
 ;     -- register cascade mode                ; 0                  ;
 ;     -- synchronous clear/load mode          ; 0                  ;
 ;     -- asynchronous clear/load mode         ; 0                  ;
 ;                                             ;                    ;
-; Total registers                             ; 5 / 570 ( < 1 % )  ;
+; Total registers                             ; 3 / 570 ( < 1 % )  ;
 ; Total LABs                                  ; 1 / 57 ( 2 % )     ;
 ; Logic elements in carry chains              ; 0                  ;
 ; Virtual pins                                ; 0                  ;
@@ -182,12 +182,12 @@ The pin-out file can be found in /home/vlad/Documents/Quartus/Maze/output_files/
 ; Global signals                              ; 1                  ;
 ;     -- Global clocks                        ; 1 / 4 ( 25 % )     ;
 ; JTAGs                                       ; 0 / 1 ( 0 % )      ;
-; Average interconnect usage (total/H/V)      ; 0.2% / 0.2% / 0.1% ;
-; Peak interconnect usage (total/H/V)         ; 0.2% / 0.2% / 0.1% ;
-; Maximum fan-out                             ; 6                  ;
-; Highest non-global fan-out                  ; 5                  ;
-; Total fan-out                               ; 34                 ;
-; Average fan-out                             ; 2.27               ;
+; Average interconnect usage (total/H/V)      ; 0.2% / 0.3% / 0.1% ;
+; Peak interconnect usage (total/H/V)         ; 0.2% / 0.3% / 0.1% ;
+; Maximum fan-out                             ; 4                  ;
+; Highest non-global fan-out                  ; 4                  ;
+; Total fan-out                               ; 17                 ;
+; Average fan-out                             ; 1.55               ;
 +---------------------------------------------+--------------------+
 
 
@@ -196,8 +196,8 @@ The pin-out file can be found in /home/vlad/Documents/Quartus/Maze/output_files/
 +------+-------+----------+--------------+--------------+-------------+-----------------------+--------------------+--------+-----------------+----------+--------------+--------------+----------------------+----------------+
 ; Name ; Pin # ; I/O Bank ; X coordinate ; Y coordinate ; Cell number ; Combinational Fan-Out ; Registered Fan-Out ; Global ; PCI I/O Enabled ; Bus Hold ; Weak Pull Up ; I/O Standard ; Location assigned by ; Slow Slew Rate ;
 +------+-------+----------+--------------+--------------+-------------+-----------------------+--------------------+--------+-----------------+----------+--------------+--------------+----------------------+----------------+
-; clk  ; H5    ; 1        ; 0            ; 5            ; 0           ; 6                     ; 0                  ; yes    ; no              ; no       ; Off          ; 3.3-V LVTTL  ; User                 ; no             ;
-; rst  ; M9    ; 1        ; 8            ; 3            ; 2           ; 5                     ; 0                  ; no     ; no              ; no       ; Off          ; 3.3-V LVTTL  ; User                 ; no             ;
+; clk  ; H5    ; 1        ; 0            ; 5            ; 0           ; 4                     ; 0                  ; yes    ; no              ; no       ; Off          ; 3.3-V LVTTL  ; User                 ; no             ;
+; rst  ; M9    ; 1        ; 8            ; 3            ; 2           ; 0                     ; 0                  ; no     ; no              ; no       ; Off          ; 3.3-V LVTTL  ; User                 ; no             ;
 +------+-------+----------+--------------+--------------+-------------+-----------------------+--------------------+--------+-----------------+----------+--------------+--------------+----------------------+----------------+
 
 
@@ -508,14 +508,14 @@ Note: Pin directions (input, output or bidir) are based on device operating in u
 Note: User assignments will override these defaults. The user specified values are listed in the Output Pins and Bidir Pins tables.
 
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Fitter Resource Utilization by Entity                                                                                                                                                                                                                    ;
-+----------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-----------------------------------+---------------+--------------+
-; Compilation Hierarchy Node       ; Logic Cells ; LC Registers ; UFM Blocks ; Pins ; Virtual Pins ; LUT-Only LCs ; Register-Only LCs ; LUT/Register LCs ; Carry Chain LCs ; Packed LCs ; Full Hierarchy Name               ; Entity Name   ; Library Name ;
-+----------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-----------------------------------+---------------+--------------+
-; |Maze                            ; 8 (0)       ; 5            ; 0          ; 7    ; 0            ; 3 (0)        ; 0 (0)             ; 5 (0)            ; 0 (0)           ; 0 (0)      ; |Maze                             ; Maze          ; work         ;
-;    |clock_divider:clock_divider| ; 8 (8)       ; 5            ; 0          ; 0    ; 0            ; 3 (3)        ; 0 (0)             ; 5 (5)            ; 0 (0)           ; 0 (0)      ; |Maze|clock_divider:clock_divider ; clock_divider ; work         ;
-+----------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-----------------------------------+---------------+--------------+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Fitter Resource Utilization by Entity                                                                                                                                                                                                          ;
++------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-------------------------------+-------------+--------------+
+; Compilation Hierarchy Node   ; Logic Cells ; LC Registers ; UFM Blocks ; Pins ; Virtual Pins ; LUT-Only LCs ; Register-Only LCs ; LUT/Register LCs ; Carry Chain LCs ; Packed LCs ; Full Hierarchy Name           ; Entity Name ; Library Name ;
++------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-------------------------------+-------------+--------------+
+; |Maze                        ; 4 (0)       ; 3            ; 0          ; 7    ; 0            ; 1 (0)        ; 0 (0)             ; 3 (0)            ; 0 (0)           ; 0 (0)      ; |Maze                         ; Maze        ; work         ;
+;    |tft_spi:spi_transmitter| ; 4 (4)       ; 3            ; 0          ; 0    ; 0            ; 1 (1)        ; 0 (0)             ; 3 (3)            ; 0 (0)           ; 0 (0)      ; |Maze|tft_spi:spi_transmitter ; tft_spi     ; work         ;
++------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-------------------------------+-------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
 
@@ -529,8 +529,8 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 ; tft_mosi ; Output   ; --            ;
 ; tft_dc   ; Output   ; --            ;
 ; tft_cs   ; Output   ; --            ;
+; rst      ; Input    ; (0)           ;
 ; clk      ; Input    ; (1)           ;
-; rst      ; Input    ; (1)           ;
 +----------+----------+---------------+
 
 
@@ -539,7 +539,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +------+----------+---------+-------+--------+----------------------+------------------+
 ; Name ; Location ; Fan-Out ; Usage ; Global ; Global Resource Used ; Global Line Name ;
 +------+----------+---------+-------+--------+----------------------+------------------+
-; clk  ; PIN_H5   ; 6       ; Clock ; yes    ; Global Clock         ; GCLK0            ;
+; clk  ; PIN_H5   ; 4       ; Clock ; yes    ; Global Clock         ; GCLK0            ;
 +------+----------+---------+-------+--------+----------------------+------------------+
 
 
@@ -548,7 +548,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +------+----------+---------+----------------------+------------------+
 ; Name ; Location ; Fan-Out ; Global Resource Used ; Global Line Name ;
 +------+----------+---------+----------------------+------------------+
-; clk  ; PIN_H5   ; 6       ; Global Clock         ; GCLK0            ;
+; clk  ; PIN_H5   ; 4       ; Global Clock         ; GCLK0            ;
 +------+----------+---------+----------------------+------------------+
 
 
@@ -558,28 +558,28 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 ; Routing Resource Type ; Usage               ;
 +-----------------------+---------------------+
 ; C4s                   ; 1 / 1,624 ( < 1 % ) ;
-; Direct links          ; 1 / 1,930 ( < 1 % ) ;
+; Direct links          ; 3 / 1,930 ( < 1 % ) ;
 ; Global clocks         ; 1 / 4 ( 25 % )      ;
-; LAB clocks            ; 2 / 56 ( 4 % )      ;
-; LUT chains            ; 1 / 513 ( < 1 % )   ;
+; LAB clocks            ; 1 / 56 ( 2 % )      ;
+; LUT chains            ; 0 / 513 ( 0 % )     ;
 ; Local interconnects   ; 7 / 1,930 ( < 1 % ) ;
-; R4s                   ; 6 / 1,472 ( < 1 % ) ;
+; R4s                   ; 5 / 1,472 ( < 1 % ) ;
 +-----------------------+---------------------+
 
 
 +--------------------------------------------------------------------------+
 ; LAB Logic Elements                                                       ;
 +--------------------------------------------+-----------------------------+
-; Number of Logic Elements  (Average = 8.00) ; Number of LABs  (Total = 1) ;
+; Number of Logic Elements  (Average = 4.00) ; Number of LABs  (Total = 1) ;
 +--------------------------------------------+-----------------------------+
 ; 1                                          ; 0                           ;
 ; 2                                          ; 0                           ;
 ; 3                                          ; 0                           ;
-; 4                                          ; 0                           ;
+; 4                                          ; 1                           ;
 ; 5                                          ; 0                           ;
 ; 6                                          ; 0                           ;
 ; 7                                          ; 0                           ;
-; 8                                          ; 1                           ;
+; 8                                          ; 0                           ;
 ; 9                                          ; 0                           ;
 ; 10                                         ; 0                           ;
 +--------------------------------------------+-----------------------------+
@@ -597,17 +597,13 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +---------------------------------------------------------------------------+
 ; LAB Signals Sourced                                                       ;
 +---------------------------------------------+-----------------------------+
-; Number of Signals Sourced  (Average = 8.00) ; Number of LABs  (Total = 1) ;
+; Number of Signals Sourced  (Average = 4.00) ; Number of LABs  (Total = 1) ;
 +---------------------------------------------+-----------------------------+
 ; 0                                           ; 0                           ;
 ; 1                                           ; 0                           ;
 ; 2                                           ; 0                           ;
 ; 3                                           ; 0                           ;
-; 4                                           ; 0                           ;
-; 5                                           ; 0                           ;
-; 6                                           ; 0                           ;
-; 7                                           ; 0                           ;
-; 8                                           ; 1                           ;
+; 4                                           ; 1                           ;
 +---------------------------------------------+-----------------------------+
 
 
@@ -624,11 +620,10 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +---------------------------------------------------------------------------+
 ; LAB Distinct Inputs                                                       ;
 +---------------------------------------------+-----------------------------+
-; Number of Distinct Inputs  (Average = 2.00) ; Number of LABs  (Total = 1) ;
+; Number of Distinct Inputs  (Average = 1.00) ; Number of LABs  (Total = 1) ;
 +---------------------------------------------+-----------------------------+
 ; 0                                           ; 0                           ;
-; 1                                           ; 0                           ;
-; 2                                           ; 1                           ;
+; 1                                           ; 1                           ;
 +---------------------------------------------+-----------------------------+
 
 
@@ -672,7 +667,7 @@ Info (332111): Found 1 clocks
     Info (332111):    1.000          clk
 Info (186079): Completed User Assigned Global Signals Promotion Operation
 Info (186216): Automatically promoted some destinations of signal "clk" to use Global clock in PIN H5 File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 2
-    Info (186217): Destination "tft_mosi" may be non-global or may not use global clock File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 7
+    Info (186217): Destination "tft_spi:spi_transmitter|tft_clk" may be non-global or may not use global clock File: /home/vlad/Documents/Quartus/Maze/output_files/tft_spi.v Line: 13
 Info (186079): Completed Auto Global Promotion Operation
 Info (176234): Starting register packing
 Info (186468): Started processing fast register assignments
@@ -691,13 +686,13 @@ Info (170195): Router estimated average interconnect usage is 0% of the availabl
 Info (170199): The Fitter performed an Auto Fit compilation.  Optimizations were skipped to reduce compilation time.
     Info (170201): Optimizations that may affect the design's routability were skipped
 Info (170194): Fitter routing operations ending: elapsed time is 00:00:00
-Info (11888): Total time spent on timing analysis during the Fitter is 0.03 seconds.
+Info (11888): Total time spent on timing analysis during the Fitter is 0.04 seconds.
 Info (11218): Fitter post-fit operations ending: elapsed time is 00:00:00
 Warning (169174): The Reserve All Unused Pins setting has not been specified, and will default to 'As output driving ground'.
 Info: Quartus Prime Fitter was successful. 0 errors, 4 warnings
-    Info: Peak virtual memory: 1810 megabytes
-    Info: Processing ended: Thu Nov  7 12:27:53 2024
-    Info: Elapsed time: 00:00:00
+    Info: Peak virtual memory: 1813 megabytes
+    Info: Processing ended: Thu Nov  7 13:10:45 2024
+    Info: Elapsed time: 00:00:01
     Info: Total CPU time (on all processors): 00:00:01
 
 

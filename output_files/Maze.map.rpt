@@ -1,5 +1,5 @@
 Analysis & Synthesis report for Maze
-Thu Nov  7 12:27:52 2024
+Thu Nov  7 13:10:43 2024
 Quartus Prime Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
 
 
@@ -13,10 +13,12 @@ Quartus Prime Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
   5. Analysis & Synthesis Source Files Read
   6. Analysis & Synthesis Resource Usage Summary
   7. Analysis & Synthesis Resource Utilization by Entity
-  8. General Register Statistics
-  9. Multiplexer Restructuring Statistics (Restructuring Performed)
- 10. Parameter Settings for User Entity Instance: clock_divider:clock_divider
- 11. Analysis & Synthesis Messages
+  8. Registers Removed During Synthesis
+  9. Removed Registers Triggering Further Register Optimizations
+ 10. General Register Statistics
+ 11. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 12. Port Connectivity Checks: "tft_spi:spi_transmitter"
+ 13. Analysis & Synthesis Messages
 
 
 
@@ -43,12 +45,12 @@ https://fpgasoftware.intel.com/eula.
 +------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                 ;
 +-----------------------------+------------------------------------------------+
-; Analysis & Synthesis Status ; Successful - Thu Nov  7 12:27:52 2024          ;
+; Analysis & Synthesis Status ; Successful - Thu Nov  7 13:10:43 2024          ;
 ; Quartus Prime Version       ; 23.1std.1 Build 993 05/14/2024 SC Lite Edition ;
 ; Revision Name               ; Maze                                           ;
 ; Top-level Entity Name       ; Maze                                           ;
 ; Family                      ; MAX V                                          ;
-; Total logic elements        ; 8                                              ;
+; Total logic elements        ; 4                                              ;
 ; Total pins                  ; 7                                              ;
 ; Total virtual pins          ; 0                                              ;
 ; UFM blocks                  ; 0 / 1 ( 0 % )                                  ;
@@ -142,14 +144,14 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------+-------------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Source Files Read                                                                                                    ;
-+----------------------------------+-----------------+------------------------+---------------------------------------------------+---------+
-; File Name with User-Entered Path ; Used in Netlist ; File Type              ; File Name with Absolute Path                      ; Library ;
-+----------------------------------+-----------------+------------------------+---------------------------------------------------+---------+
-; Maze.v                           ; yes             ; User Verilog HDL File  ; /home/vlad/Documents/Quartus/Maze/Maze.v          ;         ;
-; clock_divider.v                  ; yes             ; User Verilog HDL File  ; /home/vlad/Documents/Quartus/Maze/clock_divider.v ;         ;
-+----------------------------------+-----------------+------------------------+---------------------------------------------------+---------+
++--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                           ;
++----------------------------------+-----------------+------------------------+----------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type              ; File Name with Absolute Path                             ; Library ;
++----------------------------------+-----------------+------------------------+----------------------------------------------------------+---------+
+; Maze.v                           ; yes             ; User Verilog HDL File  ; /home/vlad/Documents/Quartus/Maze/Maze.v                 ;         ;
+; output_files/tft_spi.v           ; yes             ; User Verilog HDL File  ; /home/vlad/Documents/Quartus/Maze/output_files/tft_spi.v ;         ;
++----------------------------------+-----------------+------------------------+----------------------------------------------------------+---------+
 
 
 +-----------------------------------------------------+
@@ -157,44 +159,65 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------+-------+
 ; Resource                                    ; Usage ;
 +---------------------------------------------+-------+
-; Total logic elements                        ; 8     ;
-;     -- Combinational with no register       ; 3     ;
+; Total logic elements                        ; 4     ;
+;     -- Combinational with no register       ; 1     ;
 ;     -- Register only                        ; 0     ;
-;     -- Combinational with a register        ; 5     ;
+;     -- Combinational with a register        ; 3     ;
 ;                                             ;       ;
 ; Logic element usage by number of LUT inputs ;       ;
-;     -- 4 input functions                    ; 4     ;
-;     -- 3 input functions                    ; 2     ;
-;     -- 2 input functions                    ; 2     ;
+;     -- 4 input functions                    ; 1     ;
+;     -- 3 input functions                    ; 3     ;
+;     -- 2 input functions                    ; 0     ;
 ;     -- 1 input functions                    ; 0     ;
 ;     -- 0 input functions                    ; 0     ;
 ;                                             ;       ;
 ; Logic elements by mode                      ;       ;
-;     -- normal mode                          ; 8     ;
+;     -- normal mode                          ; 4     ;
 ;     -- arithmetic mode                      ; 0     ;
 ;     -- qfbk mode                            ; 0     ;
 ;     -- register cascade mode                ; 0     ;
 ;     -- synchronous clear/load mode          ; 0     ;
 ;     -- asynchronous clear/load mode         ; 0     ;
 ;                                             ;       ;
-; Total registers                             ; 5     ;
+; Total registers                             ; 3     ;
 ; I/O pins                                    ; 7     ;
 ; Maximum fan-out node                        ; clk   ;
-; Maximum fan-out                             ; 6     ;
-; Total fan-out                               ; 34    ;
-; Average fan-out                             ; 2.27  ;
+; Maximum fan-out                             ; 4     ;
+; Total fan-out                               ; 17    ;
+; Average fan-out                             ; 1.55  ;
 +---------------------------------------------+-------+
 
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                      ;
-+----------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-----------------------------------+---------------+--------------+
-; Compilation Hierarchy Node       ; Logic Cells ; LC Registers ; UFM Blocks ; Pins ; Virtual Pins ; LUT-Only LCs ; Register-Only LCs ; LUT/Register LCs ; Carry Chain LCs ; Packed LCs ; Full Hierarchy Name               ; Entity Name   ; Library Name ;
-+----------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-----------------------------------+---------------+--------------+
-; |Maze                            ; 8 (0)       ; 5            ; 0          ; 7    ; 0            ; 3 (0)        ; 0 (0)             ; 5 (0)            ; 0 (0)           ; 0 (0)      ; |Maze                             ; Maze          ; work         ;
-;    |clock_divider:clock_divider| ; 8 (8)       ; 5            ; 0          ; 0    ; 0            ; 3 (3)        ; 0 (0)             ; 5 (5)            ; 0 (0)           ; 0 (0)      ; |Maze|clock_divider:clock_divider ; clock_divider ; work         ;
-+----------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-----------------------------------+---------------+--------------+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                            ;
++------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-------------------------------+-------------+--------------+
+; Compilation Hierarchy Node   ; Logic Cells ; LC Registers ; UFM Blocks ; Pins ; Virtual Pins ; LUT-Only LCs ; Register-Only LCs ; LUT/Register LCs ; Carry Chain LCs ; Packed LCs ; Full Hierarchy Name           ; Entity Name ; Library Name ;
++------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-------------------------------+-------------+--------------+
+; |Maze                        ; 4 (0)       ; 3            ; 0          ; 7    ; 0            ; 1 (0)        ; 0 (0)             ; 3 (0)            ; 0 (0)           ; 0 (0)      ; |Maze                         ; Maze        ; work         ;
+;    |tft_spi:spi_transmitter| ; 4 (4)       ; 3            ; 0          ; 0    ; 0            ; 1 (1)        ; 0 (0)             ; 3 (3)            ; 0 (0)           ; 0 (0)      ; |Maze|tft_spi:spi_transmitter ; tft_spi     ; work         ;
++------------------------------+-------------+--------------+------------+------+--------------+--------------+-------------------+------------------+-----------------+------------+-------------------------------+-------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++--------------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                                   ;
++---------------------------------------------+----------------------------------------+
+; Register name                               ; Reason for Removal                     ;
++---------------------------------------------+----------------------------------------+
+; tft_spi:spi_transmitter|transmiting_byte[7] ; Stuck at GND due to stuck port data_in ;
+; tft_spi:spi_transmitter|tft_mosi            ; Stuck at GND due to stuck port data_in ;
+; Total Number of Removed Registers = 2       ;                                        ;
++---------------------------------------------+----------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------------+
+; Removed Registers Triggering Further Register Optimizations                                                      ;
++---------------------------------------------+---------------------------+----------------------------------------+
+; Register name                               ; Reason for Removal        ; Registers Removed due to This Register ;
++---------------------------------------------+---------------------------+----------------------------------------+
+; tft_spi:spi_transmitter|transmiting_byte[7] ; Stuck at GND              ; tft_spi:spi_transmitter|tft_mosi       ;
+;                                             ; due to stuck port data_in ;                                        ;
++---------------------------------------------+---------------------------+----------------------------------------+
 
 
 +------------------------------------------------------+
@@ -202,7 +225,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 5     ;
+; Total registers                              ; 3     ;
 ; Number of registers using Synchronous Clear  ; 0     ;
 ; Number of registers using Synchronous Load   ; 0     ;
 ; Number of registers using Asynchronous Clear ; 0     ;
@@ -212,23 +235,31 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------+-------+
 
 
-+------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                             ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------+
-; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                   ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------+
-; 3:1                ; 4 bits    ; 8 LEs         ; 8 LEs                ; 0 LEs                  ; Yes        ; |Maze|clock_divider:clock_divider|counter[1] ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                  ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                        ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------+
+; 3:1                ; 3 bits    ; 6 LEs         ; 3 LEs                ; 3 LEs                  ; Yes        ; |Maze|tft_spi:spi_transmitter|transmit_counter[2] ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------+
 
 
-+--------------------------------------------------------------------------+
-; Parameter Settings for User Entity Instance: clock_divider:clock_divider ;
-+----------------+-------+-------------------------------------------------+
-; Parameter Name ; Value ; Type                                            ;
-+----------------+-------+-------------------------------------------------+
-; DIV_FACTOR     ; 6     ; Signed Integer                                  ;
-+----------------+-------+-------------------------------------------------+
-Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
++-------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "tft_spi:spi_transmitter"                                                               ;
++---------+--------+----------+-------------------------------------------------------------------------------------+
+; Port    ; Type   ; Severity ; Details                                                                             ;
++---------+--------+----------+-------------------------------------------------------------------------------------+
+; data[7] ; Input  ; Info     ; Stuck at VCC                                                                        ;
+; data[6] ; Input  ; Info     ; Stuck at GND                                                                        ;
+; data[5] ; Input  ; Info     ; Stuck at VCC                                                                        ;
+; data[4] ; Input  ; Info     ; Stuck at GND                                                                        ;
+; data[3] ; Input  ; Info     ; Stuck at VCC                                                                        ;
+; data[2] ; Input  ; Info     ; Stuck at GND                                                                        ;
+; data[1] ; Input  ; Info     ; Stuck at VCC                                                                        ;
+; data[0] ; Input  ; Info     ; Stuck at GND                                                                        ;
+; dc      ; Input  ; Info     ; Stuck at VCC                                                                        ;
+; busy    ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++---------+--------+----------+-------------------------------------------------------------------------------------+
 
 
 +-------------------------------+
@@ -237,7 +268,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
-    Info: Processing started: Thu Nov  7 12:27:47 2024
+    Info: Processing started: Thu Nov  7 13:10:37 2024
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off Maze -c Maze
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
@@ -245,22 +276,32 @@ Info (12021): Found 1 design units, including 1 entities, in source file Maze.v
     Info (12023): Found entity 1: Maze File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file clock_divider.v
     Info (12023): Found entity 1: clock_divider File: /home/vlad/Documents/Quartus/Maze/clock_divider.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file output_files/tft_spi.v
+    Info (12023): Found entity 1: tft_spi File: /home/vlad/Documents/Quartus/Maze/output_files/tft_spi.v Line: 1
+Warning (10236): Verilog HDL Implicit Net warning at Maze.v(37): created implicit net for "transmt" File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 37
 Info (12127): Elaborating entity "Maze" for the top level hierarchy
+Warning (10036): Verilog HDL or VHDL warning at Maze.v(37): object "transmt" assigned a value but never read File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 37
+Warning (10230): Verilog HDL assignment warning at Maze.v(49): truncated value with size 32 to match size of target (5) File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 49
 Warning (10034): Output port "tft_rst" at Maze.v(5) has no driver File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 5
-Warning (10034): Output port "tft_dc" at Maze.v(8) has no driver File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 8
-Info (12128): Elaborating entity "clock_divider" for hierarchy "clock_divider:clock_divider" File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 18
-Warning (10230): Verilog HDL assignment warning at clock_divider.v(15): truncated value with size 32 to match size of target (4) File: /home/vlad/Documents/Quartus/Maze/clock_divider.v Line: 15
+Info (12128): Elaborating entity "tft_spi" for hierarchy "tft_spi:spi_transmitter" File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 32
+Warning (10230): Verilog HDL assignment warning at tft_spi.v(42): truncated value with size 32 to match size of target (3) File: /home/vlad/Documents/Quartus/Maze/output_files/tft_spi.v Line: 42
+Warning (10034): Output port "tft_cs" at tft_spi.v(11) has no driver File: /home/vlad/Documents/Quartus/Maze/output_files/tft_spi.v Line: 11
+Warning (10034): Output port "tft_dc" at tft_spi.v(12) has no driver File: /home/vlad/Documents/Quartus/Maze/output_files/tft_spi.v Line: 12
 Warning (13024): Output pins are stuck at VCC or GND
     Warning (13410): Pin "tft_rst" is stuck at GND File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 5
+    Warning (13410): Pin "tft_mosi" is stuck at GND File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 7
     Warning (13410): Pin "tft_dc" is stuck at GND File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 8
-Info (21057): Implemented 15 device resources after synthesis - the final resource count might be different
+    Warning (13410): Pin "tft_cs" is stuck at GND File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 10
+Warning (21074): Design contains 1 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "rst" File: /home/vlad/Documents/Quartus/Maze/Maze.v Line: 3
+Info (21057): Implemented 11 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 2 input pins
     Info (21059): Implemented 5 output pins
-    Info (21061): Implemented 8 logic cells
-Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 7 warnings
+    Info (21061): Implemented 4 logic cells
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 15 warnings
     Info: Peak virtual memory: 539 megabytes
-    Info: Processing ended: Thu Nov  7 12:27:52 2024
-    Info: Elapsed time: 00:00:05
-    Info: Total CPU time (on all processors): 00:00:16
+    Info: Processing ended: Thu Nov  7 13:10:43 2024
+    Info: Elapsed time: 00:00:06
+    Info: Total CPU time (on all processors): 00:00:17
 
 

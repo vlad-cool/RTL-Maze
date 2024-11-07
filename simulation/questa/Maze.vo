@@ -17,7 +17,7 @@
 // PROGRAM "Quartus Prime"
 // VERSION "Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition"
 
-// DATE "11/07/2024 12:27:57"
+// DATE "11/07/2024 13:10:48"
 
 // 
 // Device: Altera 5M570ZF256C5 Package FBGA256
@@ -60,12 +60,8 @@ tri1 devclrn;
 tri1 devpor;
 tri1 devoe;
 wire \clk~combout ;
-wire \rst~combout ;
-wire \clock_divider|Add0~1_combout ;
-wire \clock_divider|Add0~0_combout ;
-wire \clock_divider|Equal0~0_combout ;
-wire \clock_divider|clk_out~regout ;
-wire [3:0] \clock_divider|counter ;
+wire \spi_transmitter|tft_clk~combout ;
+wire [2:0] \spi_transmitter|transmit_counter ;
 
 
 // Location: PIN_H5,	 I/O Standard: 3.3-V LVTTL,	 Current Strength: Default
@@ -78,134 +74,17 @@ maxv_io \clk~I (
 defparam \clk~I .operation_mode = "input";
 // synopsys translate_on
 
-// Location: PIN_M9,	 I/O Standard: 3.3-V LVTTL,	 Current Strength: Default
-maxv_io \rst~I (
-	.datain(gnd),
-	.oe(gnd),
-	.combout(\rst~combout ),
-	.padio(rst));
-// synopsys translate_off
-defparam \rst~I .operation_mode = "input";
-// synopsys translate_on
-
-// Location: LC_X11_Y7_N2
-maxv_lcell \clock_divider|counter[0] (
+// Location: LC_X7_Y5_N3
+maxv_lcell \spi_transmitter|transmit_counter[1] (
 // Equation(s):
-// \clock_divider|counter [0] = DFFEAS((((!\clock_divider|counter [0] & \clock_divider|Equal0~0_combout )) # (!\rst~combout )), GLOBAL(\clk~combout ), VCC, , , , , , )
+// \spi_transmitter|transmit_counter [1] = DFFEAS((\spi_transmitter|transmit_counter [1] & (((\spi_transmitter|transmit_counter [0])))) # (!\spi_transmitter|transmit_counter [1] & (((!\spi_transmitter|transmit_counter [0] & \spi_transmitter|transmit_counter 
+// [2])))), GLOBAL(\clk~combout ), VCC, , , , , , )
 
 	.clk(\clk~combout ),
-	.dataa(vcc),
-	.datab(\rst~combout ),
-	.datac(\clock_divider|counter [0]),
-	.datad(\clock_divider|Equal0~0_combout ),
-	.aclr(gnd),
-	.aload(gnd),
-	.sclr(gnd),
-	.sload(gnd),
-	.ena(vcc),
-	.cin(gnd),
-	.cin0(gnd),
-	.cin1(vcc),
-	.inverta(gnd),
-	.regcascin(gnd),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.combout(),
-	.regout(\clock_divider|counter [0]),
-	.cout(),
-	.cout0(),
-	.cout1());
-// synopsys translate_off
-defparam \clock_divider|counter[0] .lut_mask = "3f33";
-defparam \clock_divider|counter[0] .operation_mode = "normal";
-defparam \clock_divider|counter[0] .output_mode = "reg_only";
-defparam \clock_divider|counter[0] .register_cascade_mode = "off";
-defparam \clock_divider|counter[0] .sum_lutc_input = "datac";
-defparam \clock_divider|counter[0] .synch_mode = "off";
-// synopsys translate_on
-
-// Location: LC_X11_Y7_N6
-maxv_lcell \clock_divider|counter[1] (
-// Equation(s):
-// \clock_divider|counter [1] = DFFEAS((\rst~combout  & (\clock_divider|Equal0~0_combout  & (\clock_divider|counter [1] $ (\clock_divider|counter [0])))), GLOBAL(\clk~combout ), VCC, , , , , , )
-
-	.clk(\clk~combout ),
-	.dataa(\clock_divider|counter [1]),
-	.datab(\rst~combout ),
-	.datac(\clock_divider|counter [0]),
-	.datad(\clock_divider|Equal0~0_combout ),
-	.aclr(gnd),
-	.aload(gnd),
-	.sclr(gnd),
-	.sload(gnd),
-	.ena(vcc),
-	.cin(gnd),
-	.cin0(gnd),
-	.cin1(vcc),
-	.inverta(gnd),
-	.regcascin(gnd),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.combout(),
-	.regout(\clock_divider|counter [1]),
-	.cout(),
-	.cout0(),
-	.cout1());
-// synopsys translate_off
-defparam \clock_divider|counter[1] .lut_mask = "4800";
-defparam \clock_divider|counter[1] .operation_mode = "normal";
-defparam \clock_divider|counter[1] .output_mode = "reg_only";
-defparam \clock_divider|counter[1] .register_cascade_mode = "off";
-defparam \clock_divider|counter[1] .sum_lutc_input = "datac";
-defparam \clock_divider|counter[1] .synch_mode = "off";
-// synopsys translate_on
-
-// Location: LC_X11_Y7_N0
-maxv_lcell \clock_divider|Add0~1 (
-// Equation(s):
-// \clock_divider|Add0~1_combout  = (((\clock_divider|counter [1] & \clock_divider|counter [0])))
-
-	.clk(gnd),
-	.dataa(vcc),
+	.dataa(\spi_transmitter|transmit_counter [1]),
 	.datab(vcc),
-	.datac(\clock_divider|counter [1]),
-	.datad(\clock_divider|counter [0]),
-	.aclr(gnd),
-	.aload(gnd),
-	.sclr(gnd),
-	.sload(gnd),
-	.ena(vcc),
-	.cin(gnd),
-	.cin0(gnd),
-	.cin1(vcc),
-	.inverta(gnd),
-	.regcascin(gnd),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.combout(\clock_divider|Add0~1_combout ),
-	.regout(),
-	.cout(),
-	.cout0(),
-	.cout1());
-// synopsys translate_off
-defparam \clock_divider|Add0~1 .lut_mask = "f000";
-defparam \clock_divider|Add0~1 .operation_mode = "normal";
-defparam \clock_divider|Add0~1 .output_mode = "comb_only";
-defparam \clock_divider|Add0~1 .register_cascade_mode = "off";
-defparam \clock_divider|Add0~1 .sum_lutc_input = "datac";
-defparam \clock_divider|Add0~1 .synch_mode = "off";
-// synopsys translate_on
-
-// Location: LC_X11_Y7_N1
-maxv_lcell \clock_divider|counter[2] (
-// Equation(s):
-// \clock_divider|counter [2] = DFFEAS((\rst~combout  & (\clock_divider|Equal0~0_combout  & (\clock_divider|counter [2] $ (\clock_divider|Add0~1_combout )))), GLOBAL(\clk~combout ), VCC, , , , , , )
-
-	.clk(\clk~combout ),
-	.dataa(\rst~combout ),
-	.datab(\clock_divider|counter [2]),
-	.datac(\clock_divider|Add0~1_combout ),
-	.datad(\clock_divider|Equal0~0_combout ),
+	.datac(\spi_transmitter|transmit_counter [0]),
+	.datad(\spi_transmitter|transmit_counter [2]),
 	.aclr(gnd),
 	.aload(gnd),
 	.sclr(gnd),
@@ -219,65 +98,29 @@ maxv_lcell \clock_divider|counter[2] (
 	.devclrn(devclrn),
 	.devpor(devpor),
 	.combout(),
-	.regout(\clock_divider|counter [2]),
+	.regout(\spi_transmitter|transmit_counter [1]),
 	.cout(),
 	.cout0(),
 	.cout1());
 // synopsys translate_off
-defparam \clock_divider|counter[2] .lut_mask = "2800";
-defparam \clock_divider|counter[2] .operation_mode = "normal";
-defparam \clock_divider|counter[2] .output_mode = "reg_only";
-defparam \clock_divider|counter[2] .register_cascade_mode = "off";
-defparam \clock_divider|counter[2] .sum_lutc_input = "datac";
-defparam \clock_divider|counter[2] .synch_mode = "off";
+defparam \spi_transmitter|transmit_counter[1] .lut_mask = "a5a0";
+defparam \spi_transmitter|transmit_counter[1] .operation_mode = "normal";
+defparam \spi_transmitter|transmit_counter[1] .output_mode = "reg_only";
+defparam \spi_transmitter|transmit_counter[1] .register_cascade_mode = "off";
+defparam \spi_transmitter|transmit_counter[1] .sum_lutc_input = "datac";
+defparam \spi_transmitter|transmit_counter[1] .synch_mode = "off";
 // synopsys translate_on
 
-// Location: LC_X11_Y7_N5
-maxv_lcell \clock_divider|Add0~0 (
+// Location: LC_X7_Y5_N4
+maxv_lcell \spi_transmitter|transmit_counter[2] (
 // Equation(s):
-// \clock_divider|Add0~0_combout  = \clock_divider|counter [3] $ (((\clock_divider|counter [1] & (\clock_divider|counter [0] & \clock_divider|counter [2]))))
-
-	.clk(gnd),
-	.dataa(\clock_divider|counter [1]),
-	.datab(\clock_divider|counter [0]),
-	.datac(\clock_divider|counter [3]),
-	.datad(\clock_divider|counter [2]),
-	.aclr(gnd),
-	.aload(gnd),
-	.sclr(gnd),
-	.sload(gnd),
-	.ena(vcc),
-	.cin(gnd),
-	.cin0(gnd),
-	.cin1(vcc),
-	.inverta(gnd),
-	.regcascin(gnd),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.combout(\clock_divider|Add0~0_combout ),
-	.regout(),
-	.cout(),
-	.cout0(),
-	.cout1());
-// synopsys translate_off
-defparam \clock_divider|Add0~0 .lut_mask = "78f0";
-defparam \clock_divider|Add0~0 .operation_mode = "normal";
-defparam \clock_divider|Add0~0 .output_mode = "comb_only";
-defparam \clock_divider|Add0~0 .register_cascade_mode = "off";
-defparam \clock_divider|Add0~0 .sum_lutc_input = "datac";
-defparam \clock_divider|Add0~0 .synch_mode = "off";
-// synopsys translate_on
-
-// Location: LC_X11_Y7_N4
-maxv_lcell \clock_divider|counter[3] (
-// Equation(s):
-// \clock_divider|counter [3] = DFFEAS(((\rst~combout  & (\clock_divider|Add0~0_combout  & \clock_divider|Equal0~0_combout ))), GLOBAL(\clk~combout ), VCC, , , , , , )
+// \spi_transmitter|transmit_counter [2] = DFFEAS(((\spi_transmitter|transmit_counter [2] & ((\spi_transmitter|transmit_counter [0]) # (\spi_transmitter|transmit_counter [1])))), GLOBAL(\clk~combout ), VCC, , , , , , )
 
 	.clk(\clk~combout ),
 	.dataa(vcc),
-	.datab(\rst~combout ),
-	.datac(\clock_divider|Add0~0_combout ),
-	.datad(\clock_divider|Equal0~0_combout ),
+	.datab(\spi_transmitter|transmit_counter [0]),
+	.datac(\spi_transmitter|transmit_counter [2]),
+	.datad(\spi_transmitter|transmit_counter [1]),
 	.aclr(gnd),
 	.aload(gnd),
 	.sclr(gnd),
@@ -291,65 +134,29 @@ maxv_lcell \clock_divider|counter[3] (
 	.devclrn(devclrn),
 	.devpor(devpor),
 	.combout(),
-	.regout(\clock_divider|counter [3]),
+	.regout(\spi_transmitter|transmit_counter [2]),
 	.cout(),
 	.cout0(),
 	.cout1());
 // synopsys translate_off
-defparam \clock_divider|counter[3] .lut_mask = "c000";
-defparam \clock_divider|counter[3] .operation_mode = "normal";
-defparam \clock_divider|counter[3] .output_mode = "reg_only";
-defparam \clock_divider|counter[3] .register_cascade_mode = "off";
-defparam \clock_divider|counter[3] .sum_lutc_input = "datac";
-defparam \clock_divider|counter[3] .synch_mode = "off";
+defparam \spi_transmitter|transmit_counter[2] .lut_mask = "f0c0";
+defparam \spi_transmitter|transmit_counter[2] .operation_mode = "normal";
+defparam \spi_transmitter|transmit_counter[2] .output_mode = "reg_only";
+defparam \spi_transmitter|transmit_counter[2] .register_cascade_mode = "off";
+defparam \spi_transmitter|transmit_counter[2] .sum_lutc_input = "datac";
+defparam \spi_transmitter|transmit_counter[2] .synch_mode = "off";
 // synopsys translate_on
 
-// Location: LC_X11_Y7_N3
-maxv_lcell \clock_divider|Equal0~0 (
+// Location: LC_X7_Y5_N2
+maxv_lcell \spi_transmitter|transmit_counter[0] (
 // Equation(s):
-// \clock_divider|Equal0~0_combout  = (\clock_divider|counter [3]) # (((\clock_divider|counter [0]) # (!\clock_divider|counter [1])) # (!\clock_divider|counter [2]))
-
-	.clk(gnd),
-	.dataa(\clock_divider|counter [3]),
-	.datab(\clock_divider|counter [2]),
-	.datac(\clock_divider|counter [1]),
-	.datad(\clock_divider|counter [0]),
-	.aclr(gnd),
-	.aload(gnd),
-	.sclr(gnd),
-	.sload(gnd),
-	.ena(vcc),
-	.cin(gnd),
-	.cin0(gnd),
-	.cin1(vcc),
-	.inverta(gnd),
-	.regcascin(gnd),
-	.devclrn(devclrn),
-	.devpor(devpor),
-	.combout(\clock_divider|Equal0~0_combout ),
-	.regout(),
-	.cout(),
-	.cout0(),
-	.cout1());
-// synopsys translate_off
-defparam \clock_divider|Equal0~0 .lut_mask = "ffbf";
-defparam \clock_divider|Equal0~0 .operation_mode = "normal";
-defparam \clock_divider|Equal0~0 .output_mode = "comb_only";
-defparam \clock_divider|Equal0~0 .register_cascade_mode = "off";
-defparam \clock_divider|Equal0~0 .sum_lutc_input = "datac";
-defparam \clock_divider|Equal0~0 .synch_mode = "off";
-// synopsys translate_on
-
-// Location: LC_X11_Y7_N9
-maxv_lcell \clock_divider|clk_out (
-// Equation(s):
-// \clock_divider|clk_out~regout  = DFFEAS(((\clock_divider|clk_out~regout  $ (!\clock_divider|Equal0~0_combout ))), GLOBAL(\clk~combout ), VCC, , , , , , )
+// \spi_transmitter|transmit_counter [0] = DFFEAS(((!\spi_transmitter|transmit_counter [0] & ((\spi_transmitter|transmit_counter [2]) # (\spi_transmitter|transmit_counter [1])))), GLOBAL(\clk~combout ), VCC, , , , , , )
 
 	.clk(\clk~combout ),
-	.dataa(vcc),
+	.dataa(\spi_transmitter|transmit_counter [2]),
 	.datab(vcc),
-	.datac(\clock_divider|clk_out~regout ),
-	.datad(\clock_divider|Equal0~0_combout ),
+	.datac(\spi_transmitter|transmit_counter [1]),
+	.datad(\spi_transmitter|transmit_counter [0]),
 	.aclr(gnd),
 	.aload(gnd),
 	.sclr(gnd),
@@ -363,17 +170,53 @@ maxv_lcell \clock_divider|clk_out (
 	.devclrn(devclrn),
 	.devpor(devpor),
 	.combout(),
-	.regout(\clock_divider|clk_out~regout ),
+	.regout(\spi_transmitter|transmit_counter [0]),
 	.cout(),
 	.cout0(),
 	.cout1());
 // synopsys translate_off
-defparam \clock_divider|clk_out .lut_mask = "f00f";
-defparam \clock_divider|clk_out .operation_mode = "normal";
-defparam \clock_divider|clk_out .output_mode = "reg_only";
-defparam \clock_divider|clk_out .register_cascade_mode = "off";
-defparam \clock_divider|clk_out .sum_lutc_input = "datac";
-defparam \clock_divider|clk_out .synch_mode = "off";
+defparam \spi_transmitter|transmit_counter[0] .lut_mask = "00fa";
+defparam \spi_transmitter|transmit_counter[0] .operation_mode = "normal";
+defparam \spi_transmitter|transmit_counter[0] .output_mode = "reg_only";
+defparam \spi_transmitter|transmit_counter[0] .register_cascade_mode = "off";
+defparam \spi_transmitter|transmit_counter[0] .sum_lutc_input = "datac";
+defparam \spi_transmitter|transmit_counter[0] .synch_mode = "off";
+// synopsys translate_on
+
+// Location: LC_X7_Y5_N7
+maxv_lcell \spi_transmitter|tft_clk (
+// Equation(s):
+// \spi_transmitter|tft_clk~combout  = (\clk~combout ) # ((!\spi_transmitter|transmit_counter [0] & (!\spi_transmitter|transmit_counter [2] & !\spi_transmitter|transmit_counter [1])))
+
+	.clk(gnd),
+	.dataa(\clk~combout ),
+	.datab(\spi_transmitter|transmit_counter [0]),
+	.datac(\spi_transmitter|transmit_counter [2]),
+	.datad(\spi_transmitter|transmit_counter [1]),
+	.aclr(gnd),
+	.aload(gnd),
+	.sclr(gnd),
+	.sload(gnd),
+	.ena(vcc),
+	.cin(gnd),
+	.cin0(gnd),
+	.cin1(vcc),
+	.inverta(gnd),
+	.regcascin(gnd),
+	.devclrn(devclrn),
+	.devpor(devpor),
+	.combout(\spi_transmitter|tft_clk~combout ),
+	.regout(),
+	.cout(),
+	.cout0(),
+	.cout1());
+// synopsys translate_off
+defparam \spi_transmitter|tft_clk .lut_mask = "aaab";
+defparam \spi_transmitter|tft_clk .operation_mode = "normal";
+defparam \spi_transmitter|tft_clk .output_mode = "comb_only";
+defparam \spi_transmitter|tft_clk .register_cascade_mode = "off";
+defparam \spi_transmitter|tft_clk .sum_lutc_input = "datac";
+defparam \spi_transmitter|tft_clk .synch_mode = "off";
 // synopsys translate_on
 
 // Location: PIN_E15,	 I/O Standard: 3.3-V LVTTL,	 Current Strength: 16mA
@@ -388,7 +231,7 @@ defparam \tft_rst~I .operation_mode = "output";
 
 // Location: PIN_D15,	 I/O Standard: 3.3-V LVTTL,	 Current Strength: 16mA
 maxv_io \tft_clk~I (
-	.datain(\clock_divider|clk_out~regout ),
+	.datain(!\spi_transmitter|tft_clk~combout ),
 	.oe(vcc),
 	.combout(),
 	.padio(tft_clk));
@@ -398,7 +241,7 @@ defparam \tft_clk~I .operation_mode = "output";
 
 // Location: PIN_C15,	 I/O Standard: 3.3-V LVTTL,	 Current Strength: 16mA
 maxv_io \tft_mosi~I (
-	.datain(\clk~combout ),
+	.datain(gnd),
 	.oe(vcc),
 	.combout(),
 	.padio(tft_mosi));
@@ -418,12 +261,22 @@ defparam \tft_dc~I .operation_mode = "output";
 
 // Location: PIN_D16,	 I/O Standard: 3.3-V LVTTL,	 Current Strength: 16mA
 maxv_io \tft_cs~I (
-	.datain(\rst~combout ),
+	.datain(gnd),
 	.oe(vcc),
 	.combout(),
 	.padio(tft_cs));
 // synopsys translate_off
 defparam \tft_cs~I .operation_mode = "output";
+// synopsys translate_on
+
+// Location: PIN_M9,	 I/O Standard: 3.3-V LVTTL,	 Current Strength: Default
+maxv_io \rst~I (
+	.datain(gnd),
+	.oe(gnd),
+	.combout(),
+	.padio(rst));
+// synopsys translate_off
+defparam \rst~I .operation_mode = "input";
 // synopsys translate_on
 
 endmodule

@@ -1,5 +1,5 @@
 Timing Analyzer report for Maze
-Thu Nov  7 12:27:56 2024
+Thu Nov  7 13:10:47 2024
 Quartus Prime Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
 
 
@@ -96,7 +96,7 @@ https://fpgasoftware.intel.com/eula.
 +------------+-----------------+------------+------+
 ; Fmax       ; Restricted Fmax ; Clock Name ; Note ;
 +------------+-----------------+------------+------+
-; 119.66 MHz ; 119.66 MHz      ; clk        ;      ;
+; 171.56 MHz ; 171.56 MHz      ; clk        ;      ;
 +------------+-----------------+------------+------+
 This panel reports FMAX for every clock in the design, regardless of the user-specified clock periods.  FMAX is only computed for paths where the source and destination registers or ports are driven by the same clock.  Paths of different clocks, including generated clocks, are ignored.  For paths between a clock and its inversion, FMAX is computed as if the rising and falling edges are scaled along with FMAX, such that the duty cycle (in terms of a percentage) is maintained. Altera recommends that you always use clock constraints and other slack reports for sign-off analysis.
 
@@ -106,7 +106,7 @@ This panel reports FMAX for every clock in the design, regardless of the user-sp
 +-------+--------+---------------+
 ; Clock ; Slack  ; End Point TNS ;
 +-------+--------+---------------+
-; clk   ; -7.357 ; -35.204       ;
+; clk   ; -4.829 ; -14.249       ;
 +-------+--------+---------------+
 
 
@@ -115,7 +115,7 @@ This panel reports FMAX for every clock in the design, regardless of the user-sp
 +-------+-------+---------------+
 ; Clock ; Slack ; End Point TNS ;
 +-------+-------+---------------+
-; clk   ; 4.278 ; 0.000         ;
+; clk   ; 3.376 ; 0.000         ;
 +-------+-------+---------------+
 
 
@@ -140,62 +140,38 @@ No paths to report.
 +-------+--------+---------------+
 
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Setup: 'clk'                                                                                                                                                   ;
-+--------+----------------------------------------+----------------------------------------+--------------+-------------+--------------+------------+------------+
-; Slack  ; From Node                              ; To Node                                ; Launch Clock ; Latch Clock ; Relationship ; Clock Skew ; Data Delay ;
-+--------+----------------------------------------+----------------------------------------+--------------+-------------+--------------+------------+------------+
-; -7.357 ; clock_divider:clock_divider|counter[1] ; clock_divider:clock_divider|counter[3] ; clk          ; clk         ; 1.000        ; 0.000      ; 8.036      ;
-; -7.141 ; clock_divider:clock_divider|counter[0] ; clock_divider:clock_divider|counter[3] ; clk          ; clk         ; 1.000        ; 0.000      ; 7.820      ;
-; -6.964 ; clock_divider:clock_divider|counter[3] ; clock_divider:clock_divider|counter[1] ; clk          ; clk         ; 1.000        ; 0.000      ; 7.643      ;
-; -6.963 ; clock_divider:clock_divider|counter[3] ; clock_divider:clock_divider|clk_out    ; clk          ; clk         ; 1.000        ; 0.000      ; 7.642      ;
-; -6.960 ; clock_divider:clock_divider|counter[3] ; clock_divider:clock_divider|counter[0] ; clk          ; clk         ; 1.000        ; 0.000      ; 7.639      ;
-; -6.960 ; clock_divider:clock_divider|counter[3] ; clock_divider:clock_divider|counter[2] ; clk          ; clk         ; 1.000        ; 0.000      ; 7.639      ;
-; -6.762 ; clock_divider:clock_divider|counter[2] ; clock_divider:clock_divider|counter[1] ; clk          ; clk         ; 1.000        ; 0.000      ; 7.441      ;
-; -6.761 ; clock_divider:clock_divider|counter[2] ; clock_divider:clock_divider|clk_out    ; clk          ; clk         ; 1.000        ; 0.000      ; 7.440      ;
-; -6.758 ; clock_divider:clock_divider|counter[2] ; clock_divider:clock_divider|counter[0] ; clk          ; clk         ; 1.000        ; 0.000      ; 7.437      ;
-; -6.758 ; clock_divider:clock_divider|counter[2] ; clock_divider:clock_divider|counter[2] ; clk          ; clk         ; 1.000        ; 0.000      ; 7.437      ;
-; -6.365 ; clock_divider:clock_divider|clk_out    ; clock_divider:clock_divider|clk_out    ; clk          ; clk         ; 1.000        ; 0.000      ; 7.044      ;
-; -6.289 ; clock_divider:clock_divider|counter[3] ; clock_divider:clock_divider|counter[3] ; clk          ; clk         ; 1.000        ; 0.000      ; 6.968      ;
-; -6.229 ; clock_divider:clock_divider|counter[1] ; clock_divider:clock_divider|counter[2] ; clk          ; clk         ; 1.000        ; 0.000      ; 6.908      ;
-; -5.941 ; clock_divider:clock_divider|counter[1] ; clock_divider:clock_divider|counter[1] ; clk          ; clk         ; 1.000        ; 0.000      ; 6.620      ;
-; -5.940 ; clock_divider:clock_divider|counter[1] ; clock_divider:clock_divider|clk_out    ; clk          ; clk         ; 1.000        ; 0.000      ; 6.619      ;
-; -5.937 ; clock_divider:clock_divider|counter[1] ; clock_divider:clock_divider|counter[0] ; clk          ; clk         ; 1.000        ; 0.000      ; 6.616      ;
-; -5.647 ; clock_divider:clock_divider|counter[2] ; clock_divider:clock_divider|counter[3] ; clk          ; clk         ; 1.000        ; 0.000      ; 6.326      ;
-; -5.558 ; clock_divider:clock_divider|counter[0] ; clock_divider:clock_divider|counter[2] ; clk          ; clk         ; 1.000        ; 0.000      ; 6.237      ;
-; -5.273 ; clock_divider:clock_divider|counter[0] ; clock_divider:clock_divider|counter[1] ; clk          ; clk         ; 1.000        ; 0.000      ; 5.952      ;
-; -5.272 ; clock_divider:clock_divider|counter[0] ; clock_divider:clock_divider|clk_out    ; clk          ; clk         ; 1.000        ; 0.000      ; 5.951      ;
-; -5.269 ; clock_divider:clock_divider|counter[0] ; clock_divider:clock_divider|counter[0] ; clk          ; clk         ; 1.000        ; 0.000      ; 5.948      ;
-+--------+----------------------------------------+----------------------------------------+--------------+-------------+--------------+------------+------------+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Setup: 'clk'                                                                                                                                                             ;
++--------+---------------------------------------------+---------------------------------------------+--------------+-------------+--------------+------------+------------+
+; Slack  ; From Node                                   ; To Node                                     ; Launch Clock ; Latch Clock ; Relationship ; Clock Skew ; Data Delay ;
++--------+---------------------------------------------+---------------------------------------------+--------------+-------------+--------------+------------+------------+
+; -4.829 ; tft_spi:spi_transmitter|transmit_counter[2] ; tft_spi:spi_transmitter|transmit_counter[0] ; clk          ; clk         ; 1.000        ; 0.000      ; 5.508      ;
+; -4.810 ; tft_spi:spi_transmitter|transmit_counter[1] ; tft_spi:spi_transmitter|transmit_counter[1] ; clk          ; clk         ; 1.000        ; 0.000      ; 5.489      ;
+; -4.610 ; tft_spi:spi_transmitter|transmit_counter[0] ; tft_spi:spi_transmitter|transmit_counter[2] ; clk          ; clk         ; 1.000        ; 0.000      ; 5.289      ;
+; -4.231 ; tft_spi:spi_transmitter|transmit_counter[1] ; tft_spi:spi_transmitter|transmit_counter[0] ; clk          ; clk         ; 1.000        ; 0.000      ; 4.910      ;
+; -4.220 ; tft_spi:spi_transmitter|transmit_counter[0] ; tft_spi:spi_transmitter|transmit_counter[1] ; clk          ; clk         ; 1.000        ; 0.000      ; 4.899      ;
+; -3.734 ; tft_spi:spi_transmitter|transmit_counter[2] ; tft_spi:spi_transmitter|transmit_counter[1] ; clk          ; clk         ; 1.000        ; 0.000      ; 4.413      ;
+; -3.152 ; tft_spi:spi_transmitter|transmit_counter[2] ; tft_spi:spi_transmitter|transmit_counter[2] ; clk          ; clk         ; 1.000        ; 0.000      ; 3.831      ;
+; -2.736 ; tft_spi:spi_transmitter|transmit_counter[1] ; tft_spi:spi_transmitter|transmit_counter[2] ; clk          ; clk         ; 1.000        ; 0.000      ; 3.415      ;
+; -2.736 ; tft_spi:spi_transmitter|transmit_counter[0] ; tft_spi:spi_transmitter|transmit_counter[0] ; clk          ; clk         ; 1.000        ; 0.000      ; 3.415      ;
++--------+---------------------------------------------+---------------------------------------------+--------------+-------------+--------------+------------+------------+
 
 
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Hold: 'clk'                                                                                                                                                   ;
-+-------+----------------------------------------+----------------------------------------+--------------+-------------+--------------+------------+------------+
-; Slack ; From Node                              ; To Node                                ; Launch Clock ; Latch Clock ; Relationship ; Clock Skew ; Data Delay ;
-+-------+----------------------------------------+----------------------------------------+--------------+-------------+--------------+------------+------------+
-; 4.278 ; clock_divider:clock_divider|counter[0] ; clock_divider:clock_divider|counter[3] ; clk          ; clk         ; 0.000        ; 0.000      ; 4.317      ;
-; 4.836 ; clock_divider:clock_divider|counter[0] ; clock_divider:clock_divider|counter[0] ; clk          ; clk         ; 0.000        ; 0.000      ; 4.875      ;
-; 4.842 ; clock_divider:clock_divider|counter[0] ; clock_divider:clock_divider|counter[1] ; clk          ; clk         ; 0.000        ; 0.000      ; 4.881      ;
-; 4.946 ; clock_divider:clock_divider|counter[1] ; clock_divider:clock_divider|counter[3] ; clk          ; clk         ; 0.000        ; 0.000      ; 4.985      ;
-; 5.318 ; clock_divider:clock_divider|counter[2] ; clock_divider:clock_divider|counter[2] ; clk          ; clk         ; 0.000        ; 0.000      ; 5.357      ;
-; 5.530 ; clock_divider:clock_divider|counter[1] ; clock_divider:clock_divider|counter[1] ; clk          ; clk         ; 0.000        ; 0.000      ; 5.569      ;
-; 5.767 ; clock_divider:clock_divider|counter[2] ; clock_divider:clock_divider|counter[3] ; clk          ; clk         ; 0.000        ; 0.000      ; 5.806      ;
-; 5.909 ; clock_divider:clock_divider|counter[0] ; clock_divider:clock_divider|counter[2] ; clk          ; clk         ; 0.000        ; 0.000      ; 5.948      ;
-; 5.912 ; clock_divider:clock_divider|counter[0] ; clock_divider:clock_divider|clk_out    ; clk          ; clk         ; 0.000        ; 0.000      ; 5.951      ;
-; 5.969 ; clock_divider:clock_divider|counter[3] ; clock_divider:clock_divider|counter[3] ; clk          ; clk         ; 0.000        ; 0.000      ; 6.008      ;
-; 6.577 ; clock_divider:clock_divider|counter[1] ; clock_divider:clock_divider|counter[0] ; clk          ; clk         ; 0.000        ; 0.000      ; 6.616      ;
-; 6.577 ; clock_divider:clock_divider|counter[1] ; clock_divider:clock_divider|counter[2] ; clk          ; clk         ; 0.000        ; 0.000      ; 6.616      ;
-; 6.580 ; clock_divider:clock_divider|counter[1] ; clock_divider:clock_divider|clk_out    ; clk          ; clk         ; 0.000        ; 0.000      ; 6.619      ;
-; 7.005 ; clock_divider:clock_divider|clk_out    ; clock_divider:clock_divider|clk_out    ; clk          ; clk         ; 0.000        ; 0.000      ; 7.044      ;
-; 7.398 ; clock_divider:clock_divider|counter[2] ; clock_divider:clock_divider|counter[0] ; clk          ; clk         ; 0.000        ; 0.000      ; 7.437      ;
-; 7.401 ; clock_divider:clock_divider|counter[2] ; clock_divider:clock_divider|clk_out    ; clk          ; clk         ; 0.000        ; 0.000      ; 7.440      ;
-; 7.402 ; clock_divider:clock_divider|counter[2] ; clock_divider:clock_divider|counter[1] ; clk          ; clk         ; 0.000        ; 0.000      ; 7.441      ;
-; 7.600 ; clock_divider:clock_divider|counter[3] ; clock_divider:clock_divider|counter[0] ; clk          ; clk         ; 0.000        ; 0.000      ; 7.639      ;
-; 7.600 ; clock_divider:clock_divider|counter[3] ; clock_divider:clock_divider|counter[2] ; clk          ; clk         ; 0.000        ; 0.000      ; 7.639      ;
-; 7.603 ; clock_divider:clock_divider|counter[3] ; clock_divider:clock_divider|clk_out    ; clk          ; clk         ; 0.000        ; 0.000      ; 7.642      ;
-; 7.604 ; clock_divider:clock_divider|counter[3] ; clock_divider:clock_divider|counter[1] ; clk          ; clk         ; 0.000        ; 0.000      ; 7.643      ;
-+-------+----------------------------------------+----------------------------------------+--------------+-------------+--------------+------------+------------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Hold: 'clk'                                                                                                                                                             ;
++-------+---------------------------------------------+---------------------------------------------+--------------+-------------+--------------+------------+------------+
+; Slack ; From Node                                   ; To Node                                     ; Launch Clock ; Latch Clock ; Relationship ; Clock Skew ; Data Delay ;
++-------+---------------------------------------------+---------------------------------------------+--------------+-------------+--------------+------------+------------+
+; 3.376 ; tft_spi:spi_transmitter|transmit_counter[1] ; tft_spi:spi_transmitter|transmit_counter[2] ; clk          ; clk         ; 0.000        ; 0.000      ; 3.415      ;
+; 3.376 ; tft_spi:spi_transmitter|transmit_counter[0] ; tft_spi:spi_transmitter|transmit_counter[0] ; clk          ; clk         ; 0.000        ; 0.000      ; 3.415      ;
+; 3.792 ; tft_spi:spi_transmitter|transmit_counter[2] ; tft_spi:spi_transmitter|transmit_counter[2] ; clk          ; clk         ; 0.000        ; 0.000      ; 3.831      ;
+; 4.374 ; tft_spi:spi_transmitter|transmit_counter[2] ; tft_spi:spi_transmitter|transmit_counter[1] ; clk          ; clk         ; 0.000        ; 0.000      ; 4.413      ;
+; 4.860 ; tft_spi:spi_transmitter|transmit_counter[0] ; tft_spi:spi_transmitter|transmit_counter[1] ; clk          ; clk         ; 0.000        ; 0.000      ; 4.899      ;
+; 4.871 ; tft_spi:spi_transmitter|transmit_counter[1] ; tft_spi:spi_transmitter|transmit_counter[0] ; clk          ; clk         ; 0.000        ; 0.000      ; 4.910      ;
+; 5.250 ; tft_spi:spi_transmitter|transmit_counter[0] ; tft_spi:spi_transmitter|transmit_counter[2] ; clk          ; clk         ; 0.000        ; 0.000      ; 5.289      ;
+; 5.450 ; tft_spi:spi_transmitter|transmit_counter[1] ; tft_spi:spi_transmitter|transmit_counter[1] ; clk          ; clk         ; 0.000        ; 0.000      ; 5.489      ;
+; 5.469 ; tft_spi:spi_transmitter|transmit_counter[2] ; tft_spi:spi_transmitter|transmit_counter[0] ; clk          ; clk         ; 0.000        ; 0.000      ; 5.508      ;
++-------+---------------------------------------------+---------------------------------------------+--------------+-------------+--------------+------------+------------+
 
 
 +-------------------------------------------------------------------+
@@ -203,7 +179,7 @@ No paths to report.
 +------------+----------+----------+----------+----------+----------+
 ; From Clock ; To Clock ; RR Paths ; FR Paths ; RF Paths ; FF Paths ;
 +------------+----------+----------+----------+----------+----------+
-; clk        ; clk      ; 31       ; 0        ; 0        ; 0        ;
+; clk        ; clk      ; 9        ; 0        ; 0        ; 0        ;
 +------------+----------+----------+----------+----------+----------+
 Entries labeled "false path" only account for clock-to-clock false paths and not path-based false paths. As a result, actual path counts may be lower than reported.
 
@@ -213,7 +189,7 @@ Entries labeled "false path" only account for clock-to-clock false paths and not
 +------------+----------+----------+----------+----------+----------+
 ; From Clock ; To Clock ; RR Paths ; FR Paths ; RF Paths ; FF Paths ;
 +------------+----------+----------+----------+----------+----------+
-; clk        ; clk      ; 31       ; 0        ; 0        ; 0        ;
+; clk        ; clk      ; 9        ; 0        ; 0        ; 0        ;
 +------------+----------+----------+----------+----------+----------+
 Entries labeled "false path" only account for clock-to-clock false paths and not path-based false paths. As a result, actual path counts may be lower than reported.
 
@@ -237,10 +213,10 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 +---------------------------------+-------+------+
 ; Illegal Clocks                  ; 0     ; 0    ;
 ; Unconstrained Clocks            ; 0     ; 0    ;
-; Unconstrained Input Ports       ; 2     ; 2    ;
-; Unconstrained Input Port Paths  ; 6     ; 6    ;
-; Unconstrained Output Ports      ; 3     ; 3    ;
-; Unconstrained Output Port Paths ; 3     ; 3    ;
+; Unconstrained Input Ports       ; 1     ; 1    ;
+; Unconstrained Input Port Paths  ; 1     ; 1    ;
+; Unconstrained Output Ports      ; 1     ; 1    ;
+; Unconstrained Output Port Paths ; 4     ; 4    ;
 +---------------------------------+-------+------+
 
 
@@ -259,7 +235,6 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; Input Port ; Comment                                                                              ;
 +------------+--------------------------------------------------------------------------------------+
 ; clk        ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; rst        ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
 +------------+--------------------------------------------------------------------------------------+
 
 
@@ -269,8 +244,6 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; Output Port ; Comment                                                                               ;
 +-------------+---------------------------------------------------------------------------------------+
 ; tft_clk     ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; tft_cs      ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; tft_mosi    ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 +-------------+---------------------------------------------------------------------------------------+
 
 
@@ -280,7 +253,6 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; Input Port ; Comment                                                                              ;
 +------------+--------------------------------------------------------------------------------------+
 ; clk        ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; rst        ; No input delay, min/max delays, false-path exceptions, or max skew assignments found ;
 +------------+--------------------------------------------------------------------------------------+
 
 
@@ -290,8 +262,6 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 ; Output Port ; Comment                                                                               ;
 +-------------+---------------------------------------------------------------------------------------+
 ; tft_clk     ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; tft_cs      ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
-; tft_mosi    ; No output delay, min/max delays, false-path exceptions, or max skew assignments found ;
 +-------------+---------------------------------------------------------------------------------------+
 
 
@@ -301,7 +271,7 @@ No non-DPA dedicated SERDES Receiver circuitry present in device or used in desi
 Info: *******************************************************************
 Info: Running Quartus Prime Timing Analyzer
     Info: Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
-    Info: Processing started: Thu Nov  7 12:27:55 2024
+    Info: Processing started: Thu Nov  7 13:10:47 2024
 Info: Command: quartus_sta Maze -c Maze
 Info: qsta_default_script.tcl version: #1
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
@@ -317,14 +287,14 @@ Info (332105): Deriving Clocks
 Info: Found TIMING_ANALYZER_REPORT_SCRIPT_INCLUDE_DEFAULT_ANALYSIS = ON
 Info: Can't run Report Timing Closure Recommendations. The current device family is not supported.
 Critical Warning (332148): Timing requirements not met
-Info (332146): Worst-case setup slack is -7.357
+Info (332146): Worst-case setup slack is -4.829
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):    -7.357             -35.204 clk 
-Info (332146): Worst-case hold slack is 4.278
+    Info (332119):    -4.829             -14.249 clk 
+Info (332146): Worst-case hold slack is 3.376
     Info (332119):     Slack       End Point TNS Clock 
     Info (332119): ========= =================== =====================
-    Info (332119):     4.278               0.000 clk 
+    Info (332119):     3.376               0.000 clk 
 Info (332140): No Recovery paths to report
 Info (332140): No Removal paths to report
 Info (332146): Worst-case minimum pulse width slack is -2.289
@@ -336,8 +306,8 @@ Info (332102): Design is not fully constrained for setup requirements
 Info (332102): Design is not fully constrained for hold requirements
 Info: Quartus Prime Timing Analyzer was successful. 0 errors, 3 warnings
     Info: Peak virtual memory: 552 megabytes
-    Info: Processing ended: Thu Nov  7 12:27:56 2024
-    Info: Elapsed time: 00:00:01
+    Info: Processing ended: Thu Nov  7 13:10:47 2024
+    Info: Elapsed time: 00:00:00
     Info: Total CPU time (on all processors): 00:00:00
 
 
