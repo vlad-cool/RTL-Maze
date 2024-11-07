@@ -48,7 +48,7 @@ tft_spi spi_transmitter
 
 tft_init tft_initializer(
 	 .clk(tft_clk_in),
-    .rst(rst),
+    .rst(~rst),
     .tft_busy(spi_busy),
 
     .tft_dc(dc_out),
@@ -56,5 +56,7 @@ tft_init tft_initializer(
     .tft_transmit(transmit),
     .finished(LED1)
 );
+
+assign DEBUG_OUT1 = dc_out;
 
 endmodule

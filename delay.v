@@ -8,7 +8,7 @@ module delay
     output wire free
 );
 
-localparam[13:0] ticks_per_ms = 14'd10000;
+localparam[13:0] ticks_per_ms = 14'd2000;
 
 reg[7:0] counter;
 reg[13:0] low_counter;
