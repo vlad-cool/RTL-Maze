@@ -1,7 +1,7 @@
 module tft_init
 (
     input wire clk,
-    input wire rst,
+    input wire global_reset,
     input wire tft_busy,
 
     output reg tft_dc,
@@ -55,12 +55,12 @@ assign init_sequence[1+33] = {COMM, 8'h2a};
 assign init_sequence[1+34] = {DATA, 8'h00};
 assign init_sequence[1+35] = {DATA, 8'h10};
 assign init_sequence[1+36] = {DATA, 8'h00};
-assign init_sequence[1+37] = {DATA, 8'h10};
+assign init_sequence[1+37] = {DATA, 8'h20};
 assign init_sequence[1+38] = {COMM, 8'h2b};
 assign init_sequence[1+39] = {DATA, 8'h00};
 assign init_sequence[1+40] = {DATA, 8'h10};
 assign init_sequence[1+41] = {DATA, 8'h00};
-assign init_sequence[1+42] = {DATA, 8'h10};
+assign init_sequence[1+42] = {DATA, 8'h20};
 assign init_sequence[1+43] = {COMM, 8'h2c};
 
 assign init_sequence[1+44] = {DATA, 8'hff};
@@ -99,9 +99,74 @@ assign init_sequence[1+76] = {DATA, 8'hff};
 assign init_sequence[1+77] = {DATA, 8'hff};
 assign init_sequence[1+78] = {DATA, 8'hff};
 assign init_sequence[1+79] = {DATA, 8'hff};
+assign init_sequence[1+71] = {DATA, 8'hff};
+assign init_sequence[1+72] = {DATA, 8'hff};
+assign init_sequence[1+73] = {DATA, 8'hff};
+assign init_sequence[1+74] = {DATA, 8'hff};
+assign init_sequence[1+75] = {DATA, 8'hff};
+assign init_sequence[1+76] = {DATA, 8'hff};
+assign init_sequence[1+77] = {DATA, 8'hff};
+assign init_sequence[1+78] = {DATA, 8'hff};
+assign init_sequence[1+79] = {DATA, 8'hff};
+assign init_sequence[1+80] = {DATA, 8'hff};
+assign init_sequence[1+81] = {DATA, 8'hff};
+assign init_sequence[1+82] = {DATA, 8'hff};
+assign init_sequence[1+83] = {DATA, 8'hff};
+assign init_sequence[1+84] = {DATA, 8'hff};
+assign init_sequence[1+85] = {DATA, 8'hff};
+assign init_sequence[1+86] = {DATA, 8'hff};
+assign init_sequence[1+87] = {DATA, 8'hff};
+assign init_sequence[1+88] = {DATA, 8'hff};
+assign init_sequence[1+89] = {DATA, 8'hff};
+assign init_sequence[1+80] = {DATA, 8'hff};
+assign init_sequence[1+81] = {DATA, 8'hff};
+assign init_sequence[1+82] = {DATA, 8'hff};
+assign init_sequence[1+83] = {DATA, 8'hff};
+assign init_sequence[1+84] = {DATA, 8'hff};
+assign init_sequence[1+85] = {DATA, 8'hff};
+assign init_sequence[1+86] = {DATA, 8'hff};
+assign init_sequence[1+87] = {DATA, 8'hff};
+assign init_sequence[1+88] = {DATA, 8'hff};
+assign init_sequence[1+89] = {DATA, 8'hff};
+assign init_sequence[1+90] = {DATA, 8'hff};
+assign init_sequence[1+91] = {DATA, 8'hff};
+assign init_sequence[1+92] = {DATA, 8'hff};
+assign init_sequence[1+93] = {DATA, 8'hff};
+assign init_sequence[1+94] = {DATA, 8'hff};
+assign init_sequence[1+95] = {DATA, 8'hff};
+assign init_sequence[1+96] = {DATA, 8'hff};
+assign init_sequence[1+97] = {DATA, 8'hff};
+assign init_sequence[1+98] = {DATA, 8'hff};
+assign init_sequence[1+99] = {DATA, 8'hff};
+assign init_sequence[1+100] = {DATA, 8'hff};
+assign init_sequence[1+101] = {DATA, 8'hff};
+assign init_sequence[1+102] = {DATA, 8'hff};
+assign init_sequence[1+103] = {DATA, 8'hff};
+assign init_sequence[1+104] = {DATA, 8'hff};
+assign init_sequence[1+105] = {DATA, 8'hff};
+assign init_sequence[1+106] = {DATA, 8'hff};
+assign init_sequence[1+107] = {DATA, 8'hff};
+assign init_sequence[1+108] = {DATA, 8'hff};
+assign init_sequence[1+109] = {DATA, 8'hff};
+assign init_sequence[1+110] = {DATA, 8'hff};
+assign init_sequence[1+111] = {DATA, 8'hff};
+assign init_sequence[1+112] = {DATA, 8'hff};
+assign init_sequence[1+113] = {DATA, 8'hff};
+assign init_sequence[1+114] = {DATA, 8'hff};
+assign init_sequence[1+115] = {DATA, 8'hff};
+assign init_sequence[1+116] = {DATA, 8'hff};
+assign init_sequence[1+117] = {DATA, 8'hff};
+assign init_sequence[1+118] = {DATA, 8'hff};
+assign init_sequence[1+119] = {DATA, 8'hff};
+assign init_sequence[1+120] = {DATA, 8'hff};
+assign init_sequence[1+121] = {DATA, 8'hff};
+assign init_sequence[1+122] = {DATA, 8'hff};
+assign init_sequence[1+123] = {DATA, 8'hff};
+assign init_sequence[1+124] = {DATA, 8'hff};
+assign init_sequence[1+125] = {DATA, 8'hff};
+assign init_sequence[1+126] = {DATA, 8'hff};
 
-reg prev_rst;
-reg[10:0] index;
+reg[10:0] index, index_tmp;
 reg set_wait_delay;
 reg[7:0] wait_delay_value;
 wire not_wait;
@@ -117,11 +182,13 @@ delay wait_delay
 
 always @(posedge clk)
 begin
-    prev_rst <= rst;
-    if(rst)
+    if (global_reset)
     begin
         finished <= 0;
         index <= 0;
+		  index_tmp <= 0;
+        set_wait_delay <= 0;
+		  wait_delay_value <= 0;
     end
     else if((~finished) & (~tft_busy) & not_wait & (~set_wait_delay))
     begin
@@ -136,8 +203,9 @@ begin
             tft_dc <= init_sequence[index][8];
             tft_data <= init_sequence[index][7:0];
         end
-        index <= index + 1;
-        if(index == 79)
+        index_tmp <= index + 1;
+		  index <= index_tmp > 100 ? index : index_tmp;
+        if(index == 126)
             finished <= 1;
     end
     else
