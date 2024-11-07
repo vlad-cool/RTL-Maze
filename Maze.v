@@ -46,42 +46,15 @@ tft_spi spi_transmitter
 	.busy(spi_busy)
 );
 
+tft_init tft_initializer(
+	 .clk(tft_clk_in),
+    .rst(rst),
+    .tft_busy(spi_busy),
 
-reg [4:0]counter;
+    .tft_dc(dc_out),
+    .tft_data(data_out),
+    .tft_transmit(transmit),
+    .finished(LED1)
+);
 
-reg [7:0]transmit_data;
-
-assign transmit = 1;
-// assign data_out = 8'b10000001;
-assign data_out = transmit_data;
-assign dc_out = 1;
-
-assign DEBUG_OUT1 = transmit;
-
-always @(posedge tft_clk_in)
-begin
-	if (~rst)
-	begin
-		counter <= 0;
-		transmit_data <= 0;
-	end
-	else
-	begin
-		counter <= counter + 1;
-		
-		transmit_data <= counter == 0 ? transmit_data + 1 : transmit_data;
-		
-		// if (counter == 2 and ~spi_busy)
-		// begin
-		// 	
-		// end
-	end
-end
-
-/*
-
-
-assign tft_mosi = clk;
-assign tft_cs = rst;
-*/
 endmodule

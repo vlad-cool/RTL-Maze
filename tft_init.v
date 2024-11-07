@@ -62,7 +62,7 @@ delay wait_delay
     .rst(rst),
     .ms(wait_delay_value),
     .free(not_wait)
-)
+);
 
 always @(posedge clk)
 begin

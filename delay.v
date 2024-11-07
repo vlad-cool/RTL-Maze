@@ -16,7 +16,7 @@ reg[13:0] low_counter;
 assign free = (counter == 0); 
 
 always @(posedge clk)
-{
+begin
     if(rst)
         {counter, low_counter} <= 0;
     else if(set)
@@ -25,6 +25,6 @@ always @(posedge clk)
         low_counter <= low_counter - 1;
     else if(counter > 0)
         {counter, low_counter} <= {counter - 1, ticks_per_ms};
-}
+end
 
 endmodule
