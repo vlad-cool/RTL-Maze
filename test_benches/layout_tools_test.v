@@ -1,11 +1,11 @@
 module layout_tools_test;
 
 wire[47:0] original = {8'b00000000,
-                     8'b11000011,
-                     8'b11000000,
-                     8'b00011111,
-                     8'b00010000,
-                     8'b00010001};
+                       8'b11000011,
+                       8'b11000000,
+                       8'b00011111,
+                       8'b00010000,
+                       8'b00010001};
 
 wire[47:0] swap_v;
 swap_v_layout#(8, 6, 1) v(.src(original), .dst(swap_v));
