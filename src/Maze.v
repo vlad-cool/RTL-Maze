@@ -70,7 +70,8 @@ tft_spi spi_transmitter
 	.busy(spi_busy)
 );
 
-tft_init tft_initializer(
+tft_init tft_initializer
+(
 	.clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
@@ -82,18 +83,19 @@ tft_init tft_initializer(
     .enable(init_enable)
 );
 
-player player(
+scene_exhibitor player(
     .clk(clk),
     .rst(~rst),
-    .enable(player_enable),
+    .tft_busy(spi_busy),
 
     .busy(player_busy),
     .tft_dc(player_dc_out),
     .tft_data(player_data_out),
     .tft_transmit(player_transmit_out),
+    .enable(player_enable),
 
-    .x(100),
-    .y(101)
+    // .x(100),
+    // .y(101)
 
     // busy
 );
