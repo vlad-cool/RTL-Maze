@@ -70,7 +70,7 @@ assign init_sequence[43] = {DATA, 8'hdf};
 //start drawing
 assign init_sequence[44] = {COMM, 8'h2a};
 //nop
-assign init_sequence[45] = {WAIT. 8'h00};
+assign init_sequence[45] = {WAIT, 8'h00};
 
 reg[7:0] index;
 reg set_wait_delay;
