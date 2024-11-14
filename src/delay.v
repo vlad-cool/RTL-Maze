@@ -1,3 +1,6 @@
+//by Aleksandr
+//Create delay for [0 to 255] ms.
+
 module delay
 (
     input wire clk,
