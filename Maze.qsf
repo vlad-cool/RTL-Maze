@@ -52,8 +52,6 @@ set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_symbol
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_signal_integrity
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_boundary_scan
-set_global_assignment -name VERILOG_FILE Maze.v
-set_global_assignment -name VERILOG_FILE clock_divider.v
 set_location_assignment PIN_H5 -to clk
 set_location_assignment PIN_M9 -to rst
 set_location_assignment PIN_N14 -to tft_clk
@@ -61,7 +59,6 @@ set_location_assignment PIN_M15 -to tft_cs
 set_location_assignment PIN_L13 -to tft_dc
 set_location_assignment PIN_M13 -to tft_mosi
 set_location_assignment PIN_M14 -to tft_rst
-set_global_assignment -name VERILOG_FILE output_files/tft_spi.v
 set_location_assignment PIN_B14 -to DEBUG_OUT1
 set_location_assignment PIN_P4 -to LED1
 set_location_assignment PIN_R1 -to LED2
@@ -73,3 +70,12 @@ set_location_assignment PIN_E15 -to analyzer_rst
 set_location_assignment PIN_N13 -to tft_led
 set_location_assignment PIN_D13 -to DEBUG_OUT2
 set_location_assignment PIN_C12 -to DEBUG_OUT3
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "NO HEAT SINK WITH STILL AIR"
+set_global_assignment -name VERILOG_FILE src/layouts/layout_tools.v
+set_global_assignment -name VERILOG_FILE src/layouts/wall_layout.v
+set_global_assignment -name VERILOG_FILE src/tft_spi.v
+set_global_assignment -name VERILOG_FILE src/delay.v
+set_global_assignment -name VERILOG_FILE src/dummy_module.v
+set_global_assignment -name VERILOG_FILE src/Maze.v
+set_global_assignment -name VERILOG_FILE src/player.v
+set_global_assignment -name VERILOG_FILE src/tft_init.v

@@ -32,34 +32,25 @@ assign tft_mosi = analyzer_mosi;
 assign tft_dc = analyzer_dc;
 assign tft_cs = 0;
 
-assign DEBUG_OUT2 = tft_clk_in;
 assign DEBUG_OUT3 = clk;
 
 assign LED2 = rst;
 
-wire [7:0]data_out;
-wire dc_out;
-wire transmit;
+wire [7:0]data_out_1;
+wire [7:0]data_out_2;
+wire dc_out_1, dc_out_2;
+wire transmit_1, transmit_2;
 wire spi_busy;
-
-wire tft_clk_in;
-
-clock_divider#(
-	.DIV_FACTOR(5)
-) clock_divider (
-	.global_reset(~rst),
-	.clk_in(clk),
-	.clk_out(tft_clk_in)
-);
 
 tft_spi spi_transmitter
 (
 	.global_reset(~rst),
 	.clk(clk),
 	
-	.data(data_out),
-	.dc(dc_out),
-	.transmit(transmit),
+	.data(LED1 ? data_out_2 : data_out_1),
+	.dc(LED1 ? dc_out_2 : dc_out_1),
+	// .dc(dc_out_1),
+	.transmit(LED1 ? transmit_2 : transmit_1),
 	
 	.tft_mosi(analyzer_mosi),
 	.tft_cs(analyzer_cs),
@@ -70,16 +61,31 @@ tft_spi spi_transmitter
 );
 
 tft_init tft_initializer(
-	 .clk(clk),
-    .global_reset(~rst),
+	.clk(clk),
+    .rst(~rst),
     .tft_busy(spi_busy),
 
-    .tft_dc(dc_out),
-    .tft_data(data_out),
-    .tft_transmit(transmit),
+    .tft_dc(dc_out_1),
+    .tft_data(data_out_1),
+    .tft_transmit(transmit_1),
     .finished(LED1)
 );
 
-assign DEBUG_OUT1 = dc_out;
+player player(
+    .rst(~rst),
+    .clk(clk),
+    .x(100),
+    .y(101),
+    .draw(LED1),
+
+    .tft_busy(spi_busy),
+    .tft_dc(dc_out_2),
+    .tft_data(data_out_2),
+    .tft_transmit(transmit_2),
+
+    // busy
+);
+
+// assign DEBUG_OUT1 = dc_out;
 
 endmodule
