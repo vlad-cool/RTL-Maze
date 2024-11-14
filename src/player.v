@@ -1,3 +1,5 @@
+// by Vladislav
+
 module player
 #(
     parameter size = 10

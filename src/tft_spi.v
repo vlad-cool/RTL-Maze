@@ -1,3 +1,5 @@
+// by Vladislav
+
 module tft_spi
 (
 	input wire global_reset,

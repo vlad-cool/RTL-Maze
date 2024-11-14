@@ -1,5 +1,5 @@
-//by Aleksandr
-//Transmit init sequence & select all screen to draw the scene.
+// by Aleksandr
+// Transmit init sequence & select all screen to draw the scene.
 
 module tft_init
 (
