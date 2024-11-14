@@ -5,6 +5,7 @@ module tft_init
 (
     input wire clk,
     input wire rst,
+    input wire enable,
     input wire tft_busy,
 
     output reg tft_dc,
@@ -71,7 +72,7 @@ reg set_wait_delay;
 reg[7:0] wait_delay_value;
 wire not_wait;
 
-assign busy = (index < DC_COUNT);
+assign busy = (index < DC_COUNT) & enable;
 
 delay wait_delay
 (
