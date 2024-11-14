@@ -32,7 +32,6 @@ wire init_busy, player_busy;
 
 reg init_enable, player_enable;
 
-wire spi_rst;
 wire spi_clk;
 wire spi_mosi;
 wire spi_dc;
@@ -42,13 +41,13 @@ wire spi_busy;
 
 assign spi_cs = 0;
 
-assign analyzer_rst = spi_rst;
+assign analyzer_rst = rst;
 assign analyzer_clk = spi_clk;
 assign analyzer_mosi = spi_mosi;
 assign analyzer_dc = spi_dc;
 assign analyzer_cs = spi_cs;
 
-assign tft_rst = spi_rst;
+assign tft_rst = rst;
 assign tft_clk = spi_clk;
 assign tft_mosi = spi_mosi;
 assign tft_dc = spi_dc;
@@ -98,6 +97,21 @@ player player(
 
     // busy
 );
+
+assign spi_data_in = 
+    init_busy ? init_data_out :
+    player_busy ? player_data_out : 
+    0;
+
+assign spi_dc_in = 
+    init_busy ? init_dc_out :
+    player_busy ? player_dc_out : 
+    0;
+
+assign spi_transmit_in = 
+    init_busy ? init_transmit_out :
+    player_busy ? player_transmit_out :
+    0;
 
 always @(posedge clk) begin
     if (~rst) begin

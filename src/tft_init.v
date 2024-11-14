@@ -5,6 +5,7 @@ module tft_init
 (
     input wire clk,
     input wire rst,
+    input wire enable,
     input wire tft_busy,
 
     output reg tft_dc,
@@ -13,7 +14,7 @@ module tft_init
     output wire busy
 );
 
-localparam DC_COUNT = 44;
+localparam DC_COUNT = 46;
 localparam[1:0] COMM = 2'b00;
 localparam[1:0] DATA = 2'b01;
 localparam[1:0] WAIT = 2'b10;
@@ -49,29 +50,44 @@ assign init_sequence[26] = {DATA, 8'h2c};
 assign init_sequence[27] = {DATA, 8'h82};
 assign init_sequence[28] = {COMM, 8'h11};
 assign init_sequence[29] = {WAIT, 8'hff};
+
 assign init_sequence[30] = {COMM, 8'h29};
 assign init_sequence[31] = {COMM, 8'h21};
 assign init_sequence[32] = {COMM, 8'h34};
 
 assign init_sequence[33] = {WAIT, 8'hff};
 
-assign init_sequence[34] = {COMM, 8'h2a};
+// assign init_sequence[34] = {COMM, 8'h2a};
+// assign init_sequence[35] = {DATA, 8'h00};
+// assign init_sequence[36] = {DATA, 8'h00};
+// assign init_sequence[37] = {DATA, 8'h01};
+// assign init_sequence[38] = {DATA, 8'h3f};
+// assign init_sequence[39] = {COMM, 8'h2b};
+// assign init_sequence[40] = {DATA, 8'h00};
+// assign init_sequence[41] = {DATA, 8'h00};
+// assign init_sequence[42] = {DATA, 8'h01};
+// assign init_sequence[43] = {DATA, 8'hdf};
+
+assign init_sequence[34] = {COMM, 8'h00};
 assign init_sequence[35] = {DATA, 8'h00};
 assign init_sequence[36] = {DATA, 8'h00};
-assign init_sequence[37] = {DATA, 8'h01};
-assign init_sequence[38] = {DATA, 8'h3f};
-assign init_sequence[39] = {COMM, 8'h2b};
+assign init_sequence[37] = {DATA, 8'h00};
+assign init_sequence[38] = {DATA, 8'h00};
+assign init_sequence[39] = {COMM, 8'h00};
 assign init_sequence[40] = {DATA, 8'h00};
 assign init_sequence[41] = {DATA, 8'h00};
-assign init_sequence[42] = {DATA, 8'h01};
-assign init_sequence[43] = {DATA, 8'hdf};
+assign init_sequence[42] = {DATA, 8'h00};
+assign init_sequence[43] = {DATA, 8'h00};
+
+assign init_sequence[44] = {WAIT, 8'hff};
+assign init_sequence[45] = {COMM, 8'h00};
 
 reg[7:0] index;
 reg set_wait_delay;
 reg[7:0] wait_delay_value;
 wire not_wait;
 
-assign busy = (index < DC_COUNT);
+assign busy = (index < DC_COUNT) & enable;
 
 delay wait_delay
 (

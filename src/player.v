@@ -38,18 +38,18 @@ always @(posedge clk) begin
             busy <= 1;
         end
         else if (~tft_busy) begin
-            if (selection_counter < 12) begin
+            if (selection_counter > 0 && selection_counter < 12) begin
                 case(selection_counter)
                     1:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2a};
-                    2:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, x >> 8};
+                    2:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'b0}; // TODO FIX LATER
                     3:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, x & 8'hff};
-                    4:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, (x + size - 1) >> 8};
+                    4:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'b0};
                     5:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, (x + size - 1) & 8'hff};
 
-                    6:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2a};
-                    7:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, y >> 8};
+                    6:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2b};
+                    7:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'b0};
                     8:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, y & 8'hff};
-                    9:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, (y + size - 1) >> 8};
+                    9:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'b0};
                     10: {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, (y + size - 1) & 8'hff};
 
                     11: {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2c};
@@ -58,7 +58,7 @@ always @(posedge clk) begin
                 selection_counter <= selection_counter + 1;
             end
             else begin
-                {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, counter};
+                {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'h22};
                 counter <= counter + 1;
             end
         end
