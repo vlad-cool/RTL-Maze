@@ -1,3 +1,4 @@
+//by Aleksandr
 //W = src width in "pixels"
 //H = src height in lines
 //S = size of "pixel" in bits
