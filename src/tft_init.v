@@ -52,7 +52,7 @@ assign init_sequence[28] = {COMM, 8'h11};
 assign init_sequence[29] = {WAIT, 8'hff};
 
 assign init_sequence[30] = {COMM, 8'h29};
-assign init_sequence[31] = {COMM, 8'h21};
+assign init_sequence[31] = {COMM, 8'h00};
 assign init_sequence[32] = {COMM, 8'h34};
 //wait initialization
 assign init_sequence[33] = {WAIT, 8'hff};

@@ -82,7 +82,7 @@ tft_init tft_initializer(
     .enable(init_enable)
 );
 
-input wire[159:0] test_h_walls;
+wire[159:0] test_h_walls;
 assign test_h_walls = {10'b1000000010,
                        10'b0111011100,
                        10'b0000000000,
@@ -101,7 +101,7 @@ assign test_h_walls = {10'b1000000010,
                        10'b0001111110};
 
 
-input wire[164:0] test_v_walls;
+wire[164:0] test_v_walls;
 assign test_v_walls = {11'b10000000100,
                        11'b01110111000,
                        11'b00000000000,
