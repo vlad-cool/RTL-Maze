@@ -9,7 +9,7 @@ module player
     input wire clk,
     input wire[8:0] x,
     input wire[8:0] y,
-    input wire draw,
+    input wire enable,
 
     input wire tft_busy,
     output reg tft_dc,
@@ -22,16 +22,18 @@ module player
 reg [$clog2(size * size) - 1 : 0]sub_pixel_counter;
 reg [3:0]selection_counter;
 
-// assign busy = selection_counter > 0 && sub_pixel_counter < size * size;
+reg [7:0] counter;
 
 always @(posedge clk) begin
     if (rst) begin
         sub_pixel_counter <= 0;
         selection_counter <= 0;
         busy <= 0;
+
+        counter <= 0;
     end
-    else begin
-        if (!busy && draw) begin
+    else if (enable) begin
+        if (!busy) begin
             selection_counter <= selection_counter + 1;
             busy <= 1;
         end
@@ -56,7 +58,8 @@ always @(posedge clk) begin
                 selection_counter <= selection_counter + 1;
             end
             else begin
-                {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'hf8};
+                {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, counter};
+                counter <= counter + 1;
             end
         end
         else if (tft_busy) begin

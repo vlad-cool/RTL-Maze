@@ -2,7 +2,7 @@
 
 module tft_spi
 (
-	input wire global_reset,
+	input wire rst,
 	input wire clk,
 	
 	input wire [7:0]data,
@@ -25,7 +25,7 @@ assign tft_clk = ~clk & ~tft_cs;
 
 always @(posedge clk)
 begin
-	if (global_reset)
+	if (rst)
 	begin
 		transmiting_byte <= 0;
 		transmit_counter <= 0;
