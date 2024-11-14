@@ -31,15 +31,15 @@ assign wall_color[0] = 0;
 assign wall_color[1] = 8'h10;
 assign wall_color[2] = 8'hfe;
 wire[7:0] background_color[2:0];
-assign wall_color[0] = 0;
-assign wall_color[1] = 0;
-assign wall_color[2] = 0;
+assign background_color[0] = 0;
+assign background_color[1] = 0;
+assign background_color[2] = 0;
 
 wire wall_value;
 wall_layout layout
 (
-    .x(x_index[3:0] + 8), //shift wall grid
-    .y(y_index[3:0] + 8), //shift wall grid
+    .x(x_index[4:1] + 8), //shift wall grid
+    .y(y_index[4:1] + 8), //shift wall grid
     .left((x_index > 8) & (x_index < 312)),
     .top(1),
     .right(1),

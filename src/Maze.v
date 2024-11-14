@@ -25,12 +25,12 @@ module Maze(
 
 assign tft_led = 0;
 
-wire [7:0]init_data_out, player_data_out, spi_data_in;
-wire init_dc_out, player_dc_out, spi_dc_in;
-wire init_transmit_out, player_transmit_out, spi_transmit_in;
-wire init_busy, player_busy;
+wire [7:0]init_data_out, player_data_out, scene_data_out, spi_data_in;
+wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
+wire init_transmit_out, player_transmit_out, scene_transmit_out, spi_transmit_in;
+wire init_busy, player_busy, scene_busy;
 
-reg init_enable, player_enable;
+reg init_enable, player_enable, scene_enable;
 
 wire spi_clk;
 wire spi_mosi;
@@ -83,7 +83,19 @@ tft_init tft_initializer
     .enable(init_enable)
 );
 
-scene_exhibitor player(
+scene_exhibitor scene(
+    .clk(clk),
+    .rst(~rst),
+    .tft_busy(spi_busy),
+
+    .busy(scene_busy),
+    .tft_dc(scene_dc_out),
+    .tft_data(scene_data_out),
+    .tft_transmit(scene_transmit_out),
+    .enable(scene_enable),
+);
+
+player player(
     .clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
@@ -94,43 +106,55 @@ scene_exhibitor player(
     .tft_transmit(player_transmit_out),
     .enable(player_enable),
 
-    // .x(100),
-    // .y(101)
-
-    // busy
+    .x(100),
+    .y(101)
 );
 
 assign spi_data_in = 
-    init_busy ? init_data_out :
-    player_busy ? player_data_out : 
+    init_enable ? init_data_out :
+    scene_enable ? scene_data_out :
+    player_enable ? player_data_out : 
     0;
 
 assign spi_dc_in = 
-    init_busy ? init_dc_out :
-    player_busy ? player_dc_out : 
+    init_enable ? init_dc_out :
+    scene_enable ? scene_dc_out :
+    player_enable ? player_dc_out : 
     0;
 
 assign spi_transmit_in = 
-    init_busy ? init_transmit_out :
-    player_busy ? player_transmit_out :
+    init_enable ? init_transmit_out :
+    scene_enable ? scene_transmit_out :
+    player_enable ? player_transmit_out :
     0;
 
 always @(posedge clk) begin
     if (~rst) begin
         init_enable <= 0;
+        scene_enable <= 0;
         player_enable <= 0;
     end
     else begin
-        if (!init_enable && !player_enable) begin
+        if (~init_enable & ~scene_enable & ~player_enable) begin
             init_enable <= 1;
         end
-        if (init_enable && !init_busy) begin
+        else if (init_enable & ~init_busy) begin
             init_enable <= 0;
-            player_enable <= 1;
+            scene_enable <= 1;
+        end
+        else if (scene_enable & ~scene_busy) begin
+            scene_enable <= 0;
+            // player_enable <= 1;
         end
     end
 end
 
 // assign DEBUG_OUT1 = dc_out;
+
+assign DEBUG_OUT1 = scene_enable;
+assign DEBUG_OUT2 = scene_busy;
+assign DEBUG_OUT3 = player_enable;
+
+assign LED2 = scene_busy;
 
 endmodule

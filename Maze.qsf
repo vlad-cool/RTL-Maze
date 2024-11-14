@@ -75,6 +75,7 @@ set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "NO HEAT SINK WITH STI
 set_global_assignment -name VERILOG_FILE src/layouts/layout_tools.v
 set_global_assignment -name VERILOG_FILE src/layouts/wall_layout.v
 set_global_assignment -name VERILOG_FILE src/tft_spi.v
+set_global_assignment -name VERILOG_FILE src/scene_exhibitor.v
 set_global_assignment -name VERILOG_FILE src/delay.v
 set_global_assignment -name VERILOG_FILE src/dummy_module.v
 set_global_assignment -name VERILOG_FILE src/Maze.v
