@@ -16,15 +16,15 @@ module scene_exhibitor
     output wire busy
 );
 
-localparam H_WALLS = 21;
-localparam V_WALLS = 31;
+localparam SCENE_WIDTH = 320;
+localparam SCENE_HEIGHT = 480;
 
 reg[8:0] x_index;
 reg[8:0] y_index;
 reg[1:0] color_index;
 
 assign tft_dc = 1;  //data
-assign busy = (y_index < V_WALLS) & (x_index < H_WALLS) & enable;
+assign busy = (x_index < SCENE_WIDTH) & (y_index < SCENE_HEIGHT) & enable;
 
 wire[7:0] wall_color[2:0];
 wall_color[0] = 0;
@@ -38,9 +38,9 @@ wall_color[2] = 0;
 wire wall_value;
 wall_layout layout
 (
-    .x(x_index),
-    .y(y_index),
-    .left((x_index != 0) & (x_index != 20)),
+    .x(x_index[3:0]),
+    .y(y_index[3:0]),
+    .left((x_index > 20) & (x_index < 300)),
     .top(1),
     .right(1),
     .bottom(0),
@@ -59,7 +59,7 @@ begin
         color_index <= 0;
         x_index <= x_index + 1;
     end
-    else if(x_index == 21)
+    else if(x_index == SCENE_WIDTH)
     begin
         x_index <= 0;
         y_index <= y_index + 1;
