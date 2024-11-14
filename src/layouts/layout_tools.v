@@ -1,8 +1,8 @@
-//by Aleksandr
-//W = src width in "pixels"
-//H = src height in lines
-//S = size of "pixel" in bits
-//When you rotate layout: W(dst) = H(src) & H(dst) = W(src)
+// by Aleksandr
+// W = src width in "pixels"
+// H = src height in lines
+// S = size of "pixel" in bits
+// When you rotate layout: W(dst) = H(src) & H(dst) = W(src)
 
 module swap_v_layout
 #(

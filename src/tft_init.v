@@ -10,7 +10,7 @@ module tft_init
     output reg tft_dc,
     output reg[7:0] tft_data,
     output reg tft_transmit,
-    output wire finished
+    output wire busy
 );
 
 localparam DC_COUNT = 44;
@@ -55,24 +55,23 @@ assign init_sequence[32] = {COMM, 8'h34};
 
 assign init_sequence[33] = {WAIT, 8'hff};
 
-//todo: select full screen
 assign init_sequence[34] = {COMM, 8'h2a};
 assign init_sequence[35] = {DATA, 8'h00};
-assign init_sequence[36] = {DATA, 8'h10};
-assign init_sequence[37] = {DATA, 8'h00};
-assign init_sequence[38] = {DATA, 8'h10};
+assign init_sequence[36] = {DATA, 8'h00};
+assign init_sequence[37] = {DATA, 8'h01};
+assign init_sequence[38] = {DATA, 8'h3f};
 assign init_sequence[39] = {COMM, 8'h2b};
 assign init_sequence[40] = {DATA, 8'h00};
-assign init_sequence[41] = {DATA, 8'h10};
-assign init_sequence[42] = {DATA, 8'h00};
-assign init_sequence[43] = {DATA, 8'h10};
+assign init_sequence[41] = {DATA, 8'h00};
+assign init_sequence[42] = {DATA, 8'h01};
+assign init_sequence[43] = {DATA, 8'hdf};
 
 reg[7:0] index;
 reg set_wait_delay;
 reg[7:0] wait_delay_value;
 wire not_wait;
 
-assign finished = (index == DC_COUNT);
+assign busy = (index < DC_COUNT);
 
 delay wait_delay
 (
@@ -91,7 +90,7 @@ begin
         set_wait_delay <= 0;
         tft_transmit <= 0;
     end
-    else if((~finished) & (~tft_busy) & (~tft_transmit) & not_wait & (~set_wait_delay))
+    else if(busy & (~tft_busy) & (~tft_transmit) & not_wait & (~set_wait_delay))
     begin
         if(init_sequence[index][9]) //WAIT bit
         begin

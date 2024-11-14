@@ -1,6 +1,6 @@
-//by Aleksandr
-//(x, Y) - coords in pixels from left-top point
-//left, top, right, bottom is flags of other walls
+// by Aleksandr
+// (x, Y) - coords in pixels from left-top point
+// left, top, right, bottom is flags of other walls
 
 module wall_layout
 (
