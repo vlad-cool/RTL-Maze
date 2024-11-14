@@ -36,10 +36,10 @@ wall_layout layout
 (
     .x(x_index[4:1] + 8), //shift & double size walls grid
     .y(y_index[4:1] + 8), //shift & double size walls grid
-    .left(h_walls[x_index[8:5]]),
-    .top(v_walls[y_index[8:5]]),
-    .right(h_walls[x_index[8:5] + 1]),
-    .bottom(v_walls[y_index[8:5] + 1]),
+    .left(h_walls[y_index[8:5] * 11 + x_index[8:5]]),
+    .top(v_walls[y_index[8:5] * 11 + x_index[8:5]]),
+    .right(h_walls[y_index[8:5] * 11 + x_index[8:5] + 1]),
+    .bottom(v_walls[y_index[8:5] * 12 + x_index[8:5]]),
     .value(wall_value)
 );
 
