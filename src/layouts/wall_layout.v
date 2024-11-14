@@ -1,4 +1,5 @@
 // by Aleksandr
+// 16x16 walls layout
 // (x, Y) - coords in pixels from left-top point
 // left, top, right, bottom is flags of other walls
 

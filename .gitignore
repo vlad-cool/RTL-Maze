@@ -2,7 +2,10 @@
 /incremental_db/
 /output_files/
 /simulation/
+/.qsys_edit
 *.bak
+*.qws
 *.icv
 *.bat
-*.qws
+*.qpf
+*.qsf

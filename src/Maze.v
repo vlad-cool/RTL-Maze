@@ -82,16 +82,55 @@ tft_init tft_initializer(
     .enable(init_enable)
 );
 
+input wire[159:0] test_h_walls;
+assign test_h_walls = {10'b1000000010,
+                       10'b0111011100,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0011110000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0001111110};
+
+
+input wire[164:0] test_v_walls;
+assign test_v_walls = {11'b10000000100,
+                       11'b01110111000,
+                       11'b00000000000,
+                       11'b00000000000,
+                       11'b00000000000,
+                       11'b00111100000,
+                       11'b00000000000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000};
+
+assign player_dc_out = 1;
 scene_exhibitor scene
 (
     .clk(clk),
     .rst(~rst),
-    .enable(player_enable),
     .tft_busy(spi_busy),
+    .h_walls(test_h_walls),
+    .v_walls(test_v_walls),
+
     .busy(player_busy),
-    .tft_dc(player_dc_out),
     .tft_data(player_data_out),
     .tft_transmit(player_transmit_out),
+    .enable(player_enable)
 );
 
 assign spi_data_in = 
@@ -114,11 +153,14 @@ always @(posedge clk) begin
         init_enable <= 0;
         player_enable <= 0;
     end
-    else begin
-        if (!init_enable && !player_enable) begin
+    else
+    begin
+        if (!init_enable && !player_enable) 
+        begin
             init_enable <= 1;
         end
-        if (init_enable && !init_busy) begin
+        if (init_enable && !init_busy) 
+        begin
             init_enable <= 0;
             player_enable <= 1;
         end
