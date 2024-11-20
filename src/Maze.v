@@ -70,8 +70,45 @@ tft_spi spi_transmitter
 	.busy(spi_busy)
 );
 
-tft_init tft_initializer
-(
+wire[159:0] test_h_walls;
+assign test_h_walls = {10'b1000000010,
+                       10'b0111011100,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0011110000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0001111110};
+
+
+wire[164:0] test_v_walls;
+assign test_v_walls = {11'b10000000100,
+                       11'b01110111000,
+                       11'b00000000000,
+                       11'b00000000000,
+                       11'b00000000000,
+                       11'b00111100000,
+                       11'b00000000000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000000000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000};
+
+assign player_dc_out = 1;
+
+tft_init tft_initializer(
 	.clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
@@ -89,19 +126,22 @@ scene_exhibitor scene(
     .tft_busy(spi_busy),
 
     .busy(scene_busy),
-    .tft_dc(scene_dc_out),
+    // .tft_dc(scene_dc_out),
     .tft_data(scene_data_out),
     .tft_transmit(scene_transmit_out),
     .enable(scene_enable),
+
+    .h_walls(test_h_walls),
+    .v_walls(test_v_walls),
 );
 
-player player(
+player player
+(
     .clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
 
     .busy(player_busy),
-    .tft_dc(player_dc_out),
     .tft_data(player_data_out),
     .tft_transmit(player_transmit_out),
     .enable(player_enable),
@@ -118,7 +158,7 @@ assign spi_data_in =
 
 assign spi_dc_in = 
     init_enable ? init_dc_out :
-    scene_enable ? scene_dc_out :
+    scene_enable ? 1 :
     player_enable ? player_dc_out : 
     0;
 
@@ -134,6 +174,8 @@ always @(posedge clk) begin
         scene_enable <= 0;
         player_enable <= 0;
     end
+    else
+    begin
         if (~init_enable & ~scene_enable & ~player_enable) begin
             init_enable <= 1;
         end

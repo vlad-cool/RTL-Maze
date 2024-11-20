@@ -50,7 +50,6 @@ assign init_sequence[26] = {DATA, 8'h2c};
 assign init_sequence[27] = {DATA, 8'h82};
 assign init_sequence[28] = {COMM, 8'h11};
 assign init_sequence[29] = {WAIT, 8'hff};
-
 assign init_sequence[30] = {COMM, 8'h29};
 assign init_sequence[31] = {COMM, 8'h00};
 assign init_sequence[32] = {COMM, 8'h34};
@@ -71,7 +70,6 @@ assign init_sequence[43] = {DATA, 8'hdf};
 assign init_sequence[44] = {COMM, 8'h2c};
 //nop
 assign init_sequence[45] = {WAIT, 8'h00};
-assign init_sequence[46] = {WAIT, 8'h00};
 
 reg[7:0] index;
 reg set_wait_delay;
