@@ -141,6 +141,7 @@ player player(
     .tft_busy(spi_busy),
 
     .busy(player_busy),
+    .tft_dc(player_dc_out),
     .tft_data(player_data_out),
     .tft_transmit(player_transmit_out),
     .enable(player_enable),
@@ -157,7 +158,7 @@ assign spi_data_in =
 
 assign spi_dc_in = 
     init_enable ? init_dc_out :
-    scene_enable ? 1 :
+    scene_enable ? scene_dc_out :
     player_enable ? player_dc_out : 
     0;
 
