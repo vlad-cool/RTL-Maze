@@ -30,6 +30,8 @@ wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
 wire init_transmit_out, player_transmit_out, scene_transmit_out, spi_transmit_in;
 wire init_busy, player_busy, scene_busy;
 
+reg player_draw;
+
 reg init_enable, player_enable, scene_enable;
 
 wire spi_clk;
@@ -83,40 +85,40 @@ tft_init tft_initializer(
 );
 
 wire[159:0] test_h_walls;
-assign test_h_walls = {10'b1000000010,
-                       10'b0111011100,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0011110000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0001111110};
+assign test_h_walls = {10'b1111111111,
+                       10'b1111111111,
+                       10'b1111101111,
+                       10'b1100000111,
+                       10'b1100000111,
+                       10'b1111110111,
+                       10'b1100000111,
+                       10'b1100000111,
+                       10'b1100000111,
+                       10'b1100000111,
+                       10'b1100000111,
+                       10'b1100000111,
+                       10'b1100000111,
+                       10'b1100000111,
+                       10'b1111111111,
+                       10'b1111111111};
 
 
 wire[164:0] test_v_walls;
-assign test_v_walls = {11'b10000000100,
-                       11'b01110111000,
-                       11'b00000000000,
-                       11'b00000000000,
-                       11'b00000000000,
-                       11'b00111100000,
-                       11'b00000000000,
-                       11'b00000001000,
-                       11'b00000001000,
-                       11'b00000001000,
-                       11'b00000000000,
-                       11'b00000001000,
-                       11'b00000001000,
-                       11'b00000001000,
-                       11'b00000001000};
+assign test_v_walls = {11'b11111111111,
+                       11'b11111111111,
+                       11'b11000000111,
+                       11'b11000000111,
+                       11'b11000000111,
+                       11'b11111100111,
+                       11'b11000000111,
+                       11'b11000001111,
+                       11'b11000001111,
+                       11'b11000001111,
+                       11'b11000000111,
+                       11'b11000001111,
+                       11'b11111111111,
+                       11'b11111111111,
+                       11'b11111111111};
 
 scene_exhibitor scene(
     .clk(clk),
@@ -135,6 +137,10 @@ scene_exhibitor scene(
 
 assign scene_dc_out = 1; // TODO FIX
 
+reg [12:0] player_pos_x, player_pos_y;
+
+wire player_debug;
+
 player player(
     .clk(clk),
     .rst(~rst),
@@ -146,8 +152,11 @@ player player(
     .tft_transmit(player_transmit_out),
     .enable(player_enable),
 
-    .x(100),
-    .y(101)
+    .debug(player_debug),
+
+    .x(player_pos_x[8:0]),
+    .y(player_pos_y[12:4]),
+    .draw(player_draw)
 );
 
 assign spi_data_in = 
@@ -173,6 +182,10 @@ always @(posedge clk) begin
         init_enable <= 0;
         scene_enable <= 0;
         player_enable <= 0;
+        player_draw <= 1;
+
+        player_pos_x <= 100;
+        player_pos_y <= 0;
     end
     else begin
         if (~init_enable & ~scene_enable & ~player_enable) begin
@@ -186,13 +199,16 @@ always @(posedge clk) begin
             scene_enable <= 0;
             player_enable <= 1;
         end
+        else if (player_enable & ~player_busy) begin
+            player_pos_y <= player_pos_y + 1;
+        end
     end
 end
 
 // assign DEBUG_OUT1 = dc_out;
 
-assign DEBUG_OUT1 = scene_enable;
-assign DEBUG_OUT2 = scene_busy;
+assign DEBUG_OUT1 = player_debug;
+assign DEBUG_OUT2 = scene_enable;
 assign DEBUG_OUT3 = player_enable;
 
 assign LED2 = scene_busy;

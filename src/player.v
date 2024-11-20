@@ -7,8 +7,6 @@ module player
 (
     input wire rst,
     input wire clk,
-    input wire[8:0] x,
-    input wire[8:0] y,
     input wire enable,
 
     input wire tft_busy,
@@ -16,7 +14,13 @@ module player
     output reg[7:0] tft_data,
     output reg tft_transmit,
 
-    output reg busy
+    output reg busy,
+
+    output wire debug,
+
+    input wire[8:0] x,
+    input wire[8:0] y,
+    input wire draw
 );
 
 reg [$clog2(size * size) - 1 : 0]pixel_counter;
@@ -24,37 +28,95 @@ reg [3:0]selection_counter;
 
 reg [7:0] counter;
 
-wire [15:0] x_min, y_min, x_max, y_max;
+// wire [15:0] x_min_old, y_min_old, x_max_old, y_max_old;
+reg [8:0] x_min, y_min, x_max, y_max;
 
-assign x_min = x;
-assign y_min = y;
-assign x_max = x + size - 1;
-assign y_max = y + size - 1;
+// assign x_min_new = x_new;
+// assign y_min_new = y_new;
+// assign x_max_new = x_new + size - 1;
+// assign y_max_new = y_new + size - 1;
 
-wire [483:0]sprite;
-assign sprite = {
-22'b1110000000000000000011, 
-22'b1111000000000000111111, 
-22'b1111100000000001111111, 
-22'b0111110000000111111111, 
-22'b0011111000001111111000, 
-22'b0001111110011111110000, 
-22'b0000111111111111110000, 
-22'b0000111111111111100000, 
-22'b0000011111111111100000, 
-22'b0000000111111111000000, 
-22'b0000000111111110000000, 
-22'b0000000011111110000000, 
-22'b0000000011111110000000, 
-22'b0000001111111111100000, 
-22'b0000011111011111111100, 
-22'b0001111111011111111100, 
-22'b0011111110001111111100, 
-22'b0111111110000111111110, 
-22'b1111111100000011111110, 
-22'b1111110000000000011110, 
-22'b1111100000000000000111, 
-22'b0111000000000000000000, 
+reg [8:0]x_new, y_new;
+
+reg drawing_background;
+
+assign debug = drawing_background;
+
+wire [483:0]sprite[2:0];
+
+assign sprite[0] = {
+22'b0000000111111110000000,
+22'b0000011111111111100000,
+22'b0000111111111111110000,
+22'b0001111111111111111000,
+22'b0011111111111111111100,
+22'b0111111111111101111110,
+22'b0111111111111111111110,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b0111111111111111111110,
+22'b0111111111111111111110,
+22'b0011111111111111111100,
+22'b0001111111111111111000,
+22'b0000111111111111110000,
+22'b0000011111111111100000,
+22'b0000000111111110000000,
+};
+
+assign sprite[1] = {
+22'b0000000000000000000000,
+22'b0000010000000000100000,
+22'b0000111000000001110000,
+22'b0001111000000001111000,
+22'b0011111100000011111100,
+22'b0111111100000011111110,
+22'b0111111110000111111110,
+22'b1111111110000111011111,
+22'b1111111111001111111111,
+22'b1111111111001111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b0111111111111111111110,
+22'b0111111111111111111110,
+22'b0011111111111111111100,
+22'b0001111111111111111000,
+22'b0000111111111111110000,
+22'b0000011111111111100000,
+22'b0000000111111110000000,
+};
+
+assign sprite[2] = {
+22'b0000000000000000000000,
+22'b0000000000000000000000,
+22'b0000000000000000000000,
+22'b0000000000000000000000,
+22'b0011000000000000001100,
+22'b0111100000000000011110,
+22'b0111110000000000111110,
+22'b1111111000000001111111,
+22'b1111111100000011111111,
+22'b1111111110000111111111,
+22'b1111111111001111110111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b1111111111111111111111,
+22'b0111111111111111111110,
+22'b0111111111111111111110,
+22'b0011111111111111111100,
+22'b0001111111111111111000,
+22'b0000111111111111110000,
+22'b0000011111111111100000,
+22'b0000000111111110000000,
 };
 
 always @(posedge clk) begin
@@ -62,50 +124,76 @@ always @(posedge clk) begin
         selection_counter <= 0;
         pixel_counter <= 0;
         busy <= 0;
-
+        
         counter <= 0;
+        
+        x_new <= 24;
+        y_new <= 32;
+
+        drawing_background <= 0;
     end
     else if (enable) begin
         if (!busy) begin
-            selection_counter <= selection_counter + 1;
-            busy <= 1;
+            if (draw) begin
+                selection_counter <= 1;
+                
+                x_min <= x_new;
+                y_min <= y_new;
+                x_max <= x_new + size - 1;
+                y_max <= y_new + size - 1;
+
+                x_new <= x;
+                y_new <= y;
+                busy <= 1;
+
+                drawing_background <= 1;
+                pixel_counter <= 0;
+            end
         end
         else if (~tft_busy & ~tft_transmit) begin
             if (selection_counter > 0 && selection_counter < 12) begin
                 case(selection_counter)
-                    // 1:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2a};
-                    // 2:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'b0}; // TODO FIX LATER
-                    // 3:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, x & 8'hff};
-                    // 4:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'b0};
-                    // 5:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, (x + size - 1) & 8'hff};
-
-                    // 6:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2b};
-                    // 7:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'b0};
-                    // 8:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, y & 8'hff};
-                    // 9:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'b0};
-                    // 10: {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, (y + size - 1) & 8'hff};
-
-                    // 11: {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2c};
                     1:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2a};
-                    2:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, x_min[15:8]};
-                    3:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, x_min[ 7:0]};
-                    4:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, x_max[15:8]};
-                    5:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, x_max[ 7:0]};
+                    2:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 7'b0, x_min[8:8]};
+                    3:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1,       x_min[7:0]};
+                    4:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 7'b0, x_max[8:8]};
+                    5:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1,       x_max[7:0]};
                     6:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2b};
-                    7:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, y_min[15:8]};
-                    8:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, y_min[ 7:0]};
-                    9:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, y_max[15:8]};
-                    10: {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, y_max[ 7:0]};
+                    7:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 7'b0, y_min[8:8]};
+                    8:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1,       y_min[ 7:0]};
+                    9:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 7'b0, y_max[8:8]};
+                    10: {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1,       y_max[ 7:0]};
                     11: {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2c};
                 endcase
             
                 selection_counter <= selection_counter + 1;
             end
-            else if (selection_counter == 12) begin
-                {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[pixel_counter] ? (counter != 2 ? 8'hff : 8'h00) : 8'hc0};
+            else if (selection_counter == 12 && pixel_counter != size * size) begin
+                if (drawing_background) begin
+                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'hee};
+                end
+                else begin
+                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[1][pixel_counter] ? (counter != 2 ? 8'hff : 8'h00) : 8'hc0};
+                end
                 counter <= counter == 2 ? 0 : counter + 1;
                 pixel_counter <= counter == 2 ? pixel_counter + 1 : pixel_counter;
-                busy <= pixel_counter == size * size ? 0 : 1;
+                // busy <= pixel_counter == size * size ? 0 : 1;
+            end
+            else if (pixel_counter == size * size) begin
+                if (drawing_background) begin
+                    drawing_background <= 0;
+                    x_min <= x_new;
+                    y_min <= y_new;
+                    x_max <= x_new + size - 1;
+                    y_max <= y_new + size - 1;
+                    selection_counter <= 1;
+                    pixel_counter <= 0;
+                end
+                else
+                begin
+                    drawing_background <= 1;
+                    busy <= 0;
+                end
             end
         end
         else begin
