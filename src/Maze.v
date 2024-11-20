@@ -134,7 +134,6 @@ always @(posedge clk) begin
         scene_enable <= 0;
         player_enable <= 0;
     end
-    else begin
         if (~init_enable & ~scene_enable & ~player_enable) begin
             init_enable <= 1;
         end
@@ -144,7 +143,7 @@ always @(posedge clk) begin
         end
         else if (scene_enable & ~scene_busy) begin
             scene_enable <= 0;
-            // player_enable <= 1;
+            player_enable <= 1;
         end
     end
 end
