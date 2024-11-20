@@ -24,7 +24,7 @@ reg[8:0] y_index;
 reg[1:0] color_index;
 
 assign tft_dc = 1;  //data
-assign busy = (x_index <= SCENE_WIDTH) & (y_index <= SCENE_HEIGHT) & enable;
+assign busy = ((x_index < SCENE_WIDTH) | (y_index < SCENE_HEIGHT)) & enable;
 
 wire[7:0] wall_color[2:0];
 assign wall_color[0] = 0;
