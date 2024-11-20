@@ -70,6 +70,18 @@ tft_spi spi_transmitter
 	.busy(spi_busy)
 );
 
+tft_init tft_initializer(
+	.clk(clk),
+    .rst(~rst),
+    .tft_busy(spi_busy),
+
+    .tft_dc(init_dc_out),
+    .tft_data(init_data_out),
+    .tft_transmit(init_transmit_out),
+    .busy(init_busy),
+    .enable(init_enable)
+);
+
 wire[159:0] test_h_walls;
 assign test_h_walls = {10'b1000000010,
                        10'b0111011100,
@@ -106,20 +118,6 @@ assign test_v_walls = {11'b10000000100,
                        11'b00000001000,
                        11'b00000001000};
 
-assign player_dc_out = 1;
-
-tft_init tft_initializer(
-	.clk(clk),
-    .rst(~rst),
-    .tft_busy(spi_busy),
-
-    .tft_dc(init_dc_out),
-    .tft_data(init_data_out),
-    .tft_transmit(init_transmit_out),
-    .busy(init_busy),
-    .enable(init_enable)
-);
-
 scene_exhibitor scene(
     .clk(clk),
     .rst(~rst),
@@ -132,11 +130,12 @@ scene_exhibitor scene(
     .enable(scene_enable),
 
     .h_walls(test_h_walls),
-    .v_walls(test_v_walls),
+    .v_walls(test_v_walls)
 );
 
-player player
-(
+assign scene_dc_out = 1; // TODO FIX
+
+player player(
     .clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
@@ -174,8 +173,7 @@ always @(posedge clk) begin
         scene_enable <= 0;
         player_enable <= 0;
     end
-    else
-    begin
+    else begin
         if (~init_enable & ~scene_enable & ~player_enable) begin
             init_enable <= 1;
         end
