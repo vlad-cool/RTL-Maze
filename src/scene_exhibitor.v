@@ -12,6 +12,7 @@ module scene_exhibitor
     input wire[159:0] h_walls,
     input wire[164:0] v_walls,
 
+    output reg tft_dc,
     output reg[7:0] tft_data,
     output reg tft_transmit,
     output wire busy
@@ -25,7 +26,8 @@ reg[8:0] x_index;
 reg[8:0] y_index;
 reg[1:0] color_index;
 
-assign busy = (x_index < MAX_X_INDEX) & (y_index < MAX_Y_INDEX) & enable;
+assign tft_dc = 1;
+assign busy = ((x_index < MAX_X_INDEX) | (y_index < MAX_Y_INDEX)) & enable;
 
 wire[7:0] wall_color[2:0];
 assign wall_color[0] = 8'h3a;

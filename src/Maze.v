@@ -70,7 +70,8 @@ tft_spi spi_transmitter
 	.busy(spi_busy)
 );
 
-tft_init tft_initializer(
+tft_init tft_initializer
+(
 	.clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
@@ -100,7 +101,6 @@ assign test_h_walls = {10'b1000000010,
                        10'b0000000000,
                        10'b0001111110};
 
-
 wire[164:0] test_v_walls;
 assign test_v_walls = {11'b10000000100,
                        11'b01110111000,
@@ -118,7 +118,6 @@ assign test_v_walls = {11'b10000000100,
                        11'b00000001000,
                        11'b00000001000};
 
-assign player_dc_out = 1;
 scene_exhibitor scene
 (
     .clk(clk),
@@ -128,6 +127,7 @@ scene_exhibitor scene
     .v_walls(test_v_walls),
 
     .busy(player_busy),
+    .tft_dc(player_dc_out)
     .tft_data(player_data_out),
     .tft_transmit(player_transmit_out),
     .enable(player_enable)
