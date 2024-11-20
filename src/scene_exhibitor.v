@@ -12,7 +12,7 @@ module scene_exhibitor
     input wire[159:0] h_walls,
     input wire[164:0] v_walls,
 
-    output reg tft_dc,
+    output wire tft_dc,
     output reg[7:0] tft_data,
     output reg tft_transmit,
     output wire busy
