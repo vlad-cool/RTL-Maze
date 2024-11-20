@@ -70,8 +70,7 @@ tft_spi spi_transmitter
 	.busy(spi_busy)
 );
 
-tft_init tft_initializer
-(
+tft_init tft_initializer(
 	.clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
@@ -83,6 +82,42 @@ tft_init tft_initializer
     .enable(init_enable)
 );
 
+wire[159:0] test_h_walls;
+assign test_h_walls = {10'b1000000010,
+                       10'b0111011100,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0011110000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0001111110};
+
+
+wire[164:0] test_v_walls;
+assign test_v_walls = {11'b10000000100,
+                       11'b01110111000,
+                       11'b00000000000,
+                       11'b00000000000,
+                       11'b00000000000,
+                       11'b00111100000,
+                       11'b00000000000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000,
+                       11'b00000001000};
+
 scene_exhibitor scene(
     .clk(clk),
     .rst(~rst),
@@ -93,15 +128,19 @@ scene_exhibitor scene(
     .tft_data(scene_data_out),
     .tft_transmit(scene_transmit_out),
     .enable(scene_enable),
+
+    .h_walls(test_h_walls),
+    .v_walls(test_v_walls)
 );
 
 player player(
     .clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
+    .h_walls(test_h_walls),
+    .v_walls(test_v_walls),
 
     .busy(player_busy),
-    .tft_dc(player_dc_out),
     .tft_data(player_data_out),
     .tft_transmit(player_transmit_out),
     .enable(player_enable),
