@@ -27,7 +27,7 @@ reg[8:0] y_index;
 reg[1:0] color_index;
 
 assign tft_dc = 1;
-assign busy = ((x_index < MAX_X_INDEX) | (y_index < MAX_Y_INDEX)) & enable;
+assign busy = (y_index < MAX_Y_INDEX) & enable;
 
 wire[7:0] wall_color[2:0];
 assign wall_color[0] = 8'h3a;
