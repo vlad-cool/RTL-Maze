@@ -41,8 +41,8 @@ wall_layout layout
     .y(y_index[4:1]), //double size walls grid
     .left(x_index[8:5] == 0 ? 0 : h_walls[y_index[8:5] * 10 + x_index[8:5] - 1]),
     .top(y_index[8:5] == 0 ? 0 : v_walls[y_index[8:5] * 11 + x_index[8:5] - 11]),
-    .right(x_index[8:5] == 9 ? 0 : h_walls[y_index[8:5] * 10 + x_index[8:5]]),
-    .bottom(y_index[8:5] == 14 ? 0 : v_walls[y_index[8:5] * 11 + x_index[8:5]]),
+    .right(x_index[8:5] == 10 ? 0 : h_walls[y_index[8:5] * 10 + x_index[8:5]]),
+    .bottom(y_index[8:5] == 15 ? 0 : v_walls[y_index[8:5] * 11 + x_index[8:5]]),
     .value(wall_value)
 );
 
