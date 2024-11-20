@@ -69,7 +69,7 @@ begin
     begin
         tft_transmit <= 1;
         if(wall_value)
-            tft_data <= wall_color[color_index];
+            tft_data <= wall_color[color_index] + ((2*x_index + 3*y_index) >> 8);
         else
             tft_data <= 0; //black background
         color_index <= color_index + 1;
