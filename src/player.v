@@ -136,11 +136,37 @@ always @(posedge clk) begin
         if (!busy) begin
             if (draw) begin
                 selection_counter <= 1;
-                
-                x_min <= x_new;
-                y_min <= y_new;
-                x_max <= x_new + size - 1;
-                y_max <= y_new + size - 1;
+
+                if (x_new == x) begin
+                    x_min <= x_new;
+                    x_max <= x_new + size - 1;
+                    if (y_new < y) begin
+                        y_min <= y_new;
+                        y_max <= y - 1;
+                    end
+                    else begin
+                        y_min <= size + y + 1;
+                        y_max <= size + y_new;
+                    end
+                end
+                else if (y_new == y) begin
+                    y_min <= y_new;
+                    y_max <= y_new + size - 1;
+                    if (x_new < x) begin
+                        x_min <= x_new;
+                        x_max <= x - 1;
+                    end
+                    else begin
+                        x_min <= size + x + 1;
+                        x_max <= size + x_new;
+                    end
+                end
+                else begin
+                    x_min <= x_new;
+                    x_max <= x_new + size - 1;
+                    y_min <= y_new;
+                    y_max <= y_new + size - 1;
+                end
 
                 x_new <= x;
                 y_new <= y;
@@ -151,7 +177,7 @@ always @(posedge clk) begin
             end
         end
         else if (~tft_busy & ~tft_transmit) begin
-            if (selection_counter > 0 && selection_counter < 12) begin
+            if (selection_counter > 0 & selection_counter < 12) begin
                 case(selection_counter)
                     1:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2a};
                     2:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 7'b0, x_min[8:8]};
@@ -170,10 +196,11 @@ always @(posedge clk) begin
             end
             else if (selection_counter == 12 && pixel_counter != size * size) begin
                 if (drawing_background) begin
-                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'hee};
+                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'h00};
                 end
                 else begin
-                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[1][pixel_counter] ? (counter != 2 ? 8'hff : 8'h00) : 8'hc0};
+                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[0][pixel_counter] ? (counter != 2 ? 8'hff : 8'h00) : 8'h00};
+                    // {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'hff};
                 end
                 counter <= counter == 2 ? 0 : counter + 1;
                 pixel_counter <= counter == 2 ? pixel_counter + 1 : pixel_counter;

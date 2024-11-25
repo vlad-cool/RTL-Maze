@@ -4,6 +4,12 @@ module Maze(
 	
 	output wire LED1,
 	output wire LED2,
+
+    input wire button_1,
+    input wire button_2,
+
+    output wire logic_0,
+    output wire logic_1,
 	
 	output wire DEBUG_OUT1,
 	output wire DEBUG_OUT2,
@@ -22,6 +28,9 @@ module Maze(
 	output wire tft_cs,
 	output wire tft_led
 );
+
+assign logic_0 = 0;
+assign logic_1 = 1;
 
 assign tft_led = 0;
 
@@ -120,20 +129,20 @@ assign test_v_walls = {11'b11111111111,
                        11'b11111111111,
                        11'b11111111111};
 
-scene_exhibitor scene(
-    .clk(clk),
-    .rst(~rst),
-    .tft_busy(spi_busy),
+// scene_exhibitor scene(
+//     .clk(clk),
+//     .rst(~rst),
+//     .tft_busy(spi_busy),
 
-    .busy(scene_busy),
-    // .tft_dc(scene_dc_out),
-    .tft_data(scene_data_out),
-    .tft_transmit(scene_transmit_out),
-    .enable(scene_enable),
+//     .busy(scene_busy),
+//     // .tft_dc(scene_dc_out),
+//     .tft_data(scene_data_out),
+//     .tft_transmit(scene_transmit_out),
+//     .enable(scene_enable),
 
-    .h_walls(test_h_walls),
-    .v_walls(test_v_walls)
-);
+//     .h_walls(test_h_walls),
+//     .v_walls(test_v_walls)
+// );
 
 assign scene_dc_out = 1; // TODO FIX
 
@@ -155,7 +164,7 @@ player player(
     .debug(player_debug),
 
     .x(player_pos_x[8:0]),
-    .y(player_pos_y[12:4]),
+    .y(player_pos_y[8:0]),
     .draw(player_draw)
 );
 
@@ -185,7 +194,7 @@ always @(posedge clk) begin
         player_draw <= 1;
 
         player_pos_x <= 100;
-        player_pos_y <= 0;
+        player_pos_y <= 100;
     end
     else begin
         if (~init_enable & ~scene_enable & ~player_enable) begin
@@ -193,14 +202,25 @@ always @(posedge clk) begin
         end
         else if (init_enable & ~init_busy) begin
             init_enable <= 0;
-            scene_enable <= 1;
-        end
-        else if (scene_enable & ~scene_busy) begin
-            scene_enable <= 0;
             player_enable <= 1;
         end
+        // else if (scene_enable & ~scene_busy) begin
+        //     scene_enable <= 0;
+        //     player_enable <= 1;
+        // end
         else if (player_enable & ~player_busy) begin
-            player_pos_y <= player_pos_y + 1;
+            // player_pos_x <= player_pos_x - 1;
+            if (button_1)
+                if (button_2)
+                    player_pos_y <= player_pos_y + 2;
+                else
+                    player_pos_y <= player_pos_y - 2;
+            else
+                if (button_2)
+                    player_pos_x <= player_pos_x + 2;
+                else
+                    player_pos_x <= player_pos_x - 2;
+            // player_draw <= player_pos_y[1:0] == 0 ? 1 : 0;
         end
     end
 end
