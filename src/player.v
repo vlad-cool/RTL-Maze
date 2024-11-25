@@ -127,8 +127,8 @@ always @(posedge clk) begin
         
         counter <= 0;
         
-        x_new <= 24;
-        y_new <= 32;
+        x_new <= 5;
+        y_new <= 5;
 
         drawing_background <= 0;
     end
@@ -137,7 +137,14 @@ always @(posedge clk) begin
             if (draw) begin
                 selection_counter <= 1;
 
-                if (x_new == x) begin
+                if (x_new == x && y_new == y) begin
+                    x_min <= x_new;
+                    x_max <= x_new + size - 1;
+                    y_min <= y_new;
+                    y_max <= y_new + size - 1;
+                    drawing_background <= 0;
+                end
+                else if (x_new == x) begin
                     x_min <= x_new;
                     x_max <= x_new + size - 1;
                     if (y_new < y) begin
@@ -146,8 +153,9 @@ always @(posedge clk) begin
                     end
                     else begin
                         y_min <= size + y + 1;
-                        y_max <= size + y_new;
+                        y_max <= size + y_new - 1;
                     end
+                    drawing_background <= 1;
                 end
                 else if (y_new == y) begin
                     y_min <= y_new;
@@ -158,21 +166,22 @@ always @(posedge clk) begin
                     end
                     else begin
                         x_min <= size + x + 1;
-                        x_max <= size + x_new;
+                        x_max <= size + x_new - 1;
                     end
+                    drawing_background <= 1;
                 end
                 else begin
                     x_min <= x_new;
                     x_max <= x_new + size - 1;
                     y_min <= y_new;
                     y_max <= y_new + size - 1;
+                    drawing_background <= 1;
                 end
 
                 x_new <= x;
                 y_new <= y;
                 busy <= 1;
 
-                drawing_background <= 1;
                 pixel_counter <= 0;
             end
         end

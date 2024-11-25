@@ -129,24 +129,32 @@ assign test_v_walls = {11'b11111111111,
                        11'b11111111111,
                        11'b11111111111};
 
-// scene_exhibitor scene(
-//     .clk(clk),
-//     .rst(~rst),
-//     .tft_busy(spi_busy),
+scene_exhibitor scene(
+    .clk(clk),
+    .rst(~rst),
+    .tft_busy(spi_busy),
 
-//     .busy(scene_busy),
-//     // .tft_dc(scene_dc_out),
-//     .tft_data(scene_data_out),
-//     .tft_transmit(scene_transmit_out),
-//     .enable(scene_enable),
+    .busy(scene_busy),
+    // .tft_dc(scene_dc_out),
+    .tft_data(scene_data_out),
+    .tft_transmit(scene_transmit_out),
+    .enable(scene_enable),
 
-//     .h_walls(test_h_walls),
-//     .v_walls(test_v_walls)
-// );
+    .h_walls(test_h_walls),
+    .v_walls(test_v_walls)
+);
 
 assign scene_dc_out = 1; // TODO FIX
 
-reg [12:0] player_pos_x, player_pos_y;
+reg [8:0] player_pos_x, player_pos_y;
+// reg [3:0] grid_position_x, grid_position_y;
+// reg [4:0] sub_grid_postion_x, sub_grid_postion_y;
+reg [1:0] direction;
+
+// wire [12:0] player_pos_x, player_pos_y;
+
+// assign player_pos_x = {grid_position_x, sub_grid_postion_x} + 5;
+// assign player_pos_y = {grid_position_y, sub_grid_postion_y} + 5;
 
 wire player_debug;
 
@@ -163,8 +171,8 @@ player player(
 
     .debug(player_debug),
 
-    .x(player_pos_x[8:0]),
-    .y(player_pos_y[8:0]),
+    .x(player_pos_x[8:0] + 5),
+    .y(player_pos_y[8:0] + 5),
     .draw(player_draw)
 );
 
@@ -193,8 +201,14 @@ always @(posedge clk) begin
         player_enable <= 0;
         player_draw <= 1;
 
-        player_pos_x <= 100;
-        player_pos_y <= 100;
+        player_pos_x <= 0;
+        player_pos_y <= 0;
+        // grid_position_x <= 0;
+        // grid_position_y <= 0;
+        // sub_grid_postion_x <= 0;
+        // sub_grid_postion_y <= 0;
+
+        direction <= 0;
     end
     else begin
         if (~init_enable & ~scene_enable & ~player_enable) begin
@@ -203,24 +217,58 @@ always @(posedge clk) begin
         else if (init_enable & ~init_busy) begin
             init_enable <= 0;
             player_enable <= 1;
+            // scene_enable <= 1;
         end
         // else if (scene_enable & ~scene_busy) begin
         //     scene_enable <= 0;
         //     player_enable <= 1;
         // end
         else if (player_enable & ~player_busy) begin
-            // player_pos_x <= player_pos_x - 1;
-            if (button_1)
-                if (button_2)
-                    player_pos_y <= player_pos_y + 2;
-                else
-                    player_pos_y <= player_pos_y - 2;
+            if (player_pos_x[4:0] == 0 && player_pos_y[4:0] == 0) begin
+                direction <= {button_1, button_2};
+                case ({button_1, button_2})
+                    0: begin
+                        player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
+                    end
+                    1: begin
+                        player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
+                    end
+                    2: begin
+                        player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
+                    end
+                    3: begin
+                        player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
+                    end
+                endcase
+            end
             else
-                if (button_2)
-                    player_pos_x <= player_pos_x + 2;
-                else
-                    player_pos_x <= player_pos_x - 2;
-            // player_draw <= player_pos_y[1:0] == 0 ? 1 : 0;
+            begin
+                case (direction)
+                    0: begin
+                        player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
+                    end
+                    1: begin
+                        player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
+                    end
+                    2: begin
+                        player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
+                    end
+                    3: begin
+                        player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
+                    end
+                endcase
+            end
+
+            // if (button_1)
+            //     if (button_2)
+            //         player_pos_y <= player_pos_y + 2;
+            //     else
+            //         player_pos_y <= player_pos_y - 2;
+            // else
+            //     if (button_2)
+            //         player_pos_x <= player_pos_x + 2;
+            //     else
+            //         player_pos_x <= player_pos_x - 2;
         end
     end
 end
