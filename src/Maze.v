@@ -147,16 +147,14 @@ scene_exhibitor scene(
 assign scene_dc_out = 1; // TODO FIX
 
 reg [8:0] player_pos_x, player_pos_y;
-// reg [3:0] grid_position_x, grid_position_y;
-// reg [4:0] sub_grid_postion_x, sub_grid_postion_y;
+
 reg [1:0] direction;
 
-// wire [12:0] player_pos_x, player_pos_y;
-
-// assign player_pos_x = {grid_position_x, sub_grid_postion_x} + 5;
-// assign player_pos_y = {grid_position_y, sub_grid_postion_y} + 5;
-
 wire player_debug;
+
+reg [31:0]random_seed;
+
+reg button_1_reg, button_2_reg;
 
 player player(
     .clk(clk),
@@ -195,6 +193,9 @@ assign spi_transmit_in =
     0;
 
 always @(posedge clk) begin
+    button_1_reg <= button_1;
+    button_2_reg <= button_2;
+
     if (~rst) begin
         init_enable <= 0;
         scene_enable <= 0;
@@ -207,6 +208,8 @@ always @(posedge clk) begin
         // grid_position_y <= 0;
         // sub_grid_postion_x <= 0;
         // sub_grid_postion_y <= 0;
+
+        random_seed <= random_seed + 1;
 
         direction <= 0;
     end
@@ -225,7 +228,7 @@ always @(posedge clk) begin
         // end
         else if (player_enable & ~player_busy) begin
             if (player_pos_x[4:0] == 0 && player_pos_y[4:0] == 0) begin
-                direction <= {button_1, button_2};
+                direction <= {button_1_reg, button_2_reg};
                 case ({button_1, button_2})
                     0: begin
                         player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;

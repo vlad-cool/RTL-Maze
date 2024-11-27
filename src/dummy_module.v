@@ -4,7 +4,7 @@ module dummy_module
 (
     input wire clk,
     input wire rst,
-    inout wire enable,
+    input wire enable,
 
     input wire tft_busy,
     output reg tft_dc,
