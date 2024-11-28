@@ -1,6 +1,6 @@
 module Maze(
-	input clk,
-	input rst,
+	input wire clk,
+	input wire rst,
 	
 	output wire LED1,
 	output wire LED2,
@@ -22,7 +22,7 @@ module Maze(
 	output wire tft_clk,
 	output wire tft_mosi,
 	output wire tft_dc,
-	output wire tft_cs,
+	output wire tft_cs
 );
 
 wire [7:0]init_data_out, player_data_out, scene_data_out, spi_data_in;
