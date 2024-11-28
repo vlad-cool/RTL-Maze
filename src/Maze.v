@@ -1,32 +1,32 @@
 module Maze(
-	input clk,
-	input rst,
+	input clk,                      // @{CLK}
+	input rst,                      // @{KEY0}
 	
-	output wire LED1,
-	output wire LED2,
+	output wire LED1,               // @{LEDR1}
+	output wire LED2,               // @{LEDR2}
 
-    input wire button_1,
-    input wire button_2,
+    input wire button_1,            // @{KEY1}
+    input wire button_2,            // @{KEY2}
 
-    output wire logic_0,
-    output wire logic_1,
+    output wire logic_0,            // @{GPIO_0}
+    output wire logic_1,            // @{GPIO_1}
 	
-	output wire DEBUG_OUT1,
-	output wire DEBUG_OUT2,
-	output wire DEBUG_OUT3,
+	output wire DEBUG_OUT1,         // @{E19}
+	output wire DEBUG_OUT2,         // @{F21}
+	output wire DEBUG_OUT3,         // @{F18}
 	
-	output wire analyzer_rst,
-	output wire analyzer_clk,
-	output wire analyzer_mosi,
-	output wire analyzer_dc,
-	output wire analyzer_cs,
+	output wire analyzer_rst,       // @{GPIO_1}
+	output wire analyzer_clk,       // @{AC21}
+	output wire analyzer_mosi,      // @{Y17}
+	output wire analyzer_dc,        // @{AB21}
+	output wire analyzer_cs,        // @{GPIO_0}
 	
-	output wire tft_rst,
-	output wire tft_clk,
-	output wire tft_mosi,
-	output wire tft_dc,
-	output wire tft_cs,
-	output wire tft_led
+	output wire tft_rst,            // @{GPIO_31}
+	output wire tft_clk,            // @{GPIO_34}
+	output wire tft_mosi,           // @{GPIO_33}
+	output wire tft_dc,             // @{GPIO_32}
+	output wire tft_cs,             // @{GPIO_30}
+	output wire tft_led             // ...
 );
 
 assign logic_0 = 0;

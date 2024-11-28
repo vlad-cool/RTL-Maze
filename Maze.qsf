@@ -53,28 +53,6 @@ set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_signal_integrity
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_boundary_scan
 set_global_assignment -name NUM_PARALLEL_PROCESSORS 16
-set_location_assignment PIN_H5 -to clk
-set_location_assignment PIN_M9 -to rst
-set_location_assignment PIN_N14 -to tft_clk
-set_location_assignment PIN_M15 -to tft_cs
-set_location_assignment PIN_L13 -to tft_dc
-set_location_assignment PIN_M13 -to tft_mosi
-set_location_assignment PIN_M14 -to tft_rst
-set_location_assignment PIN_B14 -to DEBUG_OUT1
-set_location_assignment PIN_P4 -to LED1
-set_location_assignment PIN_R1 -to LED2
-set_location_assignment PIN_D15 -to analyzer_clk
-set_location_assignment PIN_D16 -to analyzer_cs
-set_location_assignment PIN_C14 -to analyzer_dc
-set_location_assignment PIN_C15 -to analyzer_mosi
-set_location_assignment PIN_E15 -to analyzer_rst
-set_location_assignment PIN_N13 -to tft_led
-set_location_assignment PIN_D13 -to DEBUG_OUT2
-set_location_assignment PIN_C12 -to DEBUG_OUT3
-set_location_assignment PIN_R3 -to button_1
-set_location_assignment PIN_C2 -to button_2
-set_location_assignment PIN_C3 -to logic_0
-set_location_assignment PIN_D1 -to logic_1
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "NO HEAT SINK WITH STILL AIR"
 set_global_assignment -name VERILOG_FILE src/layouts/layout_tools.v
 set_global_assignment -name VERILOG_FILE src/layouts/wall_layout.v
@@ -87,3 +65,25 @@ set_global_assignment -name VERILOG_FILE src/player.v
 set_global_assignment -name VERILOG_FILE src/tft_init.v
 
 set_global_assignment -name HEX_FILE sprites.hex
+
+set_location_assignment PIN_Y2 -to clk
+set_location_assignment PIN_M23 -to rst
+set_location_assignment PIN_F19 -to LED1
+set_location_assignment PIN_E19 -to LED2
+set_location_assignment PIN_M21 -to button_1
+set_location_assignment PIN_N21 -to button_2
+set_location_assignment PIN_AB22 -to logic_0
+set_location_assignment PIN_AC15 -to logic_1
+set_location_assignment PIN_E19 -to DEBUG_OUT1
+set_location_assignment PIN_F21 -to DEBUG_OUT2
+set_location_assignment PIN_F18 -to DEBUG_OUT3
+set_location_assignment PIN_AC15 -to analyzer_rst
+set_location_assignment PIN_AC21 -to analyzer_clk
+set_location_assignment PIN_Y17 -to analyzer_mosi
+set_location_assignment PIN_AB21 -to analyzer_dc
+set_location_assignment PIN_AB22 -to analyzer_cs
+set_location_assignment PIN_AG23 -to tft_rst
+set_location_assignment PIN_AH23 -to tft_clk
+set_location_assignment PIN_AH26 -to tft_mosi
+set_location_assignment PIN_AF20 -to tft_dc
+set_location_assignment PIN_AE20 -to tft_cs
