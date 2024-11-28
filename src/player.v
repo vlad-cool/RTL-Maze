@@ -209,6 +209,7 @@ always @(posedge clk) begin
                 end
                 else begin
                     {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[0][pixel_counter] ? (counter != 2 ? 8'hff : 8'h00) : 8'h00};
+                    // {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 1 ? (counter != 2 ? 8'hff : 8'h00) : 8'h00};
                     // {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'hff};
                 end
                 counter <= counter == 2 ? 0 : counter + 1;
