@@ -8,9 +8,6 @@ module Maze(
     input wire button_1,
     input wire button_2,
 
-    output wire logic_0,
-    output wire logic_1,
-	
 	output wire DEBUG_OUT1,
 	output wire DEBUG_OUT2,
 	output wire DEBUG_OUT3,
@@ -26,13 +23,7 @@ module Maze(
 	output wire tft_mosi,
 	output wire tft_dc,
 	output wire tft_cs,
-	output wire tft_led
 );
-
-assign logic_0 = 0;
-assign logic_1 = 1;
-
-assign tft_led = 0;
 
 wire [7:0]init_data_out, player_data_out, scene_data_out, spi_data_in;
 wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
