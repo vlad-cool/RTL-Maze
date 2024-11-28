@@ -1,12 +1,14 @@
 module Maze(
 	input clk,                      // @{CLK}
-	input rst,                      // @{KEY0}
+	input rst,                      // @{SW0}
 	
 	output wire LED1,               // @{LEDR1}
 	output wire LED2,               // @{LEDR2}
 
-    input wire button_1,            // @{KEY1}
-    input wire button_2,            // @{KEY2}
+    input wire button_1,            // @{KEY0}
+    input wire button_2,            // @{KEY1}
+    input wire button_3,            // @{KEY2}
+    input wire button_4,            // @{KEY3}
 
     output wire logic_0,            // @{GPIO_0}
     output wire logic_1,            // @{GPIO_1}
