@@ -12,6 +12,7 @@ module scene_exhibitor
     input wire[159:0] h_walls,
     input wire[164:0] v_walls,
 
+    output wire tft_dc,
     output reg[7:0] tft_data,
     output reg tft_transmit,
     output wire busy
@@ -25,6 +26,12 @@ reg[8:0] x_index;
 reg[8:0] y_index;
 reg[1:0] color_index;
 
+wire[11:0] gradient_index;
+assign gradient_index = ({1'h0, x_index} << 1) + ({1'h0, y_index} << 1) + y_index;
+wire[6:0] gradient_shift;
+assign gradient_shift = color_index == 2 ? 0 : gradient_index[11:5]; //don't change blue component
+
+assign tft_dc = 1;
 assign busy = (y_index < MAX_Y_INDEX) & enable;
 
 wire[7:0] wall_color[2:0];
@@ -32,15 +39,18 @@ assign wall_color[0] = 8'h3a;
 assign wall_color[1] = 8'h7b;
 assign wall_color[2] = 8'hd5;
 
+wire[7:0] line;
+assign line = ({3'h0, y_index[8:5]} << 3) + ({3'h0, y_index[8:5]} << 1);
+
 wire wall_value;
 wall_layout layout
 (
     .x(x_index[4:1]), //double size walls grid
     .y(y_index[4:1]), //double size walls grid
-    .left(x_index[8:5] == 0 ? 0 : h_walls[y_index[8:5] * 10 + x_index[8:5] - 1]),
-    .top(y_index[8:5] == 0 ? 0 : v_walls[y_index[8:5] * 11 + x_index[8:5] - 11]),
-    .right(x_index[8:5] == 10 ? 0 : h_walls[y_index[8:5] * 10 + x_index[8:5]]),
-    .bottom(y_index[8:5] == 15 ? 0 : v_walls[y_index[8:5] * 11 + x_index[8:5]]),
+    .left(x_index[8:5] == 0 ? 0 : h_walls[line + x_index[8:5] - 1]),
+    .top(y_index[8:5] == 0 ? 0 : v_walls[line + y_index[8:5] + x_index[8:5] - 11]),
+    .right(x_index[8:5] == 10 ? 0 : h_walls[line + x_index[8:5]]),
+    .bottom(y_index[8:5] == 15 ? 0 : v_walls[line + y_index[8:5] + x_index[8:5]]),
     .value(wall_value)
 );
 
@@ -67,7 +77,7 @@ begin
     begin
         tft_transmit <= 1;
         if(wall_value)
-            tft_data <= wall_color[color_index];
+            tft_data <= wall_color[color_index] + gradient_shift;
         else
             tft_data <= 0; //black background
         color_index <= color_index + 1;

@@ -81,7 +81,8 @@ tft_spi spi_transmitter
 	.busy(spi_busy)
 );
 
-tft_init tft_initializer(
+tft_init tft_initializer
+(
 	.clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
@@ -129,13 +130,14 @@ assign test_v_walls = {11'b11111111111,
                        11'b11111111111,
                        11'b11111111111};
 
-scene_exhibitor scene(
+scene_exhibitor scene
+(
     .clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
 
     .busy(scene_busy),
-    // .tft_dc(scene_dc_out),
+    .tft_dc(scene_dc_out),
     .tft_data(scene_data_out),
     .tft_transmit(scene_transmit_out),
     .enable(scene_enable),
@@ -143,8 +145,6 @@ scene_exhibitor scene(
     .h_walls(test_h_walls),
     .v_walls(test_v_walls)
 );
-
-assign scene_dc_out = 1; // TODO FIX
 
 reg [8:0] player_pos_x, player_pos_y;
 
@@ -156,7 +156,8 @@ reg [31:0]random_seed;
 
 reg button_1_reg, button_2_reg;
 
-player player(
+player player
+(
     .clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
@@ -214,18 +215,18 @@ always @(posedge clk) begin
         direction <= 0;
     end
     else begin
-        if (~init_enable & ~scene_enable & ~player_enable) begin
+        if (~init_enable & ~scene_enable & ~player_enable) 
+        begin
             init_enable <= 1;
         end
         else if (init_enable & ~init_busy) begin
             init_enable <= 0;
-            player_enable <= 1;
-            // scene_enable <= 1;
+            scene_enable <= 1;
         end
-        // else if (scene_enable & ~scene_busy) begin
-        //     scene_enable <= 0;
-        //     player_enable <= 1;
-        // end
+        else if (scene_enable & ~scene_busy) begin
+            scene_enable <= 0;
+            player_enable <= 1;
+        end
         else if (player_enable & ~player_busy) begin
             if (player_pos_x[4:0] == 0 && player_pos_y[4:0] == 0) begin
                 direction <= {button_1_reg, button_2_reg};

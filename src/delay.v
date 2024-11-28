@@ -27,7 +27,7 @@ begin
     else if(low_counter > 0)
         low_counter <= low_counter - 1;
     else if(counter > 0)
-        {counter, low_counter} <= {counter - 1, ticks_per_ms};
+        {counter, low_counter} <= {counter - 8'd1, ticks_per_ms};
 end
 
 endmodule
