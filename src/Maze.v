@@ -1,30 +1,32 @@
 module Maze(
-	input wire clk,
-	input wire rst,
+	input clk,                      // @{CLK}
+	input rst,                      // @{KEY0}
 	
-	output wire LED1,
-	output wire LED2,
+	output wire LED1,               // @{LEDR1}
+	output wire LED2,               // @{LEDR2}
 
-    input wire button_1,
-    input wire button_2,
-    input wire button_3,
-    input wire button_4,
+    input wire button_1,            // @{KEY1}
+    input wire button_2,            // @{KEY2}
 
-	output wire DEBUG_OUT1,
-	output wire DEBUG_OUT2,
-	output wire DEBUG_OUT3,
+    output wire logic_0,            // @{GPIO_0}
+    output wire logic_1,            // @{GPIO_1}
 	
-	output wire analyzer_rst,
-	output wire analyzer_clk,
-	output wire analyzer_mosi,
-	output wire analyzer_dc,
-	output wire analyzer_cs,
+	output wire DEBUG_OUT1,         // @{E19}
+	output wire DEBUG_OUT2,         // @{F21}
+	output wire DEBUG_OUT3,         // @{F18}
 	
-	output wire tft_rst,
-	output wire tft_clk,
-	output wire tft_mosi,
-	output wire tft_dc,
-	output wire tft_cs
+	output wire analyzer_rst,       // @{GPIO_1}
+	output wire analyzer_clk,       // @{AC21}
+	output wire analyzer_mosi,      // @{Y17}
+	output wire analyzer_dc,        // @{AB21}
+	output wire analyzer_cs,        // @{GPIO_0}
+	
+	output wire tft_rst,            // @{GPIO_31}
+	output wire tft_clk,            // @{GPIO_34}
+	output wire tft_mosi,           // @{GPIO_33}
+	output wire tft_dc,             // @{GPIO_32}
+	output wire tft_cs,             // @{GPIO_30}
+	output wire tft_led             // ...
 );
 
 wire [7:0]init_data_out, player_data_out, scene_data_out, spi_data_in;
@@ -88,40 +90,40 @@ tft_init tft_initializer
 );
 
 wire[159:0] test_h_walls;
-assign test_h_walls = {10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
+assign test_h_walls = {10'b1111111111,
                        10'b0111111110,
+                       10'b0011111100,
+                       10'b0001111000,
+                       10'b0000110000,
                        10'b0000000000,
                        10'b0000000000,
                        10'b0000000000,
                        10'b0000000000,
                        10'b0000000000,
                        10'b0000000000,
-                       10'b0000000000};
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0011111110,
+                       10'b0111111111,
+                       10'b1111111111};
 
 
 wire[164:0] test_v_walls;
-assign test_v_walls = {11'b00000000000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000100000,
-                       11'b00000000000};
+assign test_v_walls = {11'b10000000001,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000001,
+                       11'b10000000000};
 
 scene_exhibitor scene
 (
