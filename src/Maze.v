@@ -225,55 +225,55 @@ always @(posedge clk) begin
         end
         else if (scene_enable & ~scene_busy) begin
             scene_enable <= 0;
-            player_enable <= 1;
+            // player_enable <= 1;
         end
-        else if (player_enable & ~player_busy) begin
-            if (player_pos_x[4:0] == 0 && player_pos_y[4:0] == 0) begin
-                direction <= {button_1_reg, button_2_reg};
-                case ({button_1, button_2})
-                    0: begin
-                        player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
-                    end
-                    1: begin
-                        player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
-                    end
-                    2: begin
-                        player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
-                    end
-                    3: begin
-                        player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
-                    end
-                endcase
-            end
-            else
-            begin
-                case (direction)
-                    0: begin
-                        player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
-                    end
-                    1: begin
-                        player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
-                    end
-                    2: begin
-                        player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
-                    end
-                    3: begin
-                        player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
-                    end
-                endcase
-            end
+        // else if (player_enable & ~player_busy) begin
+        //     if (player_pos_x[4:0] == 0 && player_pos_y[4:0] == 0) begin
+        //         direction <= {button_1_reg, button_2_reg};
+        //         case ({button_1, button_2})
+        //             0: begin
+        //                 player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
+        //             end
+        //             1: begin
+        //                 player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
+        //             end
+        //             2: begin
+        //                 player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
+        //             end
+        //             3: begin
+        //                 player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
+        //             end
+        //         endcase
+        //     end
+        //     else
+        //     begin
+        //         case (direction)
+        //             0: begin
+        //                 player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
+        //             end
+        //             1: begin
+        //                 player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
+        //             end
+        //             2: begin
+        //                 player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
+        //             end
+        //             3: begin
+        //                 player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
+        //             end
+        //         endcase
+        //     end
 
-            // if (button_1)
-            //     if (button_2)
-            //         player_pos_y <= player_pos_y + 2;
-            //     else
-            //         player_pos_y <= player_pos_y - 2;
-            // else
-            //     if (button_2)
-            //         player_pos_x <= player_pos_x + 2;
-            //     else
-            //         player_pos_x <= player_pos_x - 2;
-        end
+        //     // if (button_1)
+        //     //     if (button_2)
+        //     //         player_pos_y <= player_pos_y + 2;
+        //     //     else
+        //     //         player_pos_y <= player_pos_y - 2;
+        //     // else
+        //     //     if (button_2)
+        //     //         player_pos_x <= player_pos_x + 2;
+        //     //     else
+        //     //         player_pos_x <= player_pos_x - 2;
+        // end
     end
 end
 
