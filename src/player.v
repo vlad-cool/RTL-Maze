@@ -21,18 +21,21 @@ module player
     input wire draw
 );
 
-reg [$clog2(size) - 1 : 0]pixel_counter_x, pixel_counter_y;
-reg [3:0]selection_counter;
+wire[7:0] player_color[1:0];
+wire[483:0] sprite[2:0];
 
-reg [7:0] counter;
+reg[$clog2(size) - 1 : 0] pixel_counter_x, pixel_counter_y;
+reg[3:0] selection_counter;
+reg[7:0] sub_pixel_counter;
 
-reg [8:0] x_min, y_min, x_max, y_max;
-
-reg [8:0]x_new, y_new;
+reg[8:0] x_min, y_min, x_max, y_max;
+reg[8:0] x_new, y_new;
 
 reg drawing_background;
 
-wire [483:0]sprite[2:0];
+assign player_color[0] = 8'hff;
+assign player_color[1] = 8'hff;
+assign player_color[2] = 8'h00;
 
 assign sprite[0] = {
 22'b0000000111111110000000,
@@ -118,7 +121,7 @@ always @(posedge clk) begin
         pixel_counter_y <= 0;
         busy <= 0;
         
-        counter <= 0;
+        sub_pixel_counter <= 0;
         
         x_new <= 5;
         y_new <= 5;
@@ -204,13 +207,12 @@ always @(posedge clk) begin
                     {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'h00};
                 end
                 else begin
-                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[animation_step[11:10] < 3 ? animation_step[11:10] : 1][pixel_counter_y * 22 + pixel_counter_x] ? (counter != 2 ? 8'hff : 8'h00) : 8'h00};
+                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[animation_step[11:10] < 3 ? animation_step[11:10] : 1][pixel_counter_y * 22 + pixel_counter_x] ? player_color[sub_pixel_counter] : 8'h00};
                     // {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'hff};
                 end
-                counter <= counter == 2 ? 0 : counter + 1;
-                pixel_counter_x <= counter == 2 ? (pixel_counter_x == size - 1 ? 0 : pixel_counter_x + 1) : pixel_counter_x;
-                pixel_counter_y <= counter == 2 ? (pixel_counter_x == size - 1 ? pixel_counter_y + 1 : pixel_counter_y) : pixel_counter_y;
-                // busy <= pixel_counter == size * size ? 0 : 1;
+                sub_pixel_counter <= sub_pixel_counter == 2 ? 0 : sub_pixel_counter + 1;
+                pixel_counter_x <= sub_pixel_counter == 2 ? (pixel_counter_x == size - 1 ? 0 : pixel_counter_x + 1) : pixel_counter_x;
+                pixel_counter_y <= sub_pixel_counter == 2 ? (pixel_counter_x == size - 1 ? pixel_counter_y + 1 : pixel_counter_y) : pixel_counter_y;
             end
             else if (pixel_counter_x == size & pixel_counter_y == size) begin
                 if (drawing_background) begin
