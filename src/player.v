@@ -16,31 +16,21 @@ module player
 
     output reg busy,
 
-    output wire debug,
-
     input wire[8:0] x,
     input wire[8:0] y,
     input wire draw
 );
 
-reg [$clog2(size * size) - 1 : 0]pixel_counter;
+reg [$clog2(size) - 1 : 0]pixel_counter_x, pixel_counter_y;
 reg [3:0]selection_counter;
 
 reg [7:0] counter;
 
-// wire [15:0] x_min_old, y_min_old, x_max_old, y_max_old;
 reg [8:0] x_min, y_min, x_max, y_max;
-
-// assign x_min_new = x_new;
-// assign y_min_new = y_new;
-// assign x_max_new = x_new + size - 1;
-// assign y_max_new = y_new + size - 1;
 
 reg [8:0]x_new, y_new;
 
 reg drawing_background;
-
-assign debug = drawing_background;
 
 wire [483:0]sprite[2:0];
 
@@ -119,10 +109,13 @@ assign sprite[2] = {
 22'b0000000111111110000000
 };
 
+reg [11:0]animation_step;
+
 always @(posedge clk) begin
     if (rst) begin
         selection_counter <= 0;
-        pixel_counter <= 0;
+        pixel_counter_x <= 0;
+        pixel_counter_y <= 0;
         busy <= 0;
         
         counter <= 0;
@@ -131,11 +124,13 @@ always @(posedge clk) begin
         y_new <= 5;
 
         drawing_background <= 0;
+        animation_step <= 0;
     end
     else if (enable) begin
         if (!busy) begin
             if (draw) begin
                 selection_counter <= 1;
+                animation_step <= animation_step + 1;
 
                 if (x_new == x && y_new == y) begin
                     x_min <= x_new;
@@ -182,7 +177,8 @@ always @(posedge clk) begin
                 y_new <= y;
                 busy <= 1;
 
-                pixel_counter <= 0;
+                pixel_counter_x <= 0;
+                pixel_counter_y <= 0;
             end
         end
         else if (~tft_busy & ~tft_transmit) begin
@@ -203,19 +199,20 @@ always @(posedge clk) begin
             
                 selection_counter <= selection_counter + 1;
             end
-            else if (selection_counter == 12 && pixel_counter != size * size) begin
+            else if (selection_counter == 12 & pixel_counter_x != size & pixel_counter_y != size) begin
                 if (drawing_background) begin
                     {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'h00};
                 end
                 else begin
-                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[1][pixel_counter] ? (counter != 2 ? 8'hff : 8'h00) : 8'h00};
+                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[animation_step[11:10] < 3 ? animation_step[11:10] : 1][pixel_counter_y * 22 + pixel_counter_x] ? (counter != 2 ? 8'hff : 8'h00) : 8'h00};
                     // {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'hff};
                 end
                 counter <= counter == 2 ? 0 : counter + 1;
-                pixel_counter <= counter == 2 ? pixel_counter + 1 : pixel_counter;
+                pixel_counter_x <= counter == 2 ? (pixel_counter_x == size - 1 ? 0 : pixel_counter_x + 1) : pixel_counter_x;
+                pixel_counter_y <= counter == 2 ? (pixel_counter_x == size - 1 ? pixel_counter_y + 1 : pixel_counter_y) : pixel_counter_y;
                 // busy <= pixel_counter == size * size ? 0 : 1;
             end
-            else if (pixel_counter == size * size) begin
+            else if (pixel_counter_x == size & pixel_counter_y == size) begin
                 if (drawing_background) begin
                     drawing_background <= 0;
                     x_min <= x_new;
@@ -223,7 +220,8 @@ always @(posedge clk) begin
                     x_max <= x_new + size - 1;
                     y_max <= y_new + size - 1;
                     selection_counter <= 1;
-                    pixel_counter <= 0;
+                    pixel_counter_x <= 0;
+                    pixel_counter_y <= 0;
                 end
                 else
                 begin

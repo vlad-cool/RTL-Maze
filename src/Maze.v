@@ -31,24 +31,29 @@ module Maze(
 	output wire tft_led             // ...
 );
 
-wire [7:0]init_data_out, player_data_out, scene_data_out, spi_data_in;
+wire[7:0] init_data_out, player_data_out, scene_data_out, spi_data_in;
 wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
 wire init_transmit_out, player_transmit_out, scene_transmit_out, spi_transmit_in;
 wire init_busy, player_busy, scene_busy;
-
-reg player_draw;
-
-reg init_enable, player_enable, scene_enable;
 
 wire spi_clk;
 wire spi_mosi;
 wire spi_dc;
 wire spi_cs;
-
 wire spi_busy;
 
-assign spi_cs = 0;
+wire[159:0] test_h_walls;
+wire[164:0] test_v_walls;
 
+reg button_1_reg, button_2_reg, button_3_reg, button_4_reg;
+
+reg init_enable, player_enable, scene_enable;
+reg player_draw;
+reg[8:0] player_pos_x, player_pos_y;
+reg[1:0] direction;
+reg setting_direction;
+
+assign spi_cs = 0;
 assign analyzer_rst = rst;
 assign analyzer_clk = spi_clk;
 assign analyzer_mosi = spi_mosi;
@@ -60,6 +65,58 @@ assign tft_clk = spi_clk;
 assign tft_mosi = spi_mosi;
 assign tft_dc = spi_dc;
 assign tft_cs = spi_cs;
+
+assign spi_data_in = 
+    init_enable ? init_data_out :
+    scene_enable ? scene_data_out :
+    player_enable ? player_data_out : 
+    0;
+
+assign spi_dc_in = 
+    init_enable ? init_dc_out :
+    scene_enable ? scene_dc_out :
+    player_enable ? player_dc_out : 
+    0;
+
+assign spi_transmit_in = 
+    init_enable ? init_transmit_out :
+    scene_enable ? scene_transmit_out :
+    player_enable ? player_transmit_out :
+    0;
+
+
+assign test_h_walls = {10'b1111111111,
+                       10'b0111111110,
+                       10'b0011111100,
+                       10'b0001111000,
+                       10'b0000110000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0000000000,
+                       10'b0011111110,
+                       10'b0111111111,
+                       10'b1111111111};
+
+assign test_v_walls = {11'b10000000001,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000011,
+                       11'b11000000001,
+                       11'b10000000000};
 
 tft_spi spi_transmitter
 (
@@ -91,42 +148,6 @@ tft_init tft_initializer
     .enable(init_enable)
 );
 
-wire[159:0] test_h_walls;
-assign test_h_walls = {10'b1111111111,
-                       10'b0111111110,
-                       10'b0011111100,
-                       10'b0001111000,
-                       10'b0000110000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0011111110,
-                       10'b0111111111,
-                       10'b1111111111};
-
-
-wire[164:0] test_v_walls;
-assign test_v_walls = {11'b10000000001,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000001,
-                       11'b10000000000};
-
 scene_exhibitor scene
 (
     .clk(clk),
@@ -143,18 +164,6 @@ scene_exhibitor scene
     .v_walls(test_v_walls)
 );
 
-reg [8:0] player_pos_x, player_pos_y;
-
-reg [4:0] direction;
-
-wire player_debug;
-
-reg [31:0]random_seed;
-
-reg button_1_reg, button_2_reg, button_3_reg, button_4_reg;
-
-reg setting_direction;
-
 player player
 (
     .clk(clk),
@@ -167,55 +176,31 @@ player player
     .tft_transmit(player_transmit_out),
     .enable(player_enable),
 
-    .debug(player_debug),
-
     .x(player_pos_x[8:0] + 5),
     .y(player_pos_y[8:0] + 5),
     .draw(player_draw)
 );
 
-assign spi_data_in = 
-    init_enable ? init_data_out :
-    scene_enable ? scene_data_out :
-    player_enable ? player_data_out : 
-    0;
-
-assign spi_dc_in = 
-    init_enable ? init_dc_out :
-    scene_enable ? scene_dc_out :
-    player_enable ? player_dc_out : 
-    0;
-
-assign spi_transmit_in = 
-    init_enable ? init_transmit_out :
-    scene_enable ? scene_transmit_out :
-    player_enable ? player_transmit_out :
-    0;
-
-always @(posedge clk) begin
+always @(posedge clk) begin // Buttons
     button_1_reg <= ~button_1;
     button_2_reg <= ~button_2;
     button_3_reg <= ~button_3;
     button_4_reg <= ~button_4;
+end
 
+always @(posedge clk) begin
     if (~rst) begin
-        init_enable <= 0;
-        scene_enable <= 0;
-        player_enable <= 0;
-        player_draw <= 1;
+            init_enable <= 0;
+            scene_enable <= 0;
+            player_enable <= 0;
+            player_draw <= 1;
 
-        player_pos_x <= 0;
-        player_pos_y <= 0;
-        // grid_position_x <= 0;
-        // grid_position_y <= 0;
-        // sub_grid_postion_x <= 0;
-        // sub_grid_postion_y <= 0;
+            player_pos_x <= 0;
+            player_pos_y <= 0;
 
-        random_seed <= random_seed + 1;
+            direction <= 0;
 
-        direction <= 0;
-
-        setting_direction <= 1;
+            setting_direction <= 1;
     end
     else begin
         if (~init_enable & ~scene_enable & ~player_enable) 
@@ -232,68 +217,33 @@ always @(posedge clk) begin
         end
         else if (player_enable & ~player_busy) begin
             if (setting_direction & (player_pos_x[4:0] == 0) & (player_pos_y[4:0] == 0)) begin
-                // direction <= {button_1_reg, button_2_reg};
-                direction <= button_1_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0) ? 1 : 
-                             button_2_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0) ? 2 :
-                             button_3_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 0) ? 4 :
-                             button_4_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0) ? 8 : 0;
+                direction <= button_1_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0) ? 0 : 
+                             button_2_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0) ? 1 :
+                             button_3_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 0) ? 2 :
+                             button_4_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0) ? 3 : direction;
                 
                 setting_direction <= 0;
-
-                // case ({button_1, button_2})
-                //     0: begin
-                //         player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
-                //     end
-                //     1: begin
-                //         player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
-                //     end
-                //     2: begin
-                //         player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
-                //     end
-                //     3: begin
-                //         player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
-                //     end
-                // endcase
             end
             else
             begin
                 setting_direction <= 1;
                 case (direction)
-                    1: begin
+                    0: begin
                         player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
                     end
-                    2: begin
+                    1: begin
                         player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
                     end
-                    4: begin
+                    2: begin
                         player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
                     end
-                    8: begin
+                    3: begin
                         player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
                     end
                 endcase
             end
-
-            // if (button_1)
-            //     if (button_2)
-            //         player_pos_y <= player_pos_y + 2;
-            //     else
-            //         player_pos_y <= player_pos_y - 2;
-            // else
-            //     if (button_2)
-            //         player_pos_x <= player_pos_x + 2;
-            //     else
-            //         player_pos_x <= player_pos_x - 2;
         end
     end
 end
-
-// assign DEBUG_OUT1 = dc_out;
-
-assign DEBUG_OUT1 = player_debug;
-assign DEBUG_OUT2 = scene_enable;
-assign DEBUG_OUT3 = player_enable;
-
-assign LED2 = scene_busy;
 
 endmodule
