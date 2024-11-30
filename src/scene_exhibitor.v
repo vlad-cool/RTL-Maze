@@ -53,14 +53,14 @@ assign wall_color[2] = 8'hd5;
 //food colors, array is 1D to support icarus verilog
 wire[7:0] food_colors[11:0]; //index = {color_id, food_value}
 assign food_colors[{2'd0, 2'd1}] = 8'hff;
-assign food_colors[{2'd1, 2'd1}] = 8'h00;
+assign food_colors[{2'd1, 2'd1}] = 8'ha5;
 assign food_colors[{2'd2, 2'd1}] = 8'h00;
-assign food_colors[{2'd0, 2'd2}] = 8'h00;
-assign food_colors[{2'd1, 2'd2}] = 8'hff;
-assign food_colors[{2'd2, 2'd2}] = 8'h00;
-assign food_colors[{2'd0, 2'd3}] = 8'h00;
+assign food_colors[{2'd0, 2'd2}] = 8'hff;
+assign food_colors[{2'd1, 2'd2}] = 8'hc0;
+assign food_colors[{2'd2, 2'd2}] = 8'hcb;
+assign food_colors[{2'd0, 2'd3}] = 8'hff;
 assign food_colors[{2'd1, 2'd3}] = 8'h00;
-assign food_colors[{2'd2, 2'd3}] = 8'hff;
+assign food_colors[{2'd2, 2'd3}] = 8'h00;
 
 //convert y coord to 1D array index parts
 wire[7:0] line;
