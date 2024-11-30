@@ -4,8 +4,8 @@
 
 module food_layout
 (
-    input wire[2:0] x,
-    input wire[2:0] y,
+    input wire[3:0] x,
+    input wire[3:0] y,
     input wire[1:0] type,
 
     output wire[1:0] value
@@ -40,8 +40,12 @@ assign pixels[2] = {16'b1011000000000000,
                     16'b0000000000110000,
                     16'b0001100000011011};
 
-wire[6:0] index;
-assign index = {y, x, 1'b0};
-assign value = {pixels[type][index + 1], pixels[type][index]};
+wire[8:0] index;
+wire[2:0] sx;
+assign sx = 4'd11 - x;
+wire[2:0] sy;
+assign sy = 4'd11 - y;
+assign index = {sy, sx, 1'b0};
+assign value = ((x > 3) & (x < 12) & (y > 3) & (y < 12)) ? {pixels[type][index + 1], pixels[type][index]} : 0;
 
 endmodule
