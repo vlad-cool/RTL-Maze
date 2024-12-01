@@ -14,7 +14,7 @@ module tft_init
     output wire busy
 );
 
-localparam DC_COUNT = 47;
+localparam DC_COUNT = 46;
 localparam[1:0] COMM = 2'b00;
 localparam[1:0] DATA = 2'b01;
 localparam[1:0] WAIT = 2'b10;
@@ -70,7 +70,6 @@ assign init_sequence[43] = {DATA, 8'hdf};
 assign init_sequence[44] = {COMM, 8'h2c};
 //nop
 assign init_sequence[45] = {WAIT, 8'h00};
-assign init_sequence[46] = {WAIT, 8'h00};
 
 reg[7:0] index;
 reg set_wait_delay;

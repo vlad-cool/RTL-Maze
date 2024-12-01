@@ -89,38 +89,53 @@ food_layout f_layout
     .value(food_value)
 );
 
+wire exceeded_x_index;
+assign exceeded_x_index = (x_index == WIDTH);
+wire ready;
+assign ready = busy & (~tft_busy) & (~tft_transmit) & (~exceeded_x_index);
+
 always @(posedge clk)
 begin
     if(rst)
-    begin
-        {y_index, x_index, color_index} <= 0;
-        tft_transmit <= 0;
-    end
-    else if(color_index == 3)
-    begin
         color_index <= 0;
-        x_index <= x_index + 1;
-    end
-    else if(x_index == WIDTH)
-    begin
+    else if(ready)
+        color_index <= color_index == 2 ? 0 : color_index + 1;
+end
+
+always @(posedge clk)
+begin
+    if(rst)
         x_index <= 0;
-        y_index <= y_index + 1;
-    end
-    else if(busy && (~tft_busy) & (~tft_transmit))
-    begin
-        tft_transmit <= 1;
-        if(food_value)
-            tft_data <= food_colors[{color_index, food_value}];
-        else if(wall_value)
-            tft_data <= wall_color[color_index] + gradient_shift;
-        else
-            tft_data <= 0; //black background
-        color_index <= color_index + 1;
-    end
+    else if(exceeded_x_index)
+        x_index <= 0;
+    else if(ready)
+        x_index <= x_index + (color_index == 2 ? 1 : 0);
+end
+
+always @(posedge clk)
+begin
+    if(rst)
+        y_index <= 0;
     else
-    begin
+        y_index <= y_index + exceeded_x_index;
+end
+
+always @(posedge clk)
+begin
+    if(rst)
         tft_transmit <= 0;
-    end
+    else
+        tft_transmit <= ready;
+end
+
+always @(posedge clk)
+begin
+    if(food_value)
+        tft_data <= food_colors[{color_index, food_value}];
+    else if(wall_value)
+        tft_data <= wall_color[color_index] + gradient_shift;
+    else
+        tft_data <= 0; //black background
 end
 
 endmodule
