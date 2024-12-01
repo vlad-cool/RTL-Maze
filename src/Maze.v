@@ -1,4 +1,5 @@
-module Maze(
+module Maze
+(
 	input clk,                      // @{CLK}
 	input rst,                      // @{KEY0}
 	
@@ -130,23 +131,28 @@ assign test_v_walls = {11'b10000000001,
                        11'b11000000001,
                        11'b10000000000};
 
+wire[7:0] rnd_value;
+random_byte rnd
+(
+    .clk(clk),
+    .rst(~rst),
+    .seed(9),
 
-wire[299:0] test_food;
-assign test_food = {20'b01101100000000000000,
-                    20'b00000000000000000000,
-                    20'b00000000000000000000,
-                    20'b01000000000000000000,
-                    20'b00000000000000000000,
-                    20'b00000000000000000000,
-                    20'b00000000000000000000,
-                    20'b10000000000000000000,
-                    20'b00000000000000000000,
-                    20'b00000000000000000000,
-                    20'b00010000000000000000,
-                    20'b00000000000000000000,
-                    20'b00000000000000000000,
-                    20'b00000000000000000000,
-                    20'b00100000000000111001};
+    .value(rnd_value)
+);
+
+wire[299:0] food;
+wire food_gen_busy;
+
+food_generator food_gen
+(
+    .clk(clk),
+    .rst(~rst),
+    .rnd(rnd_value),
+
+    .food(food),
+    .busy(food_gen_busy)
+);
 
 scene_exhibitor scene
 (
@@ -162,7 +168,7 @@ scene_exhibitor scene
 
     .h_walls(test_h_walls),
     .v_walls(test_v_walls),
-    .food(test_food)
+    .food(food)
 );
 
 reg [8:0] player_pos_x, player_pos_y;
@@ -234,7 +240,7 @@ always @(posedge clk) begin
         direction <= 0;
     end
     else begin
-        if (~init_enable & ~scene_enable & ~player_enable) 
+        if (~food_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
         begin
             init_enable <= 1;
         end
