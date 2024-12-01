@@ -1,3 +1,6 @@
+// by Aleksandr
+// this module generates a pseudo random byte
+
 module random_byte
 (
     input wire clk,
