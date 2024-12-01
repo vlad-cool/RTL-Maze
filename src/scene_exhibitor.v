@@ -23,35 +23,30 @@ localparam HALF_TILE_SIZE = 16;
 localparam WIDTH = 320;
 localparam HEIGHT = 480;
 
-//original(food) grid
+// original(food) grid
 reg[8:0] x_index;
 reg[8:0] y_index;
 reg[1:0] color_index;
 
-//walls grid
+// walls grid
 wire[8:0] x_shifted;
 wire[8:0] y_shifted;
 assign x_shifted = x_index + HALF_TILE_SIZE;
 assign y_shifted = y_index + HALF_TILE_SIZE;
 
-//gradient walls
+// gradient walls
 wire[11:0] gradient_index;
-assign gradient_index = ({1'h0, x_index} << 1) + ({1'h0, y_index} << 1) + y_index;
-wire[6:0] gradient_shift;
-assign gradient_shift = color_index == 2 ? 0 : gradient_index[11:5]; //don't change blue component
+assign gradient_index = ({1'h0, x_index} << 1) + x_index + ({1'h0, y_index} << 1); // 3x + 2y
+wire[7:0] wall_color;
+assign wall_color = color_index == 0 ? 8'h78 - gradient_index[11:4] : 
+                        color_index == 1 ? gradient_index[11:4] : 8'ha5;
 
-//base output
+// base output
 assign tft_dc = 1;
 assign busy = (y_index < HEIGHT) & enable;
 
-//main walls color
-wire[7:0] wall_color[2:0];
-assign wall_color[0] = 8'h3a;
-assign wall_color[1] = 8'h7b;
-assign wall_color[2] = 8'hd5;
-
-//food colors, array is 1D to support icarus verilog
-wire[7:0] food_colors[11:0]; //index = {color_id, food_value}
+// food colors, array is 1D to support icarus verilog
+wire[7:0] food_colors[11:0]; // index = {color_id, food_value}
 assign food_colors[{2'd0, 2'd1}] = 8'hff;
 assign food_colors[{2'd1, 2'd1}] = 8'ha5;
 assign food_colors[{2'd2, 2'd1}] = 8'h00;
@@ -62,7 +57,7 @@ assign food_colors[{2'd0, 2'd3}] = 8'hff;
 assign food_colors[{2'd1, 2'd3}] = 8'h00;
 assign food_colors[{2'd2, 2'd3}] = 8'h00;
 
-//convert y coord to 1D array index parts
+// convert y coord to 1D array index parts
 wire[7:0] line;
 assign line = ({3'h0, y_index[8:5]} << 3) + ({3'h0, y_index[8:5]} << 1);
 wire[7:0] line_shifted;
@@ -71,8 +66,8 @@ assign line_shifted = ({3'h0, y_shifted[8:5]} << 3) + ({3'h0, y_shifted[8:5]} <<
 wire wall_value;
 wall_layout w_layout
 (
-    .x(x_shifted[4:1]), //double size walls grid
-    .y(y_shifted[4:1]), //double size walls grid
+    .x(x_shifted[4:1]), // double size walls grid
+    .y(y_shifted[4:1]), // double size walls grid
     .left(x_shifted[8:5] == 0 ? 0 : h_walls[line_shifted + x_shifted[8:5] - 1]),
     .top(y_shifted[8:5] == 0 ? 0 : v_walls[line_shifted + y_shifted[8:5] + x_shifted[8:5] - 11]),
     .right(x_shifted[8:5] == 10 ? 0 : h_walls[line_shifted + x_shifted[8:5]]),
@@ -83,8 +78,8 @@ wall_layout w_layout
 wire[1:0] food_value;
 food_layout f_layout
 (
-    .x(x_index[4:1]), //double size walls grid
-    .y(y_index[4:1]), //double size walls grid
+    .x(x_index[4:1]), // double size walls grid
+    .y(y_index[4:1]), // double size walls grid
     .type({food[{line + x_index[8:5], 1'b1}], food[{line + x_index[8:5], 1'b0}]}),
     .value(food_value)
 );
@@ -133,9 +128,9 @@ begin
     if(food_value)
         tft_data <= food_colors[{color_index, food_value}];
     else if(wall_value)
-        tft_data <= wall_color[color_index] + gradient_shift;
+        tft_data <= wall_color;
     else
-        tft_data <= 0; //black background
+        tft_data <= 0; // black background
 end
 
 endmodule
