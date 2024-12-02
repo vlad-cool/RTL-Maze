@@ -21,7 +21,8 @@ integer i;
 initial clk = 0;
 always #1 clk = ~clk;
 
-initial begin
+initial 
+begin
     for( i = 1; i < 256; i = i + 1)
         counter[i] <= 0;
     reset = 1;

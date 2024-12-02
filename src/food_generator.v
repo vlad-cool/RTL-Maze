@@ -1,6 +1,6 @@
 // by Aleksandr
 // This module palaces food around the scene. One item in each cell.
-// Main stage: Rare food may appeare with chance of 13/256. 
+// Main stage: Rare food may appeare with chance of 21/256. 
 // Second stage: Crux food appeares in 3 quadrants excluding the one in which the player starts.
 
 // quadrants:
@@ -17,7 +17,7 @@ module food_generator
     output wire busy
 );
 
-localparam RARE_FOOD_PROBABILITY = 13; // in 256
+localparam RARE_FOOD_PROBABILITY = 21; // in 256
 
 reg[7:0] index;
 reg[2:0] crux_index;
