@@ -136,7 +136,7 @@ random_byte rnd
 (
     .clk(clk),
     .rst(~rst),
-    .seed(9),
+    .seed(217),
 
     .value(rnd_value)
 );
