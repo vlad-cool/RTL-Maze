@@ -73,7 +73,8 @@ set_global_assignment -name VERILOG_FILE src/Maze.v
 set_global_assignment -name VERILOG_FILE src/player.v
 set_global_assignment -name VERILOG_FILE src/tft_init.v
 set_global_assignment -name VERILOG_FILE src/rotator.v
-set_global_assignment -name VERILOG_FILE src/pulse_delay.v
+set_global_assignment -name VERILOG_FILE src/random_byte.v
+set_global_assignment -name VERILOG_FILE src/food_generator.v
 
 set_location_assignment PIN_112 -to tft_cs
 set_location_assignment PIN_106 -to tft_rst
@@ -88,7 +89,7 @@ set_location_assignment PIN_114 -to analyzer_mosi
 set_location_assignment PIN_110 -to analyzer_clk
 
 set_location_assignment PIN_24 -to clk
-set_location_assignment PIN_98 -to rst
+set_location_assignment PIN_98 -to true_rst
 # 
 set_location_assignment PIN_104 -to LED1
 set_location_assignment PIN_105 -to LED2

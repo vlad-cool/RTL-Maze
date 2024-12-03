@@ -63,11 +63,7 @@ begin
         food[{index, 1'b1}] <= rare;
         food[{index, 1'b0}] <= ~rare;
     end
-end
-
-always @(posedge clk)
-begin
-    if(second_stage & (~skip))
+    else if(second_stage & (~skip))
     begin
         food[{crux_place, 1'b1}] <= 1;
         food[{crux_place, 1'b0}] <= 1;

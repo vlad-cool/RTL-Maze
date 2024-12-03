@@ -1,7 +1,7 @@
 module Maze
 (
 	input clk,                      // @{CLK}
-	input rst,                      // @{SW0}
+	input true_rst,                 // @{SW0}
 	
 	output wire LED1,               // @{LEDR1}
 	output wire LED2,               // @{LEDR2}
@@ -35,11 +35,21 @@ module Maze
 wire [7:0]init_data_out, player_data_out, scene_data_out, spi_data_in;
 wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
 wire init_transmit_out, player_transmit_out, scene_transmit_out, spi_transmit_in;
-wire init_busy, player_busy, player_busy_inner, scene_busy;
+wire init_busy, player_busy, scene_busy;
+
+wire [1:0] direction_wire;
+
+localparam PLAYER_SPEED_FACTOR = 8;
+
+reg [$clog2(PLAYER_SPEED_FACTOR)-1:0] player_counter;
 
 reg player_draw;
 
 reg init_enable, player_enable, scene_enable;
+
+reg [149:0] visited_cells;
+
+reg soft_rst;
 
 wire spi_clk;
 wire spi_mosi;
@@ -47,6 +57,8 @@ wire spi_dc;
 wire spi_cs;
 
 wire spi_busy;
+
+wire rst;
 
 assign spi_cs = 0;
 
@@ -61,6 +73,13 @@ assign tft_clk = spi_clk;
 assign tft_mosi = spi_mosi;
 assign tft_dc = spi_dc;
 assign tft_cs = spi_cs;
+
+assign rst = (true_rst & soft_rst);
+
+assign direction_wire = button_1_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0) ? 0 : 
+                        button_2_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0) ? 1 :
+                        button_3_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 0) ? 2 :
+                        button_4_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0) ? 3 : direction;
 
 tft_spi spi_transmitter
 (
@@ -93,22 +112,22 @@ tft_init tft_initializer
 );
 
 wire[159:0] test_h_walls;
-assign test_h_walls = {10'b1111111111,
-                       10'b0111111110,
-                       10'b0011111100,
-                       10'b0001111000,
-                       10'b0000110000,
+assign test_h_walls = {10'b1111101111,
+                       10'b0111101110,
+                       10'b0011101100,
+                       10'b0001101000,
+                       10'b0000100000,
                        10'b0000000000,
                        10'b0000000000,
                        10'b0000000000,
                        10'b0000000000,
                        10'b0000000000,
-                       10'b0000010000,
-                       10'b0000111000,
-                       10'b0001111100,
-                       10'b0011111110,
-                       10'b0111111111,
-                       10'b1111111111};
+                       10'b0000000000,
+                       10'b0000101000,
+                       10'b0001101100,
+                       10'b0011101110,
+                       10'b0111101111,
+                       10'b1111101111};
 
 
 wire[164:0] test_v_walls;
@@ -119,7 +138,7 @@ assign test_v_walls = {11'b10000000001,
                        11'b11111011111,
                        11'b11111111111,
                        11'b11111111111,
-                       11'b11111111111,
+                       11'b00000000000,
                        11'b11111111111,
                        11'b11111111111,
                        11'b11111001111,
@@ -186,8 +205,7 @@ player player
     .rst(~rst),
     .tft_busy(spi_busy),
 
-    .busy(player_busy_inner),
-    // .busy(player_busy),
+    .busy(player_busy),
     .tft_dc(player_dc_out),
     .tft_data(player_data_out),
     .tft_transmit(player_transmit_out),
@@ -200,17 +218,8 @@ player player
     .direction(direction)
 );
 
-pulse_delay player_busy_delayer
-(
-    .clk(clk),
-    .rst(~rst),
-    .set(~player_busy_inner),
-    .ms(10),
-    .free(player_busy)
-);
-
-assign LED2 = player_busy_inner;
-assign LED1 = player_busy;
+// assign LED2 = player_clk;
+// assign LED1 = player_busy;
 
 assign spi_data_in = 
     init_enable ? init_data_out :
@@ -255,9 +264,18 @@ always @(posedge clk) begin
         path_blocked <= 0;
 
         setting_direction <= 1;
+
+        visited_cells <= 0;
+
+        soft_rst <= 1;
+
+        player_counter <= 0;
     end
     else begin
-        if (~food_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
+        if (visited_cells == {150 {1'b1}}) begin
+            soft_rst <= 0;
+        end
+        else if (~food_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
         begin
             init_enable <= 1;
         end
@@ -271,37 +289,41 @@ always @(posedge clk) begin
         end
         else if (player_enable & ~player_busy) begin
             if (setting_direction & (player_pos_x[4:0] == 0) & (player_pos_y[4:0] == 0)) begin
-                direction <= button_1_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0) ? 0 : 
-                             button_2_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0) ? 1 :
-                             button_3_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 0) ? 2 :
-                             button_4_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0) ? 3 : direction;
+                direction <= direction_wire;
                     
-                path_blocked <= ((button_1_reg | direction == 0) & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 1))  | 
-                                ((button_2_reg | direction == 1) & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 1)) |
-                                ((button_3_reg | direction == 2) & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 1))      |
-                                ((button_4_reg | direction == 3) & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 1));
+                path_blocked <= ((direction_wire == 0) & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 1))  | 
+                                ((direction_wire == 1) & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 1)) |
+                                ((direction_wire == 2) & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 1))      |
+                                ((direction_wire == 3) & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 1));
                 
+                visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] <= 1;
+
                 setting_direction <= 0;
             end
             else
             begin
-                setting_direction <= 1;
-                if (~path_blocked)
+                player_counter = player_counter == 0 ? PLAYER_SPEED_FACTOR - 1 : player_counter - 1;
+                if (player_counter == 0)
                 begin
-                    case (direction)
-                        0: begin
-                            player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
-                        end
-                        1: begin
-                            player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
-                        end
-                        2: begin
-                            player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
-                        end
-                        3: begin
-                            player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
-                        end
-                    endcase
+                    setting_direction <= 1;
+
+                    if (~path_blocked)
+                    begin
+                        case (direction)
+                            0: begin
+                                player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
+                            end
+                            1: begin
+                                player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
+                            end
+                            2: begin
+                                player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
+                            end
+                            3: begin
+                                player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
+                            end
+                        endcase
+                    end
                 end
             end
         end
