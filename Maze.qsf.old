@@ -38,7 +38,7 @@
 
 
 set_global_assignment -name FAMILY "Cyclone IV E"
-set_global_assignment -name DEVICE EP4CE6E22C8
+set_global_assignment -name DEVICE EP4CE115F29C7
 set_global_assignment -name TOP_LEVEL_ENTITY Maze
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 23.1STD.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "11:28:42  ноября 07, 2024"
@@ -71,33 +71,32 @@ set_global_assignment -name VERILOG_FILE src/dummy_module.v
 set_global_assignment -name VERILOG_FILE src/Maze.v
 set_global_assignment -name VERILOG_FILE src/player.v
 set_global_assignment -name VERILOG_FILE src/tft_init.v
-set_global_assignment -name VERILOG_FILE src/rotator.v
 
-set_location_assignment PIN_112 -to tft_cs
-set_location_assignment PIN_106 -to tft_rst
-set_location_assignment PIN_103 -to tft_dc
-set_location_assignment PIN_100 -to tft_mosi
-set_location_assignment PIN_99 -to tft_clk
+set_location_assignment PIN_AE20 -to tft_cs
+set_location_assignment PIN_AG23 -to tft_rst
+set_location_assignment PIN_AF20 -to tft_dc
+set_location_assignment PIN_AH26 -to tft_mosi
+set_location_assignment PIN_AH23 -to tft_clk
 
-set_location_assignment PIN_125 -to analyzer_cs
-set_location_assignment PIN_121 -to analyzer_rst
-set_location_assignment PIN_119 -to analyzer_dc
-set_location_assignment PIN_114 -to analyzer_mosi
-set_location_assignment PIN_110 -to analyzer_clk
+set_location_assignment PIN_AB22 -to analyzer_cs
+set_location_assignment PIN_AC15 -to analyzer_rst
+set_location_assignment PIN_AB21 -to analyzer_dc
+set_location_assignment PIN_Y17 -to analyzer_mosi
+set_location_assignment PIN_AC21 -to analyzer_clk
 
-set_location_assignment PIN_24 -to clk
-set_location_assignment PIN_98 -to rst
-# 
-# set_location_assignment PIN_ -to LED1
-# set_location_assignment PIN_ -to LED2
-# 
-# set_location_assignment PIN_ -to DEBUG_OUT1
-# set_location_assignment PIN_ -to DEBUG_OUT2
-# set_location_assignment PIN_ -to DEBUG_OUT3
-# 
-set_location_assignment PIN_88 -to button_1
-set_location_assignment PIN_89 -to button_2
-set_location_assignment PIN_90 -to button_3
-set_location_assignment PIN_91 -to button_4
+set_location_assignment PIN_Y2 -to clk
+set_location_assignment PIN_AB28 -to rst
+
+set_location_assignment PIN_G19 -to LED1
+set_location_assignment PIN_F19 -to LED2
+
+set_location_assignment PIN_E19 -to DEBUG_OUT1
+set_location_assignment PIN_F21 -to DEBUG_OUT2
+set_location_assignment PIN_F18 -to DEBUG_OUT3
+
+set_location_assignment PIN_M23 -to button_1
+set_location_assignment PIN_M21 -to button_2
+set_location_assignment PIN_N21 -to button_3
+set_location_assignment PIN_R24 -to button_4
 
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

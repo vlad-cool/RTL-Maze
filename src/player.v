@@ -21,7 +21,7 @@ module player
     input wire draw
 );
 
-wire[7:0] player_color[1:0];
+wire[7:0] player_color[2:0];
 wire[483:0] sprite[2:0];
 
 reg[$clog2(size) - 1 : 0] pixel_counter_x, pixel_counter_y;
@@ -113,6 +113,16 @@ assign sprite[2] = {
 };
 
 reg [11:0]animation_step;
+
+wire [$clog2(size * size) - 1:0] pixel_index;
+
+rotator #(.size(size)) rotator
+(
+    .x(pixel_counter_x),
+    .y(pixel_counter_y),
+    .direction(2),
+    .index(pixel_index)
+);
 
 always @(posedge clk) begin
     if (rst) begin
@@ -207,7 +217,7 @@ always @(posedge clk) begin
                     {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'h00};
                 end
                 else begin
-                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[animation_step[11:10] < 3 ? animation_step[11:10] : 1][pixel_counter_y * 22 + pixel_counter_x] ? player_color[sub_pixel_counter] : 8'h00};
+                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[animation_step[11:10] < 3 ? animation_step[11:10] : 1][pixel_index] ? player_color[sub_pixel_counter] : 8'h00};
                     // {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'hff};
                 end
                 sub_pixel_counter <= sub_pixel_counter == 2 ? 0 : sub_pixel_counter + 1;

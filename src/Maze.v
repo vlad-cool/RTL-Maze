@@ -50,7 +50,7 @@ reg button_1_reg, button_2_reg, button_3_reg, button_4_reg;
 reg init_enable, player_enable, scene_enable;
 reg player_draw;
 reg[8:0] player_pos_x, player_pos_y;
-reg[1:0] direction;
+reg[2:0] direction;
 reg setting_direction;
 
 assign spi_cs = 0;
@@ -198,7 +198,7 @@ always @(posedge clk) begin
             player_pos_x <= 0;
             player_pos_y <= 0;
 
-            direction <= 0;
+            direction <= 4;
 
             setting_direction <= 1;
     end
@@ -220,7 +220,7 @@ always @(posedge clk) begin
                 direction <= button_1_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0) ? 0 : 
                              button_2_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0) ? 1 :
                              button_3_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 0) ? 2 :
-                             button_4_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0) ? 3 : direction;
+                             button_4_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0) ? 3 : 4;
                 
                 setting_direction <= 0;
             end
