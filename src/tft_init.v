@@ -14,7 +14,7 @@ module tft_init
     output wire busy
 );
 
-localparam DC_COUNT = 47;
+localparam DC_COUNT = 46;
 localparam[1:0] COMM = 2'b00;
 localparam[1:0] DATA = 2'b01;
 localparam[1:0] WAIT = 2'b10;
@@ -70,7 +70,6 @@ assign init_sequence[43] = {DATA, 8'hdf};
 assign init_sequence[44] = {COMM, 8'h2c};
 //nop
 assign init_sequence[45] = {WAIT, 8'h00};
-assign init_sequence[46] = {WAIT, 8'h00};
 
 reg[7:0] index;
 reg set_wait_delay;
@@ -88,33 +87,42 @@ delay wait_delay
     .free(not_wait)
 );
 
+wire ready;
+assign ready = busy & (~tft_busy) & (~tft_transmit) & not_wait & (~set_wait_delay);
+wire wait_bit_is_up;
+assign wait_bit_is_up = init_sequence[index][9];
+
 always @(posedge clk)
 begin
     if(rst)
-    begin
         index <= 0;
-        set_wait_delay <= 0;
-        tft_transmit <= 0;
-    end
-    else if(busy & (~tft_busy) & (~tft_transmit) & not_wait & (~set_wait_delay))
-    begin
-        if(init_sequence[index][9]) //WAIT bit
-        begin
-            set_wait_delay <= 1;
-            wait_delay_value <= init_sequence[index][7:0];
-        end
-        else
-        begin
-            tft_transmit <= 1;
-            tft_dc <= init_sequence[index][8];
-            tft_data <= init_sequence[index][7:0];
-        end
+    else if(ready)
         index <= index + 1;
-    end
-    else
-    begin
+end
+
+always @(posedge clk)
+begin
+    if(rst)
         set_wait_delay <= 0;
+    else
+        set_wait_delay <= ready & wait_bit_is_up;
+end
+
+always @(posedge clk)
+begin
+    if(rst)
         tft_transmit <= 0;
+    else
+        tft_transmit <= ready & (~wait_bit_is_up);
+end
+
+always @(posedge clk)
+begin
+    if(ready)
+    begin
+        wait_delay_value <= init_sequence[index][7:0];
+        tft_dc <= init_sequence[index][8];
+        tft_data <= init_sequence[index][7:0];
     end
 end
 
