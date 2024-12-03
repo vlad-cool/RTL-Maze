@@ -149,6 +149,8 @@ food_generator food_gen
     .clk(clk),
     .rst(~rst),
     .rnd(rnd_value),
+    .player_x(player_pos_x[8:5]),
+    .player_y(player_pos_y[8:5]),
 
     .food(food),
     .busy(food_gen_busy)
