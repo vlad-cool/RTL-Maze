@@ -122,7 +122,7 @@ rotator #(.size(size)) rotator
 (
     .x(pixel_counter_x),
     .y(pixel_counter_y),
-    .direction(direction),
+    .direction(direction + 1),
     // .direction(),
     .index(pixel_index)
 );

@@ -34,7 +34,7 @@ module Maze(
 wire [7:0]init_data_out, player_data_out, scene_data_out, spi_data_in;
 wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
 wire init_transmit_out, player_transmit_out, scene_transmit_out, spi_transmit_in;
-wire init_busy, player_busy, scene_busy;
+wire init_busy, player_busy, player_busy_inner, scene_busy;
 
 reg player_draw;
 
@@ -102,9 +102,9 @@ assign test_h_walls = {10'b1111111111,
                        10'b0000000000,
                        10'b0000000000,
                        10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
+                       10'b0000010000,
+                       10'b0000111000,
+                       10'b0001111100,
                        10'b0011111110,
                        10'b0111111111,
                        10'b1111111111};
@@ -113,17 +113,17 @@ assign test_h_walls = {10'b1111111111,
 wire[164:0] test_v_walls;
 assign test_v_walls = {11'b10000000001,
                        11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
+                       11'b11100000111,
+                       11'b11110001111,
+                       11'b11111011111,
+                       11'b11111111111,
+                       11'b11111111111,
+                       11'b11111111111,
+                       11'b11111111111,
+                       11'b11111111111,
+                       11'b11111001111,
+                       11'b11110000111,
+                       11'b11100000011,
                        11'b11000000001,
                        11'b10000000000};
 
@@ -145,7 +145,7 @@ scene_exhibitor scene
 
 reg [8:0] player_pos_x, player_pos_y;
 
-reg [4:0] direction;
+reg [1:0] direction;
 
 reg [31:0]random_seed;
 
@@ -153,12 +153,15 @@ reg button_1_reg, button_2_reg, button_3_reg, button_4_reg;
 
 reg setting_direction;
 
+reg path_blocked;
+
 player player
 (
     .clk(clk),
     .rst(~rst),
     .tft_busy(spi_busy),
 
+    // .busy(player_busy_inner),
     .busy(player_busy),
     .tft_dc(player_dc_out),
     .tft_data(player_data_out),
@@ -169,8 +172,17 @@ player player
     .y(player_pos_y[8:0] + 5),
     .draw(player_draw),
 
-    .direction(direction[1] + direction[2] * 2 + direction[3] * 3)
+    .direction(direction)
 );
+
+// delay player_busy_delayer
+// (
+//     .clk(clk),
+//     .rst(~rst),
+//     .set(player_busy_inner),
+//     .ms(100),
+//     .free(player_busy)
+// );
 
 assign spi_data_in = 
     init_enable ? init_data_out :
@@ -211,7 +223,8 @@ always @(posedge clk) begin
 
         random_seed <= random_seed + 1;
 
-        direction <= 0;
+        direction <= 2;
+        path_blocked <= 0;
 
         setting_direction <= 1;
     end
@@ -230,58 +243,39 @@ always @(posedge clk) begin
         end
         else if (player_enable & ~player_busy) begin
             if (setting_direction & (player_pos_x[4:0] == 0) & (player_pos_y[4:0] == 0)) begin
-                // direction <= {button_1_reg, button_2_reg};
-                direction <= button_1_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0) ? 1 : 
-                             button_2_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0) ? 2 :
-                             button_3_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 0) ? 4 :
-                             button_4_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0) ? 8 : 0;
+                direction <= button_1_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0) ? 0 : 
+                             button_2_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0) ? 1 :
+                             button_3_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 0) ? 2 :
+                             button_4_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0) ? 3 : direction;
+                    
+                path_blocked <= ((button_1_reg | direction == 0) & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 1))  | 
+                                ((button_2_reg | direction == 1) & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 1)) |
+                                ((button_3_reg | direction == 2) & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 1))      |
+                                ((button_4_reg | direction == 3) & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 1));
                 
                 setting_direction <= 0;
-
-                // case ({button_1, button_2})
-                //     0: begin
-                //         player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
-                //     end
-                //     1: begin
-                //         player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
-                //     end
-                //     2: begin
-                //         player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
-                //     end
-                //     3: begin
-                //         player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
-                //     end
-                // endcase
             end
             else
             begin
                 setting_direction <= 1;
-                case (direction)
-                    1: begin
-                        player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
-                    end
-                    2: begin
-                        player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
-                    end
-                    4: begin
-                        player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
-                    end
-                    8: begin
-                        player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
-                    end
-                endcase
+                if (~path_blocked)
+                begin
+                    case (direction)
+                        0: begin
+                            player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
+                        end
+                        1: begin
+                            player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
+                        end
+                        2: begin
+                            player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
+                        end
+                        3: begin
+                            player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
+                        end
+                    endcase
+                end
             end
-
-            // if (button_1)
-            //     if (button_2)
-            //         player_pos_y <= player_pos_y + 2;
-            //     else
-            //         player_pos_y <= player_pos_y - 2;
-            // else
-            //     if (button_2)
-            //         player_pos_x <= player_pos_x + 2;
-            //     else
-            //         player_pos_x <= player_pos_x - 2;
         end
     end
 end
