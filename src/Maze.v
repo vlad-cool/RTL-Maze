@@ -32,14 +32,14 @@ module Maze
 	output wire tft_led             // ...
 );
 
+localparam PLAYER_SPEED_FACTOR = 8;
+
 wire [7:0]init_data_out, player_data_out, scene_data_out, spi_data_in;
 wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
 wire init_transmit_out, player_transmit_out, scene_transmit_out, spi_transmit_in;
 wire init_busy, player_busy, scene_busy;
 
 wire [1:0] direction_wire;
-
-localparam PLAYER_SPEED_FACTOR = 8;
 
 reg [$clog2(PLAYER_SPEED_FACTOR)-1:0] player_counter;
 
@@ -76,10 +76,17 @@ assign tft_cs = spi_cs;
 
 assign rst = (true_rst & soft_rst);
 
-assign direction_wire = button_1_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0) ? 0 : 
-                        button_2_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0) ? 1 :
-                        button_3_reg & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 0) ? 2 :
-                        button_4_reg & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0) ? 3 : direction;
+wire direction_1_blocked, direction_2_blocked, direction_3_blocked, direction_4_blocked;
+
+assign direction_1_free = test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0;
+assign direction_2_free = test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0;
+assign direction_3_free = test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 0;
+assign direction_4_free = test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0;
+
+assign direction_wire = button_1_reg & direction_1_free ? 0 : 
+                        button_2_reg & direction_2_free ? 1 :
+                        button_3_reg & direction_3_free ? 2 :
+                        button_4_reg & direction_4_free ? 3 : direction;
 
 tft_spi spi_transmitter
 (
@@ -187,17 +194,11 @@ scene_exhibitor scene
     .food(food)
 );
 
-reg [8:0] player_pos_x, player_pos_y;
-
-reg [1:0] direction;
-
-reg [31:0]random_seed;
-
+reg[8:0] player_pos_x, player_pos_y;
+reg[1:0] direction;
 reg button_1_reg, button_2_reg, button_3_reg, button_4_reg;
-
 reg setting_direction;
-
-reg path_blocked;
+reg path_free;
 
 player player
 (
@@ -217,9 +218,6 @@ player player
 
     .direction(direction)
 );
-
-// assign LED2 = player_clk;
-// assign LED1 = player_busy;
 
 assign spi_data_in = 
     init_enable ? init_data_out :
@@ -245,7 +243,8 @@ always @(posedge clk) begin
     button_3_reg <= ~button_3;
     button_4_reg <= ~button_4;
 
-    if (~rst) begin
+    if (~rst)
+    begin
         init_enable <= 0;
         scene_enable <= 0;
         player_enable <= 0;
@@ -258,10 +257,8 @@ always @(posedge clk) begin
         // sub_grid_postion_x <= 0;
         // sub_grid_postion_y <= 0;
 
-        random_seed <= random_seed + 1;
-
         direction <= 2;
-        path_blocked <= 0;
+        path_free <= 0;
 
         setting_direction <= 1;
 
@@ -271,30 +268,35 @@ always @(posedge clk) begin
 
         player_counter <= 0;
     end
-    else begin
-        if (visited_cells == {150 {1'b1}}) begin
+    else
+    begin
+        if (visited_cells == {150 {1'b1}})
+        begin
             soft_rst <= 0;
         end
         else if (~food_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
         begin
             init_enable <= 1;
         end
-        else if (init_enable & ~init_busy) begin
+        else if (init_enable & ~init_busy)
+        begin
             init_enable <= 0;
             scene_enable <= 1;
         end
-        else if (scene_enable & ~scene_busy) begin
+        else if (scene_enable & ~scene_busy)
+        begin
             scene_enable <= 0;
             player_enable <= 1;
         end
-        else if (player_enable & ~player_busy) begin
+        else if (player_enable & ~player_busy)
+        begin
             if (setting_direction & (player_pos_x[4:0] == 0) & (player_pos_y[4:0] == 0)) begin
                 direction <= direction_wire;
                     
-                path_blocked <= ((direction_wire == 0) & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 1))  | 
-                                ((direction_wire == 1) & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 1)) |
-                                ((direction_wire == 2) & (test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 1))      |
-                                ((direction_wire == 3) & (test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 1));
+                path_free <= ((direction_wire == 0) & (direction_1_free)) |
+                             ((direction_wire == 1) & (direction_2_free)) |
+                             ((direction_wire == 2) & (direction_3_free)) |
+                             ((direction_wire == 3) & (direction_4_free));
                 
                 visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] <= 1;
 
@@ -307,21 +309,13 @@ always @(posedge clk) begin
                 begin
                     setting_direction <= 1;
 
-                    if (~path_blocked)
+                    if (path_free)
                     begin
                         case (direction)
-                            0: begin
-                                player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
-                            end
-                            1: begin
-                                player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
-                            end
-                            2: begin
-                                player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
-                            end
-                            3: begin
-                                player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
-                            end
+                            0: player_pos_x <= player_pos_x[8:5] < 9 ? player_pos_x + 1 : player_pos_x;
+                            1: player_pos_y <= player_pos_y[8:5] < 14 ? player_pos_y + 1 : player_pos_y;
+                            2: player_pos_x <= player_pos_x > 0 ? player_pos_x - 1 : player_pos_x;
+                            3: player_pos_y <= player_pos_y > 0 ? player_pos_y - 1 : player_pos_y;
                         endcase
                     end
                 end
