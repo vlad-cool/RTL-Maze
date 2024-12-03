@@ -147,8 +147,6 @@ reg [8:0] player_pos_x, player_pos_y;
 
 reg [4:0] direction;
 
-wire player_debug;
-
 reg [31:0]random_seed;
 
 reg button_1_reg, button_2_reg, button_3_reg, button_4_reg;
@@ -167,11 +165,11 @@ player player
     .tft_transmit(player_transmit_out),
     .enable(player_enable),
 
-    .debug(player_debug),
-
     .x(player_pos_x[8:0] + 5),
     .y(player_pos_y[8:0] + 5),
-    .draw(player_draw)
+    .draw(player_draw),
+
+    .direction(direction[1] + direction[2] * 2 + direction[3] * 3)
 );
 
 assign spi_data_in = 
@@ -287,13 +285,5 @@ always @(posedge clk) begin
         end
     end
 end
-
-// assign DEBUG_OUT1 = dc_out;
-
-assign DEBUG_OUT1 = player_debug;
-assign DEBUG_OUT2 = scene_enable;
-assign DEBUG_OUT3 = player_enable;
-
-assign LED2 = scene_busy;
 
 endmodule
