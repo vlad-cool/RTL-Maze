@@ -180,8 +180,8 @@ player player
     .rst(~rst),
     .tft_busy(spi_busy),
 
-    // .busy(player_busy_inner),
-    .busy(player_busy),
+    .busy(player_busy_inner),
+    // .busy(player_busy),
     .tft_dc(player_dc_out),
     .tft_data(player_data_out),
     .tft_transmit(player_transmit_out),
@@ -194,14 +194,17 @@ player player
     .direction(direction)
 );
 
-// delay player_busy_delayer
-// (
-//     .clk(clk),
-//     .rst(~rst),
-//     .set(player_busy_inner),
-//     .ms(100),
-//     .free(player_busy)
-// );
+pulse_delay player_busy_delayer
+(
+    .clk(clk),
+    .rst(~rst),
+    .set(~player_busy_inner),
+    .ms(10),
+    .free(player_busy)
+);
+
+assign LED2 = player_busy_inner;
+assign LED1 = player_busy;
 
 assign spi_data_in = 
     init_enable ? init_data_out :
