@@ -118,42 +118,6 @@ tft_init tft_initializer
     .enable(init_enable)
 );
 
-wire[159:0] test_h_walls;
-assign test_h_walls = {10'b1111101111,
-                       10'b0111101110,
-                       10'b0011101100,
-                       10'b0001101000,
-                       10'b0000100000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000101000,
-                       10'b0001101100,
-                       10'b0011101110,
-                       10'b0111101111,
-                       10'b1111101111};
-
-
-wire[164:0] test_v_walls;
-assign test_v_walls = {11'b10000000001,
-                       11'b11000000011,
-                       11'b11100000111,
-                       11'b11110001111,
-                       11'b11111011111,
-                       11'b11111111111,
-                       11'b11111111111,
-                       11'b00000000000,
-                       11'b11111111111,
-                       11'b11111111111,
-                       11'b11111001111,
-                       11'b11110000111,
-                       11'b11100000011,
-                       11'b11000000001,
-                       11'b10000000000};
-
 wire[7:0] rnd_value;
 random_byte rnd
 (
@@ -172,9 +136,26 @@ food_generator food_gen
     .clk(clk),
     .rst(~rst),
     .rnd(rnd_value),
+    .player_x(player_pos_x[8:5]),
+    .player_y(player_pos_y[8:5]),
 
     .food(food),
     .busy(food_gen_busy)
+);
+
+wire[159:0] h_walls;
+wire[164:0] v_walls;
+wire maze_gen_busy;
+
+maze_generator maze_gen
+(
+	.clk(clk),
+    .rst(~rst),
+    .rnd(rnd_value),
+
+    .h_walls(h_walls),
+    .v_walls(v_walls),
+    .busy(maze_gen_busy)
 );
 
 scene_exhibitor scene
@@ -189,8 +170,8 @@ scene_exhibitor scene
     .tft_transmit(scene_transmit_out),
     .enable(scene_enable),
 
-    .h_walls(test_h_walls),
-    .v_walls(test_v_walls),
+    .h_walls(h_walls),
+    .v_walls(v_walls),
     .food(food)
 );
 
@@ -303,7 +284,7 @@ begin
             final_score <= seconds_counter > score ? 0 : score - seconds_counter;
             soft_rst <= 0;
         end
-        else if (~food_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
+        else if (~food_gen_busy & ~maze_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
         begin
             init_enable <= 1;
         end

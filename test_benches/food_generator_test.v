@@ -1,3 +1,5 @@
+// by Aleksandr
+
 module food_generator_test;
 
 reg clk;
@@ -21,6 +23,8 @@ food_generator food_gen
     .clk(clk),
     .rst(rst),
     .rnd(rnd_value),
+    .player_x(8),
+    .player_y(8),
 
     .food(food),
     .busy(busy)

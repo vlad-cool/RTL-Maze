@@ -1,6 +1,7 @@
-//(x, Y) - coords in pixels from left-top point
-//type - type of food
-//this layout supports 3 colors drawing
+// by Aleksandr
+// (x, y) - coords in pixels from left-top point
+// type - type of food
+// this layout supports 3 colors drawing
 
 module food_layout
 (
