@@ -95,6 +95,11 @@ tft_init tft_initializer
     .enable(init_enable)
 );
 
+maze_generator maze_gen
+(
+	.clk(clk)
+);
+
 wire[159:0] test_h_walls;
 assign test_h_walls = {10'b1111111111,
                        10'b0111111110,

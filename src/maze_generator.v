@@ -12,15 +12,66 @@ module maze_generator
     output wire busy
 );
 
+integer i, j;
+
 localparam H_INDEX_LIMIT = 160;
 localparam V_INDEX_LIMIT = 165;
+localparam VISITED_INDEX_LIMIT = 150;
+localparam DIR_UP = 0;
+localparam DIR_RIGHT = 1;
+localparam DIR_DOWN = 2;
+localparam DIR_LEFT = 3;
 
+assign busy = filling_stage | walking_stage;
+
+// I. Filling Stage:
+reg visited[149:0];
 reg[7:0] filling_h_index;
 reg[7:0] filling_v_index;
+reg[7:0] visited_index;
 wire filling_stage;
 assign filling_stage = (filling_v_index < V_INDEX_LIMIT);
 
-assign busy = filling_stage | have_valid_direction | (stack_ptr > 0);
+
+// II. Walking Stage:
+wire walking_stage;
+assign walking_stage = (~filling_stage) & (have_valid_direction | (stack_ptr > 0));
+    
+reg[3:0] x, y;
+wire[7:0] position;
+assign position = ({3'h0, y} << 3) + ({3'h0, y} << 1) + x;
+
+wire[1:0] valid_directions[0:3];
+assign valid_directions[DIR_UP]    = ((y > 0)  & ~visited[position - 10]);
+assign valid_directions[DIR_RIGHT] = ((x < 9)  & ~visited[position + 1]);
+assign valid_directions[DIR_DOWN]  = ((y < 14) & ~visited[position + 10]);
+assign valid_directions[DIR_LEFT]  = ((x > 0)  & ~visited[position - 1]);
+
+wire have_valid_direction;
+assign have_valid_direction = valid_directions[0] | valid_directions[1] | valid_directions[2] | valid_directions[3];
+
+// stack
+reg[3:0] stack_x[149:0];
+reg[3:0] stack_y[149:0];
+reg[7:0] stack_ptr;
+
+wire[1:0] direction;
+assign direction = valid_directions[rnd % 4] ? rnd % 4 : 
+                   valid_directions[(rnd + 1) % 4] ? (rnd + 1) % 4 : 
+                   valid_directions[(rnd + 2) % 4] ? (rnd + 2) % 4 : (rnd + 3) % 4;
+
+// 0 <-> -1, 1 <-> 0, 2 <-> 1, 3 <-> not allowed
+wire[1:0] dx[3:0];
+assign dx[DIR_UP]    = 2'd1;
+assign dx[DIR_RIGHT] = 2'd2;
+assign dx[DIR_DOWN]  = 2'd1;
+assign dx[DIR_LEFT]  = 2'd0;
+wire[1:0] dy[3:0];
+assign dy[DIR_UP]    = 2'd0;
+assign dy[DIR_RIGHT] = 2'd1;
+assign dy[DIR_DOWN]  = 2'd2;
+assign dy[DIR_LEFT]  = 2'd1;
+
 
 always @(posedge clk)
 begin
@@ -40,107 +91,80 @@ end
 
 always @(posedge clk)
 begin
-    if(filling_h_index < H_INDEX_LIMIT)
-        h_walls[filling_h_index] <= 1;
+    if(rst)
+        visited_index <= 0;
+    else if(visited_index < VISITED_INDEX_LIMIT)
+        visited_index <= visited_index + 1;
 end
 
 always @(posedge clk)
 begin
-    if(filling_v_index < V_INDEX_LIMIT)
-        v_walls[filling_v_index] <= 1;
+    if(filling_h_index < H_INDEX_LIMIT) // Filling Stage
+        h_walls[filling_h_index] <= 1;
+    else if(walking_stage & ~direction[0] & have_valid_direction) // Walk in a vertical direction
+        h_walls[position + (direction == DIR_DOWN ? 10 : 0)] <= 0;
 end
 
-reg visited[149:0];    
-reg[3:0] x, y;
-    
-// stack
-reg[3:0] stack_x [149:0];
-reg[3:0] stack_y [149:0];
-reg[7:0] stack_ptr;
-
-// Directions: 0 = North, 1 = East, 2 = South, 3 = West
-reg[1:0] direction;
-wire[1:0] valid_directions [0:3];
-reg[1:0] random_direction;
-
-assign valid_directions[0] = ((y > 0) & ~visited[(y-1)*10 + x]); // North
-assign valid_directions[1] = ((x < 9) & ~visited[y*10 + x +1]); // East
-assign valid_directions[2] = ((y < 14) & ~visited[(y+1)*10 + x]); // South
-assign valid_directions[3] = ((x > 0) & ~visited[10*y + x - 1]); // West
-
-wire have_valid_direction = valid_directions[0] | valid_directions[1] | valid_directions[2] | valid_directions[3];
-
-integer i, j;
-
-wire[1:0] next;
-assign next = valid_directions[rnd % 4] ? rnd % 4 : 
-              valid_directions[(rnd + 1) % 4] ? (rnd + 1) % 4 : 
-              valid_directions[(rnd + 2) % 4] ? (rnd + 2) % 4 : (rnd + 3) % 4;
-
-always @(posedge clk) 
+always @(posedge clk)
 begin
-    $monitor("time=%0d: signal1=%d, signal2=%d", $time, have_valid_direction, stack_ptr);
-    if (rst) 
+    if(filling_v_index < V_INDEX_LIMIT) // Filling Stage
+        v_walls[filling_v_index] <= 1;
+    else if(walking_stage & direction[0] & have_valid_direction) // Walk in a horizontal direction
+        v_walls[position + y + (direction == DIR_RIGHT)] <= 0;
+end
+
+always @(posedge clk)
+begin
+    if(visited_index < VISITED_INDEX_LIMIT) // Filling Stage
+        visited[visited_index] <= 0;
+    else if(walking_stage)
+        visited[position] <= 1;
+end
+
+always @(posedge clk)
+begin
+    if(rst)
+        stack_ptr <= 0;
+    else if(walking_stage)
+        stack_ptr <= have_valid_direction ? (stack_ptr + 1) : (stack_ptr - 1);
+end
+
+always @(posedge clk)
+begin
+    if(walking_stage & have_valid_direction)
+    begin
+        stack_x[stack_ptr] <= x;
+        stack_y[stack_ptr] <= y;
+    end
+end
+
+always @(posedge clk)
+begin
+    if(rst)
     begin
         x <= 0;
-        y <= 0;
-        stack_ptr <= 0;
-        for (i = 0; i < 10; i = i + 1) 
-        begin
-            for (j = 0; j < 15; j = j + 1) 
-            begin
-                visited[j*10+i] <= 0;
-            end
-        end
-    end 
-    else if(busy & ~filling_stage)
+    end
+    else if(walking_stage)
     begin
-        if (have_valid_direction) 
-        begin
-            case (next)
-                0: begin
-                    if (valid_directions[0]) 
-                    begin
-                        h_walls[y*10 + x] <= 0;
-                        y <= y - 1;
-                    end
-                end
-                1: begin // East
-                    if (valid_directions[1]) 
-                    begin
-                        v_walls[y*11 + x + 1] <= 0;
-                        x <= x + 1;
-                    end
-                end
-                2: begin // South
-                    if (valid_directions[2]) begin
-                        h_walls[(y+1)*10 + x] <= 0;
-                        y <= y + 1;
-                    end
-                end
-                3: begin // West
-                    if (valid_directions[3]) 
-                    begin
-                        v_walls[y*11 + x] <= 0;
-                        x <= x - 1;
-                    end
-                end
-            endcase
-            visited[y*10+x] <= 1;
-            stack_x[stack_ptr] <= x;
-            stack_y[stack_ptr] <= y;
-            stack_ptr <= stack_ptr + 1;
-        end 
-        else 
-        begin
-            if (stack_ptr > 0) 
-            begin
-                visited[10*y+x] <= 1;
-                stack_ptr <= stack_ptr - 1;
-                x <= stack_x[stack_ptr - 1];
-                y <= stack_y[stack_ptr - 1];
-            end
-        end
+        if(have_valid_direction)
+            x <= x + dx[direction] - 1;
+        else
+            x <= stack_x[stack_ptr - 1];
+    end
+end
+
+always @(posedge clk)
+begin
+    if(rst)
+    begin
+        y <= 0;
+    end
+    else if(walking_stage)
+    begin
+        if(have_valid_direction)
+            y <= y + dy[direction] - 1;
+        else
+            y <= stack_y[stack_ptr - 1];
     end
 end
 

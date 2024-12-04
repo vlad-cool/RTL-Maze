@@ -78,6 +78,8 @@ set_location_assignment PIN_AH26 -to tft_mosi
 set_location_assignment PIN_AF20 -to tft_dc
 set_location_assignment PIN_AE20 -to tft_cs
 
+set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_formal_verification
+set_global_assignment -name VERILOG_FILE src/maze_generator.v
 set_global_assignment -name VERILOG_FILE src/food_generator.v
 set_global_assignment -name VERILOG_FILE src/random_byte.v
 set_global_assignment -name VERILOG_FILE src/layouts/food_layout.v
@@ -91,4 +93,3 @@ set_global_assignment -name VERILOG_FILE src/Maze.v
 set_global_assignment -name VERILOG_FILE src/player.v
 set_global_assignment -name VERILOG_FILE src/tft_init.v
 set_global_assignment -name HEX_FILE sprites.hex
-set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_formal_verification
