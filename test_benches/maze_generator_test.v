@@ -15,7 +15,7 @@ random_byte rnd_gen
 (
     .clk(clk),
     .rst(rst),
-    .seed(217),
+    .seed(17),
     .value(rnd_value)
 );
 
@@ -24,6 +24,8 @@ maze_generator maze_gen
     .clk(clk),
     .rst(rst),
     .rnd(rnd_value),
+    .h_expansion(15),
+    .v_expansion(15),
 
     .h_walls(h_walls),
     .v_walls(v_walls),
