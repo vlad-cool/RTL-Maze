@@ -51,6 +51,8 @@ reg[15:0] final_score;
 
 reg soft_rst;
 
+reg[7:0] random_seed;
+
 wire spi_clk;
 wire spi_mosi;
 wire spi_dc;
@@ -62,12 +64,6 @@ wire rst;
 
 assign spi_cs = 0;
 
-assign analyzer_rst = rst;
-assign analyzer_clk = spi_clk;
-assign analyzer_mosi = spi_mosi;
-assign analyzer_dc = spi_dc;
-assign analyzer_cs = spi_cs;
-
 assign tft_rst = rst;
 assign tft_clk = spi_clk;
 assign tft_mosi = spi_mosi;
@@ -76,12 +72,12 @@ assign tft_cs = spi_cs;
 
 assign rst = (true_rst & soft_rst);
 
-wire direction_1_blocked, direction_2_blocked, direction_3_blocked, direction_4_blocked;
+wire direction_1_free, direction_2_free, direction_3_free, direction_4_free;
 
-assign direction_1_free = test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0;
-assign direction_2_free = test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0;
-assign direction_3_free = test_v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 0;
-assign direction_4_free = test_h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0;
+assign direction_1_free = v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0;
+assign direction_2_free = h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0;
+assign direction_3_free = v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5]] == 0;
+assign direction_4_free = h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5]] == 0;
 
 assign direction_wire = button_1_reg & direction_1_free ? 0 : 
                         button_2_reg & direction_2_free ? 1 :
@@ -123,7 +119,7 @@ random_byte rnd
 (
     .clk(clk),
     .rst(~rst),
-    .seed(217),
+    .seed(random_seed),
 
     .value(rnd_value)
 );
@@ -353,6 +349,14 @@ begin
     begin
         sub_seconds_counter <= sub_seconds_counter == 0 ? FREQUENCY - 1 : sub_seconds_counter - 1;
         seconds_counter <= sub_seconds_counter == 0 ? seconds_counter + 1 : seconds_counter;
+    end
+end
+
+always @(posedge clk)
+begin
+    if (~rst)
+    begin
+        random_seed <= random_seed + 1;
     end
 end
 

@@ -85,7 +85,7 @@ always @(posedge clk)
 begin
     if(rst)
         filling_v_index <= 0;
-    if(filling_v_index < V_INDEX_LIMIT)
+    else if(filling_v_index < V_INDEX_LIMIT)
         filling_v_index <= filling_v_index + 1;
 end
 
