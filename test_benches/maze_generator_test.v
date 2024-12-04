@@ -50,20 +50,20 @@ begin
         begin
             for (j = 0; j < 10; j = j + 1) 
             begin
-                $write(".%s", h_walls[i*10 + j] ? "_" : " ");
+                $write(".%s", h_walls[i*10 + j] ? "__" : "  ");
             end
             $display(".");
             
             for (j = 0; j < 11; j = j + 1) 
             begin
-                $write("%s ", v_walls[i*11 + j] ? "|" : " ");
+                $write("%s ", v_walls[i*11 + j] ? "| " : "  ");
             end
             $display();
         end
         
         for (j = 0; j < 10; j = j + 1) 
         begin
-            $write(".%s", h_walls[150 + j] ? "_" : " ");
+            $write(".%s", h_walls[150 + j] ? "__" : "  ");
         end
         $display(".");
 
