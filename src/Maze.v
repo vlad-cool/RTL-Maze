@@ -32,22 +32,33 @@ module Maze
 	output wire tft_led             // ...
 );
 
-localparam PLAYER_SPEED_FACTOR = 8;
+localparam PLAYER_SPEED_FACTOR = 32;
 
-wire [7:0]init_data_out, player_data_out, scene_data_out, spi_data_in;
+localparam FOOD_0_COST = 1;
+localparam FOOD_1_COST = 4;
+localparam FOOD_2_COST = 16;
+localparam FOOD_3_COST = 64;
+
+localparam FREQUENCY = 50000000;
+
+wire[7:0] init_data_out, player_data_out, scene_data_out, spi_data_in;
 wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
 wire init_transmit_out, player_transmit_out, scene_transmit_out, spi_transmit_in;
 wire init_busy, player_busy, scene_busy;
 
-wire [1:0] direction_wire;
+wire[1:0] direction_wire;
 
-reg [$clog2(PLAYER_SPEED_FACTOR)-1:0] player_counter;
+reg[$clog2(PLAYER_SPEED_FACTOR)-1:0] player_counter;
 
 reg player_draw;
 
 reg init_enable, player_enable, scene_enable;
 
-reg [149:0] visited_cells;
+reg[149:0] visited_cells;
+reg[$clog2(FREQUENCY)-1:0] sub_seconds_counter;
+reg[31:0] seconds_counter;
+reg[31:0] score;
+reg[31:0] final_score;
 
 reg soft_rst;
 
@@ -237,7 +248,8 @@ assign spi_transmit_in =
     player_enable ? player_transmit_out :
     0;
 
-always @(posedge clk) begin
+always @(posedge clk)
+begin
     button_1_reg <= ~button_1;
     button_2_reg <= ~button_2;
     button_3_reg <= ~button_3;
@@ -252,26 +264,29 @@ always @(posedge clk) begin
 
         player_pos_x <= 0;
         player_pos_y <= 0;
-        // grid_position_x <= 0;
-        // grid_position_y <= 0;
-        // sub_grid_postion_x <= 0;
-        // sub_grid_postion_y <= 0;
 
         direction <= 2;
         path_free <= 0;
 
         setting_direction <= 1;
 
-        visited_cells <= 0;
 
         soft_rst <= 1;
 
         player_counter <= 0;
+        
+        visited_cells <= 0;
+        seconds_counter <= 0;
+        sub_seconds_counter <= FREQUENCY - 1;
+        score <= 0;
+
+        final_score <= ~true_rst ? 0 : final_score; 
     end
     else
     begin
         if (visited_cells == {150 {1'b1}})
         begin
+            final_score <= seconds_counter > score ? 0 : score - seconds_counter;
             soft_rst <= 0;
         end
         else if (~food_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
@@ -298,6 +313,15 @@ always @(posedge clk) begin
                              ((direction_wire == 2) & (direction_3_free)) |
                              ((direction_wire == 3) & (direction_4_free));
                 
+                if (visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] == 0)
+                begin
+                    case (food[(player_pos_x[8:5] * 15 + player_pos_y[8:5]) << 1])
+                        0: score <= score + FOOD_0_COST;
+                        1: score <= score + FOOD_1_COST;
+                        2: score <= score + FOOD_2_COST;
+                        3: score <= score + FOOD_3_COST;
+                    endcase
+                end
                 visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] <= 1;
 
                 setting_direction <= 0;
@@ -321,6 +345,15 @@ always @(posedge clk) begin
                 end
             end
         end
+    end
+end
+
+always @(posedge clk)
+begin
+    if (rst)
+    begin
+        sub_seconds_counter <= sub_seconds_counter == 0 ? FREQUENCY - 1 : sub_seconds_counter - 1;
+        seconds_counter <= sub_seconds_counter == 0 ? seconds_counter + 1 : seconds_counter;
     end
 end
 
