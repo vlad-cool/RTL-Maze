@@ -1,2 +1,3 @@
 To use this tool you should compile top.v with necessary modules and save it as tsm.v
 Then start screen_mock.py 
+** Use delay_mock.v to skip initial delay.
