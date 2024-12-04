@@ -75,6 +75,7 @@ set_global_assignment -name VERILOG_FILE src/tft_init.v
 set_global_assignment -name VERILOG_FILE src/rotator.v
 set_global_assignment -name VERILOG_FILE src/random_byte.v
 set_global_assignment -name VERILOG_FILE src/food_generator.v
+set_global_assignment -name VERILOG_FILE src/spi_mux.v
 
 set_location_assignment PIN_112 -to tft_cs
 set_location_assignment PIN_106 -to tft_rst

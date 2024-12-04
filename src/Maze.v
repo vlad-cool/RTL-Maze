@@ -85,7 +85,7 @@ assign tft_mosi = spi_mosi;
 assign tft_dc = spi_dc;
 assign tft_cs = spi_cs;
 
-assign rst = (true_rst & soft_rst);
+assign rst = ~(true_rst & soft_rst);
 
 wire direction_1_blocked, direction_2_blocked, direction_3_blocked, direction_4_blocked;
 
@@ -101,7 +101,7 @@ assign direction_wire = button_1_reg & direction_1_free ? 0 :
 
 tft_spi spi_transmitter
 (
-    .rst(~rst),
+    .rst(rst),
 	.clk(clk),
 	
 	.data(spi_data_in),
@@ -119,7 +119,7 @@ tft_spi spi_transmitter
 tft_init tft_initializer
 (
 	.clk(clk),
-    .rst(~rst),
+    .rst(rst),
     .tft_busy(spi_busy),
 
     .tft_dc(init_dc_out),
@@ -169,7 +169,7 @@ wire[7:0] rnd_value;
 random_byte rnd
 (
     .clk(clk),
-    .rst(~rst),
+    .rst(rst),
     .seed(217),
 
     .value(rnd_value)
@@ -181,7 +181,7 @@ wire food_gen_busy;
 food_generator food_gen
 (
     .clk(clk),
-    .rst(~rst),
+    .rst(rst),
     .rnd(rnd_value),
 
     .food(food),
@@ -191,7 +191,7 @@ food_generator food_gen
 scene_exhibitor scene
 (
     .clk(clk),
-    .rst(~rst),
+    .rst(rst),
     .tft_busy(spi_busy),
 
     .busy(scene_busy),
@@ -214,7 +214,7 @@ reg path_free;
 player player
 (
     .clk(clk),
-    .rst(~rst),
+    .rst(rst),
     .tft_busy(spi_busy),
 
     .busy(player_busy),
@@ -230,23 +230,42 @@ player player
     .direction(direction)
 );
 
-assign spi_data_in = 
-    init_enable ? init_data_out :
-    scene_enable ? scene_data_out :
-    player_enable ? player_data_out : 
-    0;
+spi_mux#(.SIZE(8)) spi_data_mux(
+    .init_enable(init_enable),
+    .scene_enable(scene_enable),
+    .player_enable(player_enable),
 
-assign spi_dc_in = 
-    init_enable ? init_dc_out :
-    scene_enable ? scene_dc_out :
-    player_enable ? player_dc_out : 
-    0;
+    .init_out(init_data_out),
+    .scene_out(scene_data_out),
+    .player_out(player_data_out),
 
-assign spi_transmit_in = 
-    init_enable ? init_transmit_out :
-    scene_enable ? scene_transmit_out :
-    player_enable ? player_transmit_out :
-    0;
+    .spi_in(spi_data_in)
+);
+
+
+spi_mux#(.SIZE(1)) spi_dc_mux(
+    .init_enable(init_enable),
+    .scene_enable(scene_enable),
+    .player_enable(player_enable),
+
+    .init_out(init_dc_out),
+    .scene_out(scene_dc_out),
+    .player_out(player_dc_out),
+
+    .spi_in(spi_dc_in)
+);
+
+spi_mux#(.SIZE(1)) spi_transmit_mux(
+    .init_enable(init_enable),
+    .scene_enable(scene_enable),
+    .player_enable(player_enable),
+
+    .init_out(init_transmit_out),
+    .scene_out(scene_transmit_out),
+    .player_out(player_transmit_out),
+
+    .spi_in(spi_transmit_in)
+);
 
 always @(posedge clk)
 begin
@@ -254,8 +273,11 @@ begin
     button_2_reg <= ~button_2;
     button_3_reg <= ~button_3;
     button_4_reg <= ~button_4;
+end
 
-    if (~rst)
+always @(posedge clk)
+begin
+    if (rst)
     begin
         init_enable <= 0;
         scene_enable <= 0;
@@ -350,7 +372,7 @@ end
 
 always @(posedge clk)
 begin
-    if (rst)
+    if (player_enable)
     begin
         sub_seconds_counter <= sub_seconds_counter == 0 ? FREQUENCY - 1 : sub_seconds_counter - 1;
         seconds_counter <= sub_seconds_counter == 0 ? seconds_counter + 1 : seconds_counter;
