@@ -75,6 +75,7 @@ set_global_assignment -name VERILOG_FILE src/tft_init.v
 set_global_assignment -name VERILOG_FILE src/rotator.v
 set_global_assignment -name VERILOG_FILE src/random_byte.v
 set_global_assignment -name VERILOG_FILE src/food_generator.v
+set_global_assignment -name VERILOG_FILE src/segment_display.v
 
 set_location_assignment PIN_112 -to tft_cs
 set_location_assignment PIN_106 -to tft_rst
@@ -82,22 +83,27 @@ set_location_assignment PIN_103 -to tft_dc
 set_location_assignment PIN_100 -to tft_mosi
 set_location_assignment PIN_99 -to tft_clk
 
-set_location_assignment PIN_125 -to analyzer_cs
-set_location_assignment PIN_121 -to analyzer_rst
-set_location_assignment PIN_119 -to analyzer_dc
-set_location_assignment PIN_114 -to analyzer_mosi
-set_location_assignment PIN_110 -to analyzer_clk
+# set_location_assignment PIN_144 -to hex_disp_1[0]
+# set_location_assignment PIN_141 -to hex_disp_1[1]
+# set_location_assignment PIN_1   -to hex_disp_1[2]
+# set_location_assignment PIN_2   -to hex_disp_1[3]
+# set_location_assignment PIN_138 -to hex_disp_1[4]
+# set_location_assignment PIN_142 -to hex_disp_1[5]
+# set_location_assignment PIN_143 -to hex_disp_1[6]
+# set_location_assignment PIN_3   -to hex_disp_2[0]
+
+set_location_assignment PIN_126 -to hex_disp_1[0]
+set_location_assignment PIN_124 -to hex_disp_1[1]
+set_location_assignment PIN_120 -to hex_disp_1[2]
+set_location_assignment PIN_113 -to hex_disp_1[3]
+set_location_assignment PIN_115 -to hex_disp_1[4]
+set_location_assignment PIN_111 -to hex_disp_1[5]
+set_location_assignment PIN_104 -to hex_disp_1[6]
+set_location_assignment PIN_105 -to hex_disp_2[0]
 
 set_location_assignment PIN_24 -to clk
 set_location_assignment PIN_98 -to true_rst
-# 
-set_location_assignment PIN_104 -to LED1
-set_location_assignment PIN_105 -to LED2
-# 
-# set_location_assignment PIN_ -to DEBUG_OUT1
-# set_location_assignment PIN_ -to DEBUG_OUT2
-# set_location_assignment PIN_ -to DEBUG_OUT3
-# 
+
 set_location_assignment PIN_88 -to button_1
 set_location_assignment PIN_89 -to button_2
 set_location_assignment PIN_90 -to button_3

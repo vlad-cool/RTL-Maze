@@ -2,34 +2,23 @@ module Maze
 (
 	input clk,                      // @{CLK}
 	input true_rst,                 // @{SW0}
-	
-	output wire LED1,               // @{LEDR1}
-	output wire LED2,               // @{LEDR2}
 
     input wire button_1,            // @{KEY0}
     input wire button_2,            // @{KEY1}
     input wire button_3,            // @{KEY2}
     input wire button_4,            // @{KEY3}
 
-    output wire logic_0,            // @{GPIO_0}
-    output wire logic_1,            // @{GPIO_1}
-	
-	output wire DEBUG_OUT1,         // @{E19}
-	output wire DEBUG_OUT2,         // @{F21}
-	output wire DEBUG_OUT3,         // @{F18}
-	
-	output wire analyzer_rst,       // @{GPIO_1}
-	output wire analyzer_clk,       // @{AC21}
-	output wire analyzer_mosi,      // @{Y17}
-	output wire analyzer_dc,        // @{AB21}
-	output wire analyzer_cs,        // @{GPIO_0}
-	
 	output wire tft_rst,            // @{GPIO_31}
 	output wire tft_clk,            // @{GPIO_34}
 	output wire tft_mosi,           // @{GPIO_33}
 	output wire tft_dc,             // @{GPIO_32}
 	output wire tft_cs,             // @{GPIO_30}
-	output wire tft_led             // ...
+	output wire tft_led,            // ...
+
+    output wire[6:0] hex_disp_1,
+    output wire[6:0] hex_disp_2,
+    output wire[6:0] hex_disp_3,
+    output wire[6:0] hex_disp_4
 );
 
 localparam PLAYER_SPEED_FACTOR = 32;
@@ -56,9 +45,9 @@ reg init_enable, player_enable, scene_enable;
 
 reg[149:0] visited_cells;
 reg[$clog2(FREQUENCY)-1:0] sub_seconds_counter;
-reg[31:0] seconds_counter;
-reg[31:0] score;
-reg[31:0] final_score;
+reg[15:0] seconds_counter;
+reg[15:0] score;
+reg[15:0] final_score;
 
 reg soft_rst;
 
@@ -230,6 +219,30 @@ player player
     .direction(direction)
 );
 
+segment_display display_1
+(
+    .number(final_score[3:0]),
+    .disp(hex_disp_1)
+);
+
+segment_display display_2
+(
+    .number(final_score[7:4]),
+    .disp(hex_disp_2)
+);
+
+segment_display display_3
+(
+    .number(final_score[11:8]),
+    .disp(hex_disp_3)
+);
+
+segment_display display_4
+(
+    .number(final_score[15:12]),
+    .disp(hex_disp_4)
+);
+
 assign spi_data_in = 
     init_enable ? init_data_out :
     scene_enable ? scene_data_out :
@@ -254,7 +267,10 @@ begin
     button_2_reg <= ~button_2;
     button_3_reg <= ~button_3;
     button_4_reg <= ~button_4;
+end
 
+always @(posedge clk)
+begin
     if (~rst)
     begin
         init_enable <= 0;
@@ -276,8 +292,6 @@ begin
         player_counter <= 0;
         
         visited_cells <= 0;
-        seconds_counter <= 0;
-        sub_seconds_counter <= FREQUENCY - 1;
         score <= 0;
 
         final_score <= ~true_rst ? 0 : final_score; 
@@ -350,7 +364,11 @@ end
 
 always @(posedge clk)
 begin
-    if (rst)
+    if (~rst)
+    begin
+        sub_seconds_counter <= FREQUENCY - 1;
+        seconds_counter <= 0;
+    end
     begin
         sub_seconds_counter <= sub_seconds_counter == 0 ? FREQUENCY - 1 : sub_seconds_counter - 1;
         seconds_counter <= sub_seconds_counter == 0 ? seconds_counter + 1 : seconds_counter;
