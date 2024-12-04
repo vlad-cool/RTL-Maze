@@ -95,47 +95,6 @@ tft_init tft_initializer
     .enable(init_enable)
 );
 
-maze_generator maze_gen
-(
-	.clk(clk)
-);
-
-wire[159:0] test_h_walls;
-assign test_h_walls = {10'b1111111111,
-                       10'b0111111110,
-                       10'b0011111100,
-                       10'b0001111000,
-                       10'b0000110000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0000000000,
-                       10'b0011111110,
-                       10'b0111111111,
-                       10'b1111111111};
-
-
-wire[164:0] test_v_walls;
-assign test_v_walls = {11'b10000000001,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000011,
-                       11'b11000000001,
-                       11'b10000000000};
-
 wire[7:0] rnd_value;
 random_byte rnd
 (
@@ -161,6 +120,21 @@ food_generator food_gen
     .busy(food_gen_busy)
 );
 
+wire[159:0] h_walls;
+wire[164:0] v_walls;
+wire maze_gen_busy;
+
+maze_generator maze_gen
+(
+	.clk(clk),
+    .rst(~rst),
+    .rnd(rnd_value),
+
+    .h_walls(h_walls),
+    .v_walls(v_walls),
+    .busy(maze_gen_busy)
+);
+
 scene_exhibitor scene
 (
     .clk(clk),
@@ -173,8 +147,8 @@ scene_exhibitor scene
     .tft_transmit(scene_transmit_out),
     .enable(scene_enable),
 
-    .h_walls(test_h_walls),
-    .v_walls(test_v_walls),
+    .h_walls(h_walls),
+    .v_walls(v_walls),
     .food(food)
 );
 
@@ -247,7 +221,7 @@ always @(posedge clk) begin
         direction <= 0;
     end
     else begin
-        if (~food_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
+        if (~food_gen_busy & ~maze_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
         begin
             init_enable <= 1;
         end
