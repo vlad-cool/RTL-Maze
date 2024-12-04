@@ -1,5 +1,7 @@
 // by Aleksandr
 // Filling Stage: set all walls to 1
+// Walking Stage: generate standart 1-way maze
+// Expanding Stage: remove some walls
 
 module maze_generator
 (
@@ -11,8 +13,6 @@ module maze_generator
     output reg[164:0] v_walls,
     output wire busy
 );
-
-integer i, j;
 
 localparam H_INDEX_LIMIT = 160;
 localparam V_INDEX_LIMIT = 165;
@@ -85,7 +85,7 @@ always @(posedge clk)
 begin
     if(rst)
         filling_v_index <= 0;
-    if(filling_v_index < V_INDEX_LIMIT)
+    else if(filling_v_index < V_INDEX_LIMIT)
         filling_v_index <= filling_v_index + 1;
 end
 
