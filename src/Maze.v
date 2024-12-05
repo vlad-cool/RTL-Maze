@@ -270,15 +270,15 @@ begin
         player_counter <= 0;
         
         visited_cells <= 0;
-        score <= 0;
+        score <= 150;
 
-        final_score <= ~true_rst ? 0 : final_score; 
+        final_score <= 0; 
     end
     else
     begin
+        final_score <= seconds_counter > score ? 0 : score - seconds_counter;
         if (visited_cells == {150 {1'b1}})
         begin
-            final_score <= seconds_counter > score ? 0 : score - seconds_counter;
             soft_rst <= 0;
         end
         else if (~food_gen_busy & ~maze_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
