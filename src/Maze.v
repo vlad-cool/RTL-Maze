@@ -3,10 +3,10 @@ module Maze
 	input clk,                      // @{CLK}
 	input true_rst,                 // @{SW0}
 
-    input wire button_1,            // @{KEY0}
+    input wire button_1,            // @{KEY2}
     input wire button_2,            // @{KEY1}
     input wire button_3,            // @{KEY3}
-    input wire button_4,            // @{KEY2}
+    input wire button_4,            // @{KEY0}
 
 	output wire tft_clk,            // @{GPIO_26}
 	output wire tft_mosi,           // @{GPIO_28}
