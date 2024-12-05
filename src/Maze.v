@@ -147,6 +147,8 @@ maze_generator maze_gen
 	.clk(clk),
     .rst(~rst),
     .rnd(rnd_value),
+    .h_expansion(15),
+    .v_expansion(15),
 
     .h_walls(h_walls),
     .v_walls(v_walls),

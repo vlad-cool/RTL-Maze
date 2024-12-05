@@ -1,18 +1,20 @@
 // by Aleksandr
 // Filling Stage: set all walls to 1
+// Walking Stage: generate standart 1-way maze
+// Expansion Stage: remove some walls
 
 module maze_generator
 (
     input wire clk,
     input wire rst,
     input wire[7:0] rnd,
+    input wire[3:0] h_expansion,
+    input wire[3:0] v_expansion,
     
     output reg[159:0] h_walls,
     output reg[164:0] v_walls,
     output wire busy
 );
-
-integer i, j;
 
 localparam H_INDEX_LIMIT = 160;
 localparam V_INDEX_LIMIT = 165;
@@ -22,7 +24,7 @@ localparam DIR_RIGHT = 1;
 localparam DIR_DOWN = 2;
 localparam DIR_LEFT = 3;
 
-assign busy = filling_stage | walking_stage;
+assign busy = filling_stage | walking_stage | expansion_stage;
 
 // I. Filling Stage:
 reg visited[149:0];
@@ -72,6 +74,19 @@ assign dy[DIR_RIGHT] = 2'd1;
 assign dy[DIR_DOWN]  = 2'd2;
 assign dy[DIR_LEFT]  = 2'd1;
 
+// III.Expansion Stage:
+reg[3:0] expansion_h_index;
+reg[3:0] expansion_v_index;
+wire expansion_stage;
+assign expansion_stage = (~filling_stage) & (~walking_stage) & (expansion_h_index < h_expansion) & (expansion_v_index < v_expansion);
+wire[3:0] rnd_9;
+assign rnd_9 = (rnd[3:0] < 9) ? rnd[3:0] : (rnd[3:0] - 9);
+wire[3:0] rnd_10;
+assign rnd_10 = (rnd[3:0] < 10) ? rnd[3:0] : (rnd[3:0] - 10);
+wire[3:0] rnd_1_14;
+assign rnd_1_14 = (rnd[3:0] < 14) ? (rnd[3:0] + 1) : (rnd[3:0] - 13);
+wire[3:0] rnd_15;
+assign rnd_15 = (rnd[3:0] < 15) ? rnd[3:0] : 0;
 
 always @(posedge clk)
 begin
@@ -103,6 +118,8 @@ begin
         h_walls[filling_h_index] <= 1;
     else if(walking_stage & ~direction[0] & have_valid_direction) // Walk in a vertical direction
         h_walls[position + (direction == DIR_DOWN ? 10 : 0)] <= 0;
+    else if(expansion_stage & (expansion_h_index < h_expansion)) // Remove wall during expansion stage
+        h_walls[({4'h0, rnd_1_14} << 3) + ({4'h0, rnd_1_14} << 1) + rnd_10] <= 0;
 end
 
 always @(posedge clk)
@@ -111,6 +128,8 @@ begin
         v_walls[filling_v_index] <= 1;
     else if(walking_stage & direction[0] & have_valid_direction) // Walk in a horizontal direction
         v_walls[position + y + (direction == DIR_RIGHT)] <= 0;
+    else if(expansion_stage & (expansion_v_index < v_expansion)) // Remove wall during expansion stage
+        v_walls[({4'h0, rnd_15} << 3) + ({4'h0, rnd_15} << 1) + rnd_15 + rnd_9 + 1] <= 0;
 end
 
 always @(posedge clk)
@@ -166,6 +185,22 @@ begin
         else
             y <= stack_y[stack_ptr - 1];
     end
+end
+
+always @(posedge clk)
+begin
+    if(rst)
+        expansion_h_index <= 0;
+    else if(expansion_stage & (expansion_h_index < h_expansion))
+        expansion_h_index <= expansion_h_index + 1;
+end
+
+always @(posedge clk)
+begin
+    if(rst)
+        expansion_v_index <= 0;
+    else if(expansion_stage & (expansion_v_index < v_expansion))
+        expansion_v_index <= expansion_v_index + 1;
 end
 
 endmodule
