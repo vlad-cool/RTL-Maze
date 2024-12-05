@@ -58,9 +58,9 @@ reg[3:0] stack_y[149:0];
 reg[7:0] stack_ptr;
 
 wire[1:0] direction;
-assign direction = valid_directions[rnd % 4] ? rnd % 4 : 
-                   valid_directions[(rnd + 1) % 4] ? (rnd + 1) % 4 : 
-                   valid_directions[(rnd + 2) % 4] ? (rnd + 2) % 4 : (rnd + 3) % 4;
+assign direction = valid_directions[rnd[1:0]] ? rnd & 2'b11 : 
+                   valid_directions[(rnd + 1) & 2'b11] ? (rnd + 1) & 2'b11 : 
+                   valid_directions[(rnd + 2) & 2'b11] ? (rnd + 2) & 2'b11 : (rnd + 3) & 2'b11;
 
 // 0 <-> -1, 1 <-> 0, 2 <-> 1, 3 <-> not allowed
 wire[1:0] dx[3:0];
