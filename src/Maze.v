@@ -5,20 +5,19 @@ module Maze
 
     input wire button_1,            // @{KEY0}
     input wire button_2,            // @{KEY1}
-    input wire button_3,            // @{KEY2}
-    input wire button_4,            // @{KEY3}
+    input wire button_3,            // @{KEY3}
+    input wire button_4,            // @{KEY2}
 
-	output wire tft_rst,            // @{GPIO_31}
-	output wire tft_clk,            // @{GPIO_34}
-	output wire tft_mosi,           // @{GPIO_33}
-	output wire tft_dc,             // @{GPIO_32}
-	output wire tft_cs,             // @{GPIO_30}
-	output wire tft_led,            // ...
+	output wire tft_clk,            // @{GPIO_26}
+	output wire tft_mosi,           // @{GPIO_28}
+	output wire tft_dc,             // @{GPIO_30}
+	output wire tft_rst,            // @{GPIO_32}
+	output wire tft_cs,             // @{GPIO_34}
 
-    output wire[6:0] hex_disp_1,
-    output wire[6:0] hex_disp_2,
-    output wire[6:0] hex_disp_3,
-    output wire[6:0] hex_disp_4
+    output wire[6:0] hex_disp_1,    // @{HEX0}
+    output wire[6:0] hex_disp_2,    // @{HEX1}
+    output wire[6:0] hex_disp_3,    // @{HEX2}
+    output wire[6:0] hex_disp_4     // @{HEX3}
 );
 
 localparam PLAYER_SPEED_FACTOR = 32;
