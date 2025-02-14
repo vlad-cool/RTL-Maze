@@ -9,3 +9,5 @@
 *.bat
 *.qpf
 *.qsf
+.vscode/
+obj_dir/

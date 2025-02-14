@@ -80,7 +80,7 @@ food_layout f_layout
 (
     .x(x_index[4:1]), // double size walls grid
     .y(y_index[4:1]), // double size walls grid
-    .type({food[{line + x_index[8:5], 1'b1}], food[{line + x_index[8:5], 1'b0}]}),
+    .ftype({food[{line + x_index[8:5], 1'b1}], food[{line + x_index[8:5], 1'b0}]}),
     .value(food_value)
 );
 

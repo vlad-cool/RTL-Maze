@@ -2,6 +2,7 @@
 // 16x16 walls layout
 // (x, Y) - coords in pixels from left-top point
 // left, top, right, bottom is flags of other walls
+/* verilator lint_off UNOPTFLAT */
 
 module wall_layout
 (
