@@ -20,14 +20,14 @@ module Maze
     output wire[6:0] hex_disp_4     // @{HEX3}
 );
 
-localparam PLAYER_SPEED_FACTOR = 32;
+localparam PLAYER_SPEED_FACTOR = 1;
 
 localparam FOOD_0_COST = 1;
 localparam FOOD_1_COST = 4;
 localparam FOOD_2_COST = 16;
 localparam FOOD_3_COST = 64;
 
-localparam FREQUENCY = 50000000;
+localparam FREQUENCY = 1;
 
 wire[7:0] init_data_out, player_data_out, scene_data_out, spi_data_in;
 wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
@@ -267,7 +267,7 @@ begin
 
         soft_rst <= 1;
 
-        player_counter <= 0;
+        player_counter = 0;
         
         visited_cells <= 0;
         score <= 150;

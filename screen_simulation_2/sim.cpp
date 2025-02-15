@@ -12,7 +12,7 @@
 void reset(VMaze *top, int resetTicks)
 {
     top->clk = 0;
-    top->rst = 0;
+    top->true_rst = 0;
     std::cout << "Reset Ticks: " << resetTicks << std::endl;
     for(int i = 0; i < resetTicks; i++)
     {
@@ -21,7 +21,7 @@ void reset(VMaze *top, int resetTicks)
         top->eval();
         top->clk = !top->clk;
     }
-    top->rst = 1;
+    top->true_rst = 1;
 }
 
 TFTByte read_byte(VMaze *top)
@@ -80,8 +80,10 @@ int main()
                 window.close();
         }
 
-        top->button_1 = sf::Keyboard::isKeyPressed(sf::Keyboard::Q);
-        top->button_2 = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
+        top->button_1 = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
+        top->button_2 = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
+        top->button_3 = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
+        top->button_4 = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
 
         for(int i = 0; i < BYTES_PER_LOOP; i++)
         {
@@ -92,7 +94,7 @@ int main()
             }
             catch(std::runtime_error &e)
             {
-                std::cout << "wrong byte " << b << std::endl;
+                //std::cout << "wrong byte " << b << std::endl;
             }
             if(drawer.isFinished())
                 drawer.reset();
