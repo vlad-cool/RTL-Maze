@@ -11,3 +11,4 @@
 *.qsf
 .vscode/
 obj_dir/
+screen_simulation_2/sim
