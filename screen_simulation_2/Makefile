@@ -9,7 +9,7 @@ SRC += nodelay.v
 SRC += $(wildcard $(SRC_DIR)/layouts/*.v)
 
 CPP_SRC = $(wildcard $(OBJ_DIR)/*.cpp)
-CPP_SRC += sim.cpp
+CPP_SRC += sim.cpp drawing_task.cpp
 CPP_SRC += $(INCLUDE)/verilated.cpp
 
 all: verilate compile
