@@ -80,20 +80,23 @@ int main()
                 window.close();
         }
 
-        top->button_1 = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
-        top->button_2 = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
-        top->button_3 = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
-        top->button_4 = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
+        top->button_1 = !sf::Keyboard::isKeyPressed(sf::Keyboard::D);
+        top->button_2 = !sf::Keyboard::isKeyPressed(sf::Keyboard::S);
+        top->button_3 = !sf::Keyboard::isKeyPressed(sf::Keyboard::A);
+        top->button_4 = !sf::Keyboard::isKeyPressed(sf::Keyboard::W);
 
         for(int i = 0; i < BYTES_PER_LOOP; i++)
         {
             auto b = read_byte(top);
+            while(b.dc == 0 && b.byte == 0)
+                b = read_byte(top);
             try
             {
                 drawer.handleByte(b);
             }
             catch(std::runtime_error &e)
             {
+                std::cout << e.what() << " Wrong byte " << b << std::endl;;
                 //std::cout << "wrong byte " << b << std::endl;
             }
             if(drawer.isFinished())
