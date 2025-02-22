@@ -28,13 +28,7 @@ reg [3:0]selection_counter;
 
 reg [7:0] counter;
 
-// wire [15:0] x_min_old, y_min_old, x_max_old, y_max_old;
 reg [8:0] x_min, y_min, x_max, y_max;
-
-// assign x_min_new = x_new;
-// assign y_min_new = y_new;
-// assign x_max_new = x_new + size - 1;
-// assign y_max_new = y_new + size - 1;
 
 reg [8:0]x_new, y_new;
 
