@@ -11,10 +11,10 @@ module delay
     output wire free
 );
 
-localparam[13:0] ticks_per_ms = 14'd2000;
+localparam[15:0] ticks_per_ms = 16'd50000; // 50 MHz
 
 reg[7:0] counter;
-reg[13:0] low_counter;
+reg[15:0] low_counter;
 
 assign free = (counter == 0); 
 
@@ -27,7 +27,7 @@ begin
     else if(low_counter > 0)
         low_counter <= low_counter - 1;
     else if(counter > 0)
-        {counter, low_counter} <= {counter - 1, ticks_per_ms};
+        {counter, low_counter} <= {counter - 8'd1, ticks_per_ms};
 end
 
 endmodule

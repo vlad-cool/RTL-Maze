@@ -7,4 +7,4 @@ all: src/* Maze.qsf
 	~/intelFPGA_lite/23.1std/quartus/bin/quartus_sta Maze -c Maze
 
 upload:
-	~/intelFPGA_lite/23.1std/quartus/bin/quartus_pgm -c "USB-Blaster [3-1]" -m JTAG -o p\;output_files/Maze.pof 
+	~/intelFPGA_lite/23.1std/quartus/bin/quartus_pgm -c "USB-Blaster [3-1]" -m JTAG -o p\;output_files/Maze.sof 

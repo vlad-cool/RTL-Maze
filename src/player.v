@@ -16,27 +16,28 @@ module player
 
     output reg busy,
 
-    output wire debug,
-
     input wire[8:0] x,
     input wire[8:0] y,
-    input wire draw
+    input wire draw,
+
+    input wire[2:0] direction
 );
 
-reg [$clog2(size * size) - 1 : 0]pixel_counter;
-reg [3:0]selection_counter;
+wire[7:0] player_color[2:0];
+wire[483:0] sprite[2:0];
 
-reg [7:0] counter;
+reg[$clog2(size) - 1 : 0] pixel_counter_x, pixel_counter_y;
+reg[3:0] selection_counter;
+reg[7:0] sub_pixel_counter;
 
-reg [8:0] x_min, y_min, x_max, y_max;
-
-reg [8:0]x_new, y_new;
+reg[8:0] x_min, y_min, x_max, y_max;
+reg[8:0] x_new, y_new;
 
 reg drawing_background;
 
-assign debug = drawing_background;
-
-wire [483:0]sprite[2:0];
+assign player_color[0] = 8'hff;
+assign player_color[1] = 8'hff;
+assign player_color[2] = 8'h00;
 
 assign sprite[0] = {
 22'b0000000111111110000000,
@@ -60,7 +61,7 @@ assign sprite[0] = {
 22'b0001111111111111111000,
 22'b0000111111111111110000,
 22'b0000011111111111100000,
-22'b0000000111111110000000,
+22'b0000000111111110000000
 };
 
 assign sprite[1] = {
@@ -85,7 +86,7 @@ assign sprite[1] = {
 22'b0001111111111111111000,
 22'b0000111111111111110000,
 22'b0000011111111111100000,
-22'b0000000111111110000000,
+22'b0000000111111110000000
 };
 
 assign sprite[2] = {
@@ -110,26 +111,42 @@ assign sprite[2] = {
 22'b0001111111111111111000,
 22'b0000111111111111110000,
 22'b0000011111111111100000,
-22'b0000000111111110000000,
+22'b0000000111111110000000
 };
+
+reg [11:0]animation_step;
+
+wire [$clog2(size * size) - 1:0] pixel_index;
+
+rotator #(.size(size)) rotator
+(
+    .x(pixel_counter_x),
+    .y(pixel_counter_y),
+    .direction(direction + 1),
+    // .direction(),
+    .index(pixel_index)
+);
 
 always @(posedge clk) begin
     if (rst) begin
         selection_counter <= 0;
-        pixel_counter <= 0;
+        pixel_counter_x <= 0;
+        pixel_counter_y <= 0;
         busy <= 0;
         
-        counter <= 0;
+        sub_pixel_counter <= 0;
         
         x_new <= 5;
         y_new <= 5;
 
         drawing_background <= 0;
+        animation_step <= 0;
     end
     else if (enable) begin
         if (!busy) begin
             if (draw) begin
                 selection_counter <= 1;
+                animation_step <= animation_step + 1;
 
                 if (x_new == x && y_new == y) begin
                     x_min <= x_new;
@@ -176,7 +193,8 @@ always @(posedge clk) begin
                 y_new <= y;
                 busy <= 1;
 
-                pixel_counter <= 0;
+                pixel_counter_x <= 0;
+                pixel_counter_y <= 0;
             end
         end
         else if (~tft_busy & ~tft_transmit) begin
@@ -197,20 +215,19 @@ always @(posedge clk) begin
             
                 selection_counter <= selection_counter + 1;
             end
-            else if (selection_counter == 12 && pixel_counter != size * size) begin
+            else if (selection_counter == 12 & pixel_counter_x != size & pixel_counter_y != size) begin
                 if (drawing_background) begin
                     {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'h00};
                 end
                 else begin
-                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[0][pixel_counter] ? (counter != 2 ? 8'hff : 8'h00) : 8'h00};
-                    // {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 1 ? (counter != 2 ? 8'hff : 8'h00) : 8'h00};
+                    {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[animation_step[11:10] < 3 ? animation_step[11:10] : 1][pixel_index] ? player_color[sub_pixel_counter] : 8'h00};
                     // {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'hff};
                 end
-                counter <= counter == 2 ? 0 : counter + 1;
-                pixel_counter <= counter == 2 ? pixel_counter + 1 : pixel_counter;
-                // busy <= pixel_counter == size * size ? 0 : 1;
+                sub_pixel_counter <= sub_pixel_counter == 2 ? 0 : sub_pixel_counter + 1;
+                pixel_counter_x <= sub_pixel_counter == 2 ? (pixel_counter_x == size - 1 ? 0 : pixel_counter_x + 1) : pixel_counter_x;
+                pixel_counter_y <= sub_pixel_counter == 2 ? (pixel_counter_x == size - 1 ? pixel_counter_y + 1 : pixel_counter_y) : pixel_counter_y;
             end
-            else if (pixel_counter == size * size) begin
+            else if (pixel_counter_x == 0 & pixel_counter_y == size) begin
                 if (drawing_background) begin
                     drawing_background <= 0;
                     x_min <= x_new;
@@ -218,7 +235,8 @@ always @(posedge clk) begin
                     x_max <= x_new + size - 1;
                     y_max <= y_new + size - 1;
                     selection_counter <= 1;
-                    pixel_counter <= 0;
+                    pixel_counter_x <= 0;
+                    pixel_counter_y <= 0;
                 end
                 else
                 begin
