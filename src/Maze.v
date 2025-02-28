@@ -379,7 +379,7 @@ begin
             end
             else
             begin
-                player_counter = player_counter == 0 ? PLAYER_SPEED_FACTOR - 1 : player_counter - 1;
+                player_counter <= player_counter == 0 ? PLAYER_SPEED_FACTOR - 1 : player_counter - 1;
                 if (player_counter == 0)
                 begin
                     setting_direction <= 1;
