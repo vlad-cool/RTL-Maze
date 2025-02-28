@@ -22,7 +22,7 @@ To synthesize and upload project just use `make TARGET=[name]` in root directory
 
 This make script creates Maze.qsf with necessary settings and uses pins assignments from **pins_config**.
 
-And then synthesize and upload it via USB Bluster. 
+And then synthesize and upload it via USB-Blaster. 
 
 If you want to just create quartus settings file, use `make init TARGET=[name]`.
 

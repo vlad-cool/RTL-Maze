@@ -10,6 +10,8 @@
 *.qpf
 *.qsf
 *.qdf
+*.rpt
+*.summary
 .vscode/
 obj_dir/
 screen_simulation_2/sim
