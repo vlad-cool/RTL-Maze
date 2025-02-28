@@ -9,6 +9,7 @@
 *.bat
 *.qpf
 *.qsf
+*.qdf
 .vscode/
 obj_dir/
 screen_simulation_2/sim
