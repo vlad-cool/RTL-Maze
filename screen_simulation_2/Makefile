@@ -16,7 +16,7 @@ all: verilate compile
 	./sim
 
 verilate:
-	verilator --cc $(SRC) --Wno-lint --top-module Maze  --Mdir $(OBJ_DIR)
+	verilator --cc $(SRC) -DFREQUENCY=1 --Wno-lint --top-module Maze  --Mdir $(OBJ_DIR)
 
 compile:
 	g++ $(CPP_SRC) -I$(INCLUDE) -lsfml-window -lsfml-graphics -lsfml-system -osim

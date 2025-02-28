@@ -14,8 +14,11 @@ module generator
     output wire[164:0] v_walls
 );
 
-reg [134:0] v_walls;
-reg [139:0] h_walls;
+reg [159:0] __v_walls;
+reg [164:0] __h_walls;
+
+assign h_walls = __h_walls;
+assign v_walls = __v_walls;
 
 reg [149:0] visited;
 
@@ -25,8 +28,8 @@ wire[3:0] allowed_directions;
 
 always @(posedge clk) begin
     if (~rst) begin
-        v_walls <= {135{1'b1}};
-        h_walls <= {139{1'b1}};
+        __v_walls <= {159{1'b1}};
+        __h_walls <= {164{1'b1}};
 
         visited <= {1'b0, {149{1'b1}}};
 

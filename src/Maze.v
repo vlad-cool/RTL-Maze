@@ -27,8 +27,6 @@ localparam FOOD_1_COST = 4;
 localparam FOOD_2_COST = 16;
 localparam FOOD_3_COST = 64;
 
-localparam FREQUENCY = 1;
-
 wire[7:0] init_data_out, player_data_out, scene_data_out, spi_data_in;
 wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
 wire init_transmit_out, player_transmit_out, scene_transmit_out, spi_transmit_in;
@@ -41,7 +39,7 @@ reg[$clog2(PLAYER_SPEED_FACTOR)-1:0] player_counter;
 reg init_enable, player_enable, scene_enable;
 
 reg[149:0] visited_cells;
-reg[$clog2(FREQUENCY)-1:0] sub_seconds_counter;
+reg[$clog2(`FREQUENCY)-1:0] sub_seconds_counter;
 reg[15:0] seconds_counter;
 reg[15:0] score;
 reg[15:0] final_score;
@@ -398,11 +396,11 @@ always @(posedge clk)
 begin
     if (rst)
     begin
-        sub_seconds_counter <= FREQUENCY - 1;
+        sub_seconds_counter <= `FREQUENCY - 1;
         seconds_counter <= 0;
     end
     begin
-        sub_seconds_counter <= sub_seconds_counter == 0 ? FREQUENCY - 1 : sub_seconds_counter - 1;
+        sub_seconds_counter <= sub_seconds_counter == 0 ? `FREQUENCY - 1 : sub_seconds_counter - 1;
         seconds_counter <= sub_seconds_counter == 0 ? seconds_counter + 1 : seconds_counter;
     end
 end
