@@ -70,7 +70,7 @@ int main()
     handle_init_sequence(top);
 
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "RTL-Maze sim 2");
-    DrawingTask drawer(&window);
+    DrawingTask drawer(&window, WIDTH, HEIGHT);
     while(window.isOpen())
     {
         sf::Event event;
@@ -87,20 +87,17 @@ int main()
 
         for(int i = 0; i < BYTES_PER_LOOP; i++)
         {
-            auto b = read_byte(top);
-            while(b.dc == 0 && b.byte == 0)
-                b = read_byte(top);
+            TFTByte tft_byte = read_byte(top);
+            if((tft_byte.dc == DC_COMMAND) && (tft_byte.byte == 0x2a))
+                drawer.reset();
             try
             {
-                drawer.handleByte(b);
+                drawer.handleByte(tft_byte);
             }
             catch(std::runtime_error &e)
             {
-                std::cout << e.what() << " Wrong byte " << b << std::endl;;
-                //std::cout << "wrong byte " << b << std::endl;
+                std::cout << e.what() << " Wrong byte " << tft_byte << std::endl;
             }
-            if(drawer.isFinished())
-                drawer.reset();
         }
     }
 }

@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 
 #define PIXELS_PER_DRAW 1280
+#define DC_DATA 1
+#define DC_COMMAND 0
 
 struct TFTByte
 {
@@ -24,14 +26,16 @@ private:
     sf::Uint8 init_list[11];
     sf::Uint8* pixels;
     int init_ptr;
-    int scr_ptr;
+    int screen_ptr;
+    int max_width;
+    int max_height;
 
 private:
     void prepare();
     void draw();
 
 public:
-    DrawingTask(sf::RenderWindow *window);
+    DrawingTask(sf::RenderWindow *window, int max_width, int max_height);
     void reset();
     void handleByte(TFTByte value);
     bool isFinished();
