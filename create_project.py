@@ -14,6 +14,6 @@ with open("Maze.qsf", "w") as file:
         for src_file in src_files:
             if src_file[-2:] != '.v':
                 continue
-            file.write(f"set_global_assignment -name VERILOG_FILE {os.path.join(root, src_file).replace('\\', '/')}\n")
+            file.write(f"set_global_assignment -name VERILOG_FILE {os.path.join(root, src_file)}\n")
     with open(f"pins_config/{argv[1]}.txt", "r") as config:
         file.write(config.read())
