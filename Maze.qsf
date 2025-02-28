@@ -88,7 +88,7 @@ set_location_assignment PIN_99 -to tft_clk
 set_location_assignment PIN_24 -to clk
 set_location_assignment PIN_98 -to true_rst
 
-set_location_assignment PIN_88 -to button_1
-set_location_assignment PIN_89 -to button_2
+set_location_assignment PIN_91 -to button_1
+set_location_assignment PIN_88 -to button_2
 set_location_assignment PIN_90 -to button_3
-set_location_assignment PIN_91 -to button_4
+set_location_assignment PIN_89 -to button_4

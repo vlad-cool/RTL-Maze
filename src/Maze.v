@@ -299,24 +299,27 @@ begin
     end
 end
 
-// always @(posedge clk)
-// begin
-//     if (rst)
-//     begin
-//         setting_direction <= 1;
-//     end
-//     else
-//     begin
-//         if (first_cell_step)
-//         begin
-//             setting_direction <= 0;
-//         end
-//         else if (player_counter == 0)
-//         begin
-//             setting_direction <= 1;
-//         end
-//     end
-// end
+always @(posedge clk)
+begin
+    if (rst)
+    begin
+        setting_direction <= 1;
+    end
+    else
+    begin
+        if (player_enable & ~player_busy)
+        begin
+            if (first_cell_step)
+            begin
+                setting_direction <= 0;
+            end
+            else if (player_counter == 0)
+            begin
+                setting_direction <= 1;
+            end
+        end
+    end
+end
 
 always @(posedge clk)
 begin
@@ -352,8 +355,6 @@ begin
         player_pos_x <= 0;
         player_pos_y <= 0;
 
-        setting_direction <= 1;
-
         player_counter <= 0;
         
         visited_cells <= 0;
@@ -363,7 +364,7 @@ begin
     begin
         if (player_enable & ~player_busy)
         begin
-            if (setting_direction & (player_pos_x[4:0] == 0) & (player_pos_y[4:0] == 0)) begin                
+            if (first_cell_step) begin                
                 if (visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] == 0)
                 begin
                     case (food[(player_pos_x[8:5] + player_pos_y[8:5] * 10) << 1])
@@ -374,16 +375,12 @@ begin
                     endcase
                 end
                 visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] <= 1;
-
-                setting_direction <= 0;
             end
             else
             begin
                 player_counter <= player_counter == 0 ? PLAYER_SPEED_FACTOR - 1 : player_counter - 1;
                 if (player_counter == 0)
                 begin
-                    setting_direction <= 1;
-
                     if (path_free)
                     begin
                         case (direction)
