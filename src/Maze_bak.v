@@ -20,14 +20,14 @@ module Maze
     output wire[6:0] hex_disp_4     // @{HEX3}
 );
 
-localparam PLAYER_SPEED_FACTOR = 1;
+localparam PLAYER_SPEED_FACTOR = 32;
 
 localparam FOOD_0_COST = 1;
 localparam FOOD_1_COST = 4;
 localparam FOOD_2_COST = 16;
 localparam FOOD_3_COST = 64;
 
-localparam FREQUENCY = 1;
+localparam FREQUENCY = 50000000;
 
 wire[7:0] init_data_out, player_data_out, scene_data_out, spi_data_in;
 wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
@@ -307,16 +307,13 @@ begin
     end
     else
     begin
-        if (player_enable & ~player_busy)
+        if (first_cell_step)
         begin
-            if (first_cell_step)
-            begin
-                setting_direction <= 0;
-            end
-            else if (player_counter == 0)
-            begin
-                setting_direction <= 1;
-            end
+            setting_direction <= 0;
+        end
+        else if (player_counter == 0)
+        begin
+            setting_direction <= 1;
         end
     end
 end
@@ -354,7 +351,9 @@ begin
     begin
         player_pos_x <= 0;
         player_pos_y <= 0;
+
         player_counter <= 0;
+        
         visited_cells <= 0;
         score <= 150;
     end
@@ -362,7 +361,7 @@ begin
     begin
         if (player_enable & ~player_busy)
         begin
-            if (first_cell_step) begin                
+            if (first_cell_step) begin                    
                 if (visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] == 0)
                 begin
                     case (food[(player_pos_x[8:5] + player_pos_y[8:5] * 10) << 1])
@@ -376,7 +375,7 @@ begin
             end
             else
             begin
-                player_counter <= player_counter == 0 ? PLAYER_SPEED_FACTOR - 1 : player_counter - 1;
+                player_counter = player_counter == 0 ? PLAYER_SPEED_FACTOR - 1 : player_counter - 1;
                 if (player_counter == 0)
                 begin
                     if (path_free)

@@ -144,58 +144,56 @@ always @(posedge clk) begin
     end
     else if (enable) begin
         if (!busy) begin
-            if (draw) begin
-                selection_counter <= 1;
-                animation_step <= animation_step + 1;
+            selection_counter <= 1;
+            animation_step <= animation_step + 1;
 
-                if (x_new == x && y_new == y) begin
-                    x_min <= x_new;
-                    x_max <= x_new + size - 1;
+            if (x_new == x && y_new == y) begin
+                x_min <= x_new;
+                x_max <= x_new + size - 1;
+                y_min <= y_new;
+                y_max <= y_new + size - 1;
+                drawing_background <= 0;
+            end
+            else if (x_new == x) begin
+                x_min <= x_new;
+                x_max <= x_new + size - 1;
+                if (y_new < y) begin
                     y_min <= y_new;
-                    y_max <= y_new + size - 1;
-                    drawing_background <= 0;
-                end
-                else if (x_new == x) begin
-                    x_min <= x_new;
-                    x_max <= x_new + size - 1;
-                    if (y_new < y) begin
-                        y_min <= y_new;
-                        y_max <= y - 1;
-                    end
-                    else begin
-                        y_min <= size + y + 1;
-                        y_max <= size + y_new - 1;
-                    end
-                    drawing_background <= 1;
-                end
-                else if (y_new == y) begin
-                    y_min <= y_new;
-                    y_max <= y_new + size - 1;
-                    if (x_new < x) begin
-                        x_min <= x_new;
-                        x_max <= x - 1;
-                    end
-                    else begin
-                        x_min <= size + x + 1;
-                        x_max <= size + x_new - 1;
-                    end
-                    drawing_background <= 1;
+                    y_max <= y - 1;
                 end
                 else begin
-                    x_min <= x_new;
-                    x_max <= x_new + size - 1;
-                    y_min <= y_new;
-                    y_max <= y_new + size - 1;
-                    drawing_background <= 1;
+                    y_min <= size + y + 1;
+                    y_max <= size + y_new - 1;
                 end
-
-                x_new <= x;
-                y_new <= y;
-                busy <= 1;
-
-                pixel_counter_x <= 0;
-                pixel_counter_y <= 0;
+                drawing_background <= 1;
             end
+            else if (y_new == y) begin
+                y_min <= y_new;
+                y_max <= y_new + size - 1;
+                if (x_new < x) begin
+                    x_min <= x_new;
+                    x_max <= x - 1;
+                end
+                else begin
+                    x_min <= size + x + 1;
+                    x_max <= size + x_new - 1;
+                end
+                drawing_background <= 1;
+            end
+            else begin
+                x_min <= x_new;
+                x_max <= x_new + size - 1;
+                y_min <= y_new;
+                y_max <= y_new + size - 1;
+                drawing_background <= 1;
+            end
+
+            x_new <= x;
+            y_new <= y;
+            busy <= 1;
+
+            pixel_counter_x <= 0;
+            pixel_counter_y <= 0;
         end
         else if (~tft_busy & ~tft_transmit) begin
             if (selection_counter > 0 & selection_counter < 12) begin
