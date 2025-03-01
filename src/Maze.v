@@ -20,7 +20,7 @@ module Maze
     output wire[6:0] hex_disp_4     // @{HEX3}
 );
 
-localparam PLAYER_SPEED_FACTOR = 1;
+localparam PLAYER_SPEED_FACTOR = 32;
 
 localparam FOOD_0_COST = 1;
 localparam FOOD_1_COST = 4;
@@ -350,29 +350,40 @@ always @(posedge clk)
 begin
     if (rst)
     begin
-        player_pos_x <= 0;
-        player_pos_y <= 0;
-        player_counter <= 0;
         visited_cells <= 0;
         score <= 150;
     end
     else
     begin
         if (player_enable & ~player_busy)
-        begin
-            if (first_cell_step) begin                
-                if (visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] == 0)
-                begin
-                    case (food[(player_pos_x[8:5] + player_pos_y[8:5] * 10) << 1])
-                        0: score <= score + FOOD_0_COST;
-                        1: score <= score + FOOD_1_COST;
-                        2: score <= score + FOOD_2_COST;
-                        3: score <= score + FOOD_3_COST;
-                    endcase
-                end
+        begin              
+            if (first_cell_step & visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] == 0)
+            begin
+                case (food[(player_pos_x[8:5] + player_pos_y[8:5] * 10) << 1])
+                    0: score <= score + FOOD_0_COST;
+                    1: score <= score + FOOD_1_COST;
+                    2: score <= score + FOOD_2_COST;
+                    3: score <= score + FOOD_3_COST;
+                endcase
                 visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] <= 1;
             end
-            else
+        end
+    end
+end
+
+always @(posedge clk)
+begin
+    if (rst)
+    begin
+        player_pos_x <= 0;
+        player_pos_y <= 0;
+        player_counter <= 0;
+    end
+    else
+    begin
+        if (player_enable & ~player_busy)
+        begin
+            if (~first_cell_step)
             begin
                 player_counter <= player_counter == 0 ? PLAYER_SPEED_FACTOR - 1 : player_counter - 1;
                 if (player_counter == 0)
