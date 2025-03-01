@@ -1,3 +1,4 @@
+#include "seven_seg_display.hpp"
 #include "drawing_task.hpp"
 #include "obj_dir/VMaze.h"
 #include <iostream>
@@ -69,15 +70,43 @@ int main()
     reset(top, rand() % 255);
     handle_init_sequence(top);
 
+    SevenSegmentDisplay hex4({35, 60}, {50, 100});
+    SevenSegmentDisplay hex3({95, 60}, {50, 100});
+    SevenSegmentDisplay hex2({155, 60}, {50, 100});
+    SevenSegmentDisplay hex1({215, 60}, {50, 100});
+    sf::Clock clock;
+
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "RTL-Maze sim 2");
+    sf::RenderWindow score_window(sf::VideoMode(250, 120), "RTL-Maze score");
     DrawingTask drawer(&window, WIDTH, HEIGHT);
-    while(window.isOpen())
+    while(window.isOpen() && score_window.isOpen())
     {
         sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+        }
+        while (score_window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                score_window.close();
+        }
+
+        if(clock.getElapsedTime().asSeconds() > 1)
+        {
+            hex1.setValue(~top->hex_disp_1);
+            hex2.setValue(~top->hex_disp_2);
+            hex3.setValue(~top->hex_disp_3);
+            hex4.setValue(~top->hex_disp_4);
+
+            score_window.clear();
+            hex1.draw(score_window);
+            hex2.draw(score_window);
+            hex3.draw(score_window);
+            hex4.draw(score_window);
+            score_window.display();
+            clock.restart();
         }
 
         top->button_1 = !sf::Keyboard::isKeyPressed(sf::Keyboard::D);
