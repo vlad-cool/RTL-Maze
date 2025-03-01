@@ -357,7 +357,7 @@ begin
         begin              
             if (first_cell_step & visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] == 0)
             begin
-                case (food[(player_pos_x[8:5] + player_pos_y[8:5] * 10) << 1])
+                case ({food[((player_pos_x[8:5] + player_pos_y[8:5] * 10) << 1) + 1], food[(player_pos_x[8:5] + player_pos_y[8:5] * 10) << 1]})
                     0: score <= score + FOOD_0_COST;
                     1: score <= score + FOOD_1_COST;
                     2: score <= score + FOOD_2_COST;
@@ -409,8 +409,11 @@ begin
         seconds_counter <= 0;
     end
     begin
-        sub_seconds_counter <= sub_seconds_counter == 0 ? `FREQUENCY - 1 : sub_seconds_counter - 1;
-        seconds_counter <= sub_seconds_counter == 0 ? seconds_counter + 1 : seconds_counter;
+        if (player_enable)
+        begin
+            sub_seconds_counter <= sub_seconds_counter == 0 ? `FREQUENCY - 1 : sub_seconds_counter - 1;
+            seconds_counter <= sub_seconds_counter == 0 ? seconds_counter + 1 : seconds_counter;
+        end
     end
 end
 
