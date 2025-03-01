@@ -123,7 +123,6 @@ rotator #(.size(size)) rotator
     .x(pixel_counter_x),
     .y(pixel_counter_y),
     .direction(direction + 1),
-    // .direction(),
     .index(pixel_index)
 );
 
@@ -168,11 +167,7 @@ always @(posedge clk) begin
             end
         end
         else if (~tft_busy & ~tft_transmit) begin
-            if (selection_counter > 0 & selection_counter < 12) begin
-            end
-            else if (selection_counter == 12 & pixel_counter_x != size & pixel_counter_y != size) begin
-            end
-            else if (pixel_counter_x == 0 & pixel_counter_y == size) begin
+            if (selection_counter == 12 & pixel_counter_x == 0 & pixel_counter_y == size) begin
                 if (drawing_background) begin
                     x_min <= x_new;
                     y_min <= y_new;

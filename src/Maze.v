@@ -20,7 +20,7 @@ module Maze
     output wire[6:0] hex_disp_4     // @{HEX3}
 );
 
-localparam PLAYER_SPEED_FACTOR = 32;
+// `define PLAYER_SPEED_FACTOR 32
 
 localparam FOOD_0_COST = 1;
 localparam FOOD_1_COST = 4;
@@ -34,7 +34,7 @@ wire init_busy, player_busy, scene_busy;
 
 wire[1:0] direction_wire;
 
-reg[$clog2(PLAYER_SPEED_FACTOR)-1:0] player_counter;
+reg[$clog2(`PLAYER_SPEED_FACTOR)-1:0] player_counter;
 
 reg init_enable, player_enable, scene_enable;
 
@@ -385,7 +385,7 @@ begin
         begin
             if (~first_cell_step)
             begin
-                player_counter <= player_counter == 0 ? PLAYER_SPEED_FACTOR - 1 : player_counter - 1;
+                player_counter <= player_counter == 0 ? `PLAYER_SPEED_FACTOR - 1 : player_counter - 1;
                 if (player_counter == 0)
                 begin
                     if (path_free)
