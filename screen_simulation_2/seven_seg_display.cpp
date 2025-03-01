@@ -55,13 +55,13 @@ SevenSegmentDisplay::SevenSegmentDisplay(sf::Vector2f origin, sf::Vector2f size)
     float y_size = (size.y - x_size)  * 0.5f;
     float y_pos = (size.y - x_size) * 0.25f;
     float x_pos = (size.x - x_size) * 0.5f;
-    segments[0] = Segment(origin + sf::Vector2f(0, -y_size), sf::Vector2f(size.x - x_size, x_size));
-    segments[1] = Segment(origin + sf::Vector2f(x_pos, -y_pos), sf::Vector2f(x_size, y_size));
-    segments[2] = Segment(origin + sf::Vector2f(x_pos, y_pos), sf::Vector2f(x_size, y_size));
-    segments[3] = Segment(origin + sf::Vector2f(0, y_size), sf::Vector2f(size.x - x_size, x_size));
-    segments[4] = Segment(origin + sf::Vector2f(-x_pos, y_pos), sf::Vector2f(x_size, y_size));
-    segments[5] = Segment(origin + sf::Vector2f(-x_pos, -y_pos), sf::Vector2f(x_size, y_size));
-    segments[6] = Segment(origin, sf::Vector2f(size.x - x_size, x_size));
+    segments[0] = Segment(origin + sf::Vector2f(0, -y_size), sf::Vector2f(size.x - x_size - x_size, x_size));
+    segments[1] = Segment(origin + sf::Vector2f(x_pos, -y_pos), sf::Vector2f(x_size, y_size - x_size));
+    segments[2] = Segment(origin + sf::Vector2f(x_pos, y_pos), sf::Vector2f(x_size, y_size - x_size));
+    segments[3] = Segment(origin + sf::Vector2f(0, y_size), sf::Vector2f(size.x - x_size - x_size, x_size));
+    segments[4] = Segment(origin + sf::Vector2f(-x_pos, y_pos), sf::Vector2f(x_size, y_size - x_size));
+    segments[5] = Segment(origin + sf::Vector2f(-x_pos, -y_pos), sf::Vector2f(x_size, y_size - x_size));
+    segments[6] = Segment(origin, sf::Vector2f(size.x - x_size - x_size, x_size));
 }
 
 void SevenSegmentDisplay::draw(sf::RenderWindow& window) const
