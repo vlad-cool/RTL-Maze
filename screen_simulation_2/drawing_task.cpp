@@ -39,6 +39,16 @@ void DrawingTask::prepare()
     int x_max = (static_cast<int>(init_list[3]) << 8) + init_list[4];
     int y_min = (static_cast<int>(init_list[6]) << 8) + init_list[7];
     int y_max = (static_cast<int>(init_list[8]) << 8) + init_list[9];
+
+    if (x_max < x_min)
+    {
+        std::swap(x_max, x_min);
+    }
+    if (y_max < y_min)
+    {
+        std::swap(y_max, y_min);
+    }
+
     rect = sf::Rect<int>(x_min, y_min, std::max(x_max - x_min + 1, 1), std::max(y_max - y_min + 1, 1));
     if(rect.width > max_width)
         throw std::runtime_error("Incorrect drawing rect width.");
