@@ -1,26 +1,24 @@
 module Maze
 (
-	input clk,                      // @{CLK}
-	input true_rst,                 // @{SW0}
+    input clk,                      // @{CLK}
+    input true_rst,                 // @{SW0}
 
     input wire button_1,            // @{KEY2}
     input wire button_2,            // @{KEY1}
     input wire button_3,            // @{KEY3}
     input wire button_4,            // @{KEY0}
 
-	output wire tft_clk,            // @{GPIO_26}
-	output wire tft_mosi,           // @{GPIO_28}
-	output wire tft_dc,             // @{GPIO_30}
-	output wire tft_rst,            // @{GPIO_32}
-	output wire tft_cs,             // @{GPIO_34}
+    output wire tft_clk,            // @{GPIO_26}
+    output wire tft_mosi,           // @{GPIO_28}
+    output wire tft_dc,             // @{GPIO_30}
+    output wire tft_rst,            // @{GPIO_32}
+    output wire tft_cs,             // @{GPIO_34}
 
     output wire[6:0] hex_disp_1,    // @{HEX0}
     output wire[6:0] hex_disp_2,    // @{HEX1}
     output wire[6:0] hex_disp_3,    // @{HEX2}
     output wire[6:0] hex_disp_4     // @{HEX3}
 );
-
-// `define PLAYER_SPEED_FACTOR 32
 
 localparam FOOD_0_COST = 1;
 localparam FOOD_1_COST = 4;
@@ -59,6 +57,8 @@ wire rst;
 
 wire first_cell_step;
 
+wire direction_1_free, direction_2_free, direction_3_free, direction_4_free;
+
 assign first_cell_step = setting_direction & (player_pos_x[4:0] == 0) & (player_pos_y[4:0] == 0);
 
 assign spi_cs = 0;
@@ -70,8 +70,6 @@ assign tft_dc = spi_dc;
 assign tft_cs = spi_cs;
 
 assign rst = ~(true_rst & soft_rst);
-
-wire direction_1_free, direction_2_free, direction_3_free, direction_4_free;
 
 assign direction_1_free = v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0;
 assign direction_2_free = h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0;
@@ -86,23 +84,23 @@ assign direction_wire = button_1_reg & direction_1_free ? 0 :
 tft_spi spi_transmitter
 (
     .rst(rst),
-	.clk(clk),
-	
-	.data(spi_data_in),
-	.dc(spi_dc_in),
-	.transmit(spi_transmit_in),
-	
-	.tft_mosi(spi_mosi),
-	// .tft_cs(spi_cs),
-	.tft_dc(spi_dc),
-	.tft_clk(spi_clk),
-	
-	.busy(spi_busy)
+    .clk(clk),
+    
+    .data(spi_data_in),
+    .dc(spi_dc_in),
+    .transmit(spi_transmit_in),
+    
+    .tft_mosi(spi_mosi),
+    // .tft_cs(spi_cs),
+    .tft_dc(spi_dc),
+    .tft_clk(spi_clk),
+    
+    .busy(spi_busy)
 );
 
 tft_init tft_initializer
 (
-	.clk(clk),
+    .clk(clk),
     .rst(rst),
     .tft_busy(spi_busy),
 
@@ -144,7 +142,7 @@ wire maze_gen_busy;
 
 maze_generator maze_gen
 (
-	.clk(clk),
+    .clk(clk),
     .rst(rst),
     .rnd(rnd_value),
     .h_expansion(15),

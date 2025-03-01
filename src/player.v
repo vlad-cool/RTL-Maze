@@ -126,49 +126,63 @@ rotator #(.size(size)) rotator
     .index(pixel_index)
 );
 
-always @(posedge clk) begin
-    if (~rst & enable) begin
-        if (!busy) begin
-            if (x_new == x && y_new == y) begin
+always @(posedge clk)
+begin
+    if (~rst & enable)
+    begin
+        if (!busy)
+        begin
+            if (x_new == x && y_new == y)
+            begin
                 x_min <= x_new;
                 x_max <= x_new + size - 1;
                 y_min <= y_new;
                 y_max <= y_new + size - 1;
             end
-            else if (x_new == x) begin
+            else if (x_new == x)
+            begin
                 x_min <= x_new;
                 x_max <= x_new + size - 1;
-                if (y_new < y) begin
+                if (y_new < y)
+                begin
                     y_min <= y_new;
                     y_max <= y - 1;
                 end
-                else begin
+                else
+                begin
                     y_min <= size + y + 1;
                     y_max <= size + y_new - 1;
                 end
             end
-            else if (y_new == y) begin
+            else if (y_new == y)
+            begin
                 y_min <= y_new;
                 y_max <= y_new + size - 1;
-                if (x_new < x) begin
+                if (x_new < x)
+                begin
                     x_min <= x_new;
                     x_max <= x - 1;
                 end
-                else begin
+                else
+                begin
                     x_min <= size + x + 1;
                     x_max <= size + x_new - 1;
                 end
             end
-            else begin
+            else
+            begin
                 x_min <= x_new;
                 x_max <= x_new + size - 1;
                 y_min <= y_new;
                 y_max <= y_new + size - 1;
             end
         end
-        else if (~tft_busy & ~tft_transmit) begin
-            if (selection_counter == 12 & pixel_counter_x == 0 & pixel_counter_y == size) begin
-                if (drawing_background) begin
+        else if (~tft_busy & ~tft_transmit)
+        begin
+            if (selection_counter == 12 & pixel_counter_x == 0 & pixel_counter_y == size)
+            begin
+                if (drawing_background)
+                begin
                     x_min <= x_new;
                     y_min <= y_new;
                     x_max <= x_new + size - 1;
@@ -179,9 +193,12 @@ always @(posedge clk) begin
     end
 end
 
-always @(posedge clk) begin
-    if (~rst & enable & busy & ~tft_busy & ~tft_transmit) begin
-        if (selection_counter > 0 & selection_counter < 12) begin
+always @(posedge clk)
+begin
+    if (~rst & enable & busy & ~tft_busy & ~tft_transmit)
+    begin
+        if (selection_counter > 0 & selection_counter < 12)
+        begin
             case(selection_counter)
                 1:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2a};
                 2:  {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 7'b0, x_min[8:8]};
@@ -196,44 +213,53 @@ always @(posedge clk) begin
                 11: {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b0, 8'h2c};
             endcase
         end
-        else if (selection_counter == 12 & pixel_counter_x != size & pixel_counter_y != size) begin
-            if (drawing_background) begin
+        else if (selection_counter == 12 & pixel_counter_x != size & pixel_counter_y != size)
+        begin
+            if (drawing_background)
+            begin
                 {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'h00};
             end
-            else begin
+            else
+            begin
                 {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, sprite[animation_step[11:10] < 3 ? animation_step[11:10] : 1][pixel_index] ? player_color[sub_pixel_counter] : 8'h00};
                 // {tft_transmit, tft_dc, tft_data} <= {1'b1, 1'b1, 8'hff};
             end
         end
     end
-    else begin
+    else
+    begin
         tft_transmit <= 0;
     end
 end
 
-always @(posedge clk) begin
-    if (rst) begin
+always @(posedge clk)
+begin
+    if (rst)
+    begin
         drawing_background <= 0;
         animation_step <= 0;
     end
-    else if (enable) begin
-        if (!busy) begin
+    else if (enable)
+    begin
+        if (!busy)
+        begin
             animation_step <= animation_step + 1;
 
-            if (x_new == x && y_new == y) begin
+            if (x_new == x && y_new == y)
+            begin
                 drawing_background <= 0;
             end
-            else begin
+            else
+            begin
                 drawing_background <= 1;
             end
         end
-        else if (~tft_busy & ~tft_transmit) begin
-            if (selection_counter > 0 & selection_counter < 12) begin
-            end
-            else if (selection_counter == 12 & pixel_counter_x != size & pixel_counter_y != size) begin
-            end
-            else if (pixel_counter_x == 0 & pixel_counter_y == size) begin
-                if (drawing_background) begin
+        else if (~tft_busy & ~tft_transmit)
+        begin
+            if (selection_counter == 12 & pixel_counter_x == 0 & pixel_counter_y == size)
+            begin
+                if (drawing_background)
+                begin
                     drawing_background <= 0;
                 end
                 else
@@ -245,26 +271,34 @@ always @(posedge clk) begin
     end
 end
 
-always @(posedge clk) begin
-    if (rst) begin
+always @(posedge clk)
+begin
+    if (rst)
+    begin
         pixel_counter_x <= 0;
         pixel_counter_y <= 0;
         
         sub_pixel_counter <= 0;
     end
-    else if (enable) begin
-        if (!busy) begin
+    else if (enable)
+    begin
+        if (!busy)
+        begin
             pixel_counter_x <= 0;
             pixel_counter_y <= 0;
         end
-        else if (~tft_busy & ~tft_transmit) begin
-            if (selection_counter == 12 & pixel_counter_x != size & pixel_counter_y != size) begin
+        else if (~tft_busy & ~tft_transmit)
+        begin
+            if (selection_counter == 12 & pixel_counter_x != size & pixel_counter_y != size)
+            begin
                 sub_pixel_counter <= sub_pixel_counter == 2 ? 0 : sub_pixel_counter + 1;
                 pixel_counter_x <= sub_pixel_counter == 2 ? (pixel_counter_x == size - 1 ? 0 : pixel_counter_x + 1) : pixel_counter_x;
                 pixel_counter_y <= sub_pixel_counter == 2 ? (pixel_counter_x == size - 1 ? pixel_counter_y + 1 : pixel_counter_y) : pixel_counter_y;
             end
-            else if (pixel_counter_x == 0 & pixel_counter_y == size) begin
-                if (drawing_background) begin
+            else if (pixel_counter_x == 0 & pixel_counter_y == size)
+            begin
+                if (drawing_background)
+                begin
                     pixel_counter_x <= 0;
                     pixel_counter_y <= 0;
                 end
@@ -273,15 +307,20 @@ always @(posedge clk) begin
     end
 end
 
-always @(posedge clk) begin
-    if (rst) begin
+always @(posedge clk)
+begin
+    if (rst)
+    begin
         busy <= 0;
     end
-    else if (enable) begin
-        if (!busy) begin
+    else if (enable)
+    begin
+        if (!busy)
+        begin
             busy <= 1;
         end
-        else if (~tft_busy & ~tft_transmit) begin
+        else if (~tft_busy & ~tft_transmit)
+        begin
             if (selection_counter == 12 & pixel_counter_x == 0 & pixel_counter_y == size)
             begin
                 if (~drawing_background)
@@ -293,33 +332,43 @@ always @(posedge clk) begin
     end
 end
 
-always @(posedge clk) begin
-    if (rst) begin
+always @(posedge clk)
+begin
+    if (rst)
+    begin
         x_new <= 5;
         y_new <= 5;
     end
-    else if (enable) begin
-        if (!busy) begin
+    else if (enable)
+    begin
+        if (!busy)
+        begin
             x_new <= x;
             y_new <= y;
         end
     end
 end
 
-always @(posedge clk) begin
-    if (rst) begin
+always @(posedge clk)
+begin
+    if (rst)
+    begin
         selection_counter <= 0;
     end
     else if (enable)
     begin
-        if (!busy) begin
+        if (!busy)
+        begin
             selection_counter <= 1;
         end
-        else if (~tft_busy & ~tft_transmit) begin
-            if (selection_counter > 0 & selection_counter < 12) begin
+        else if (~tft_busy & ~tft_transmit)
+        begin
+            if (selection_counter > 0 & selection_counter < 12)
+            begin
                 selection_counter <= selection_counter + 1;
             end
-            else if (pixel_counter_x == 0 & pixel_counter_y == size) begin
+            else if (pixel_counter_x == 0 & pixel_counter_y == size)
+            begin
                 if (drawing_background)
                 begin
                     selection_counter <= 1;
