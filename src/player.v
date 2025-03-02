@@ -321,12 +321,9 @@ begin
         end
         else if (~tft_busy & ~tft_transmit)
         begin
-            if (selection_counter == 12 & pixel_counter_x == 0 & pixel_counter_y == size)
+            if (selection_counter == 12 & pixel_counter_x == 0 & pixel_counter_y == size & ~drawing_background)
             begin
-                if (~drawing_background)
-                begin
-                    busy <= 0;
-                end
+                busy <= 0;
             end
         end
     end
