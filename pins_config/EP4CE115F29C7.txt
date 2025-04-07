@@ -1,4 +1,5 @@
 set_global_assignment -name VERILOG_MACRO "FREQUENCY=50000000"
+set_global_assignment -name DEVICE Cyclone IV E
 
 set_location_assignment PIN_Y2 -to clk
 set_location_assignment PIN_AB28 -to true_rst

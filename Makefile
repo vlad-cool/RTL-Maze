@@ -12,6 +12,10 @@ else ifeq ($(TARGET), C8)
 __TARGET__ := EP4CE6E22C8
 select_target:
 	@echo "$(__TARGET__) selected as target"
+else ifeq ($(TARGET), DE10-LITE)
+__TARGET__ := 10M50DAF484C7G
+select_target:
+	@echo "$(__TARGET__) selected as target"
 else
 select_target:
 	$(error TARGET not selected...)
@@ -27,4 +31,7 @@ syntesize: init
 	quartus_sta Maze -c Maze
 
 upload:
-	quartus_pgm -c "USB-Blaster [3-1]" -m JTAG -o p\;output_files/Maze.sof 
+	quartus_pgm -c "USB-Blaster [3-2]" -m JTAG -o p\;output_files/Maze.sof 
+
+list:
+	quartus_pgm -l

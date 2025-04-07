@@ -6,7 +6,7 @@ if(len(argv) < 2):
     exit(-1)
 
 with open("Maze.qsf", "w") as file:
-    file.write("set_global_assignment -name FAMILY \"Cyclone IV E\"\n")
+    # file.write(f"set_global_assignment -name FAMILY \"{argv[2]}\"\n")
     file.write(f"set_global_assignment -name DEVICE {argv[1]}\n")
     file.write("set_global_assignment -name TOP_LEVEL_ENTITY Maze\n")
     file.write("set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files\n")
