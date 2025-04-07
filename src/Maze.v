@@ -1,3 +1,11 @@
+`ifndef PLAYER_SPEED_FACTOR
+    `define PLAYER_SPEED_FACTOR 32
+`endif
+
+`ifndef FREQUENCY
+    `define FREQUENCY 50000000 // 50 MHz by default
+`endif
+
 module Maze
 (
     input clk,                      // @{CLK}
