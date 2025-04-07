@@ -357,7 +357,7 @@ begin
     if (rst)
     begin
         visited_cells <= 0;
-        score <= 150;
+        score <= true_rst ? score : 150;
     end
     else
     begin
