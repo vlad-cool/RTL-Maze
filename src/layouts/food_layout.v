@@ -1,13 +1,13 @@
 // by Aleksandr
 // (x, y) - coords in pixels from left-top point
-// type - type of food
+// ftype - ftype of food
 // this layout supports 3 colors drawing
 
 module food_layout
 (
     input wire[3:0] x,
     input wire[3:0] y,
-    input wire[1:0] type,
+    input wire[1:0] ftype,
 
     output wire[1:0] value
 );
@@ -40,6 +40,6 @@ assign sx = 4'd9 - x;
 wire[1:0] sy;
 assign sy = 4'd9 - y;
 assign index = {sy, sx, 1'b0};
-assign value = ((x > 5) & (x < 10) & (y > 5) & (y < 10)) ? {pixels[type][index + 1], pixels[type][index]} : 0;
+assign value = ((x > 5) & (x < 10) & (y > 5) & (y < 10)) ? {pixels[ftype][index + 1], pixels[ftype][index]} : 0;
 
 endmodule

@@ -11,10 +11,12 @@ module delay
     output wire free
 );
 
-localparam[15:0] ticks_per_ms = 16'd50000; // 50 MHz
+localparam low_counter_size = $clog2(`FREQUENCY / 1000) - 1;
+
+localparam[low_counter_size:0] ticks_per_ms = `FREQUENCY / 1000;
 
 reg[7:0] counter;
-reg[15:0] low_counter;
+reg[low_counter_size:0] low_counter;
 
 assign free = (counter == 0); 
 

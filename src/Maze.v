@@ -1,7 +1,15 @@
+`ifndef PLAYER_SPEED_FACTOR
+    `define PLAYER_SPEED_FACTOR 32
+`endif
+
+`ifndef FREQUENCY
+    `define FREQUENCY 50000000 // 50 MHz by default
+`endif
+
 module Maze
 (
-	input clk,                      // @{CLK}
-	input true_rst,                 // @{SW0}
+    input clk,                      // @{CLK}
+    input true_rst,                 // @{SW0}
 
     input wire button_1,            // @{KEY2}
     input wire button_2,            // @{KEY1}
@@ -15,14 +23,10 @@ module Maze
 	output wire tft_cs              // @{GPIO_34}
 );
 
-localparam PLAYER_SPEED_FACTOR = 32;
-
 localparam FOOD_0_COST = 1;
 localparam FOOD_1_COST = 4;
 localparam FOOD_2_COST = 16;
 localparam FOOD_3_COST = 64;
-
-localparam FREQUENCY = 50000000;
 
 wire[7:0] init_data_out, player_data_out, scene_data_out, spi_data_in;
 wire init_dc_out, player_dc_out, scene_dc_out, spi_dc_in;
@@ -31,14 +35,12 @@ wire init_busy, player_busy, scene_busy;
 
 wire[1:0] direction_wire;
 
-reg[$clog2(PLAYER_SPEED_FACTOR)-1:0] player_counter;
-
-reg player_draw;
+reg[$clog2(`PLAYER_SPEED_FACTOR)-1:0] player_counter;
 
 reg init_enable, player_enable, scene_enable;
 
 reg[149:0] visited_cells;
-reg[$clog2(FREQUENCY)-1:0] sub_seconds_counter;
+reg[$clog2(`FREQUENCY)-1:0] sub_seconds_counter;
 reg[15:0] seconds_counter;
 reg[15:0] score;
 reg[15:0] final_score;
@@ -56,17 +58,21 @@ wire spi_busy;
 
 wire rst;
 
+wire first_cell_step;
+
+wire direction_1_free, direction_2_free, direction_3_free, direction_4_free;
+
+assign first_cell_step = setting_direction & (player_pos_x[4:0] == 0) & (player_pos_y[4:0] == 0);
+
 assign spi_cs = 0;
 
-assign tft_rst = rst;
+assign tft_rst = ~rst;
 assign tft_clk = spi_clk;
 assign tft_mosi = spi_mosi;
 assign tft_dc = spi_dc;
 assign tft_cs = spi_cs;
 
-assign rst = (true_rst & soft_rst);
-
-wire direction_1_free, direction_2_free, direction_3_free, direction_4_free;
+assign rst = ~(true_rst & soft_rst);
 
 assign direction_1_free = v_walls[player_pos_y[8:5] * 11 + player_pos_x[8:5] + 1] == 0;
 assign direction_2_free = h_walls[player_pos_y[8:5] * 10 + player_pos_x[8:5] + 10] == 0;
@@ -80,25 +86,25 @@ assign direction_wire = button_1_reg & direction_1_free ? 0 :
 
 tft_spi spi_transmitter
 (
-    .rst(~rst),
-	.clk(clk),
-	
-	.data(spi_data_in),
-	.dc(spi_dc_in),
-	.transmit(spi_transmit_in),
-	
-	.tft_mosi(spi_mosi),
-	// .tft_cs(spi_cs),
-	.tft_dc(spi_dc),
-	.tft_clk(spi_clk),
-	
-	.busy(spi_busy)
+    .rst(rst),
+    .clk(clk),
+    
+    .data(spi_data_in),
+    .dc(spi_dc_in),
+    .transmit(spi_transmit_in),
+    
+    .tft_mosi(spi_mosi),
+    // .tft_cs(spi_cs),
+    .tft_dc(spi_dc),
+    .tft_clk(spi_clk),
+    
+    .busy(spi_busy)
 );
 
 tft_init tft_initializer
 (
-	.clk(clk),
-    .rst(~rst),
+    .clk(clk),
+    .rst(rst),
     .tft_busy(spi_busy),
 
     .tft_dc(init_dc_out),
@@ -112,7 +118,7 @@ wire[7:0] rnd_value;
 random_byte rnd
 (
     .clk(clk),
-    .rst(~rst),
+    .rst(rst),
     .seed(random_seed),
 
     .value(rnd_value)
@@ -124,7 +130,7 @@ wire food_gen_busy;
 food_generator food_gen
 (
     .clk(clk),
-    .rst(~rst),
+    .rst(rst),
     .rnd(rnd_value),
     .player_x(player_pos_x[8:5]),
     .player_y(player_pos_y[8:5]),
@@ -139,8 +145,8 @@ wire maze_gen_busy;
 
 maze_generator maze_gen
 (
-	.clk(clk),
-    .rst(~rst),
+    .clk(clk),
+    .rst(rst),
     .rnd(rnd_value),
     .h_expansion(15),
     .v_expansion(15),
@@ -153,7 +159,7 @@ maze_generator maze_gen
 scene_exhibitor scene
 (
     .clk(clk),
-    .rst(~rst),
+    .rst(rst),
     .tft_busy(spi_busy),
 
     .busy(scene_busy),
@@ -176,7 +182,7 @@ reg path_free;
 player player
 (
     .clk(clk),
-    .rst(~rst),
+    .rst(rst),
     .tft_busy(spi_busy),
 
     .busy(player_busy),
@@ -187,7 +193,6 @@ player player
 
     .x(player_pos_x[8:0] + 5),
     .y(player_pos_y[8:0] + 5),
-    .draw(player_draw),
 
     .direction(direction)
 );
@@ -244,82 +249,146 @@ end
 
 always @(posedge clk)
 begin
-    if (~rst)
+    if (rst)
     begin
-        init_enable <= 0;
-        scene_enable <= 0;
-        player_enable <= 0;
-        player_draw <= 1;
-
-        player_pos_x <= 0;
-        player_pos_y <= 0;
-
-        direction <= 2;
-        path_free <= 0;
-
-        setting_direction <= 1;
-
-
         soft_rst <= 1;
+    end
+    else if (visited_cells == {150 {1'b1}})
+    begin
+        soft_rst <= 0;
+    end
+end
 
-        player_counter <= 0;
-        
-        visited_cells <= 0;
-        score <= 150;
-
-        final_score <= 0; 
+always @(posedge clk)
+begin
+    if (rst)
+    begin
+        final_score <= 0;
     end
     else
     begin
         final_score <= seconds_counter > score ? 0 : score - seconds_counter;
-        if (visited_cells == {150 {1'b1}})
-        begin
-            soft_rst <= 0;
-        end
-        else if (~food_gen_busy & ~maze_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
+    end
+end
+
+always @(posedge clk)
+begin
+    if (rst)
+    begin
+        init_enable <= 0;
+        scene_enable <= 0;
+        player_enable <= 0;
+    end
+    else
+    begin
+        if (~food_gen_busy & ~maze_gen_busy & ~init_enable & ~scene_enable & ~player_enable) 
         begin
             init_enable <= 1;
         end
-        else if (init_enable & ~init_busy)
+        if (init_enable & ~init_busy)
         begin
             init_enable <= 0;
             scene_enable <= 1;
         end
-        else if (scene_enable & ~scene_busy)
+        if (scene_enable & ~scene_busy)
         begin
             scene_enable <= 0;
             player_enable <= 1;
         end
-        else if (player_enable & ~player_busy)
-        begin
-            if (setting_direction & (player_pos_x[4:0] == 0) & (player_pos_y[4:0] == 0)) begin
-                direction <= direction_wire;
-                    
-                path_free <= ((direction_wire == 0) & (direction_1_free)) |
-                             ((direction_wire == 1) & (direction_2_free)) |
-                             ((direction_wire == 2) & (direction_3_free)) |
-                             ((direction_wire == 3) & (direction_4_free));
-                
-                if (visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] == 0)
-                begin
-                    case (food[(player_pos_x[8:5] + player_pos_y[8:5] * 10) << 1])
-                        0: score <= score + FOOD_0_COST;
-                        1: score <= score + FOOD_1_COST;
-                        2: score <= score + FOOD_2_COST;
-                        3: score <= score + FOOD_3_COST;
-                    endcase
-                end
-                visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] <= 1;
+    end
+end
 
+always @(posedge clk)
+begin
+    if (rst)
+    begin
+        setting_direction <= 1;
+    end
+    else
+    begin
+        if (player_enable & ~player_busy)
+        begin
+            if (first_cell_step)
+            begin
                 setting_direction <= 0;
             end
-            else
+            else if (player_counter == 0)
             begin
-                player_counter = player_counter == 0 ? PLAYER_SPEED_FACTOR - 1 : player_counter - 1;
+                setting_direction <= 1;
+            end
+        end
+    end
+end
+
+always @(posedge clk)
+begin
+    if (rst)
+    begin
+        direction <= 2;
+    end
+    else if (first_cell_step)
+    begin
+        direction <= direction_wire;
+    end
+end
+
+always @(posedge clk)
+begin
+    if (rst)
+    begin
+        path_free <= 0;
+    end
+    else if (first_cell_step) 
+    begin
+        path_free <= ((direction_wire == 0) & (direction_1_free)) |
+                     ((direction_wire == 1) & (direction_2_free)) |
+                     ((direction_wire == 2) & (direction_3_free)) |
+                     ((direction_wire == 3) & (direction_4_free));
+    end
+end
+
+always @(posedge clk)
+begin
+    if (rst)
+    begin
+        visited_cells <= 0;
+        score <= true_rst ? score : 150;
+    end
+    else
+    begin
+        if (player_enable & ~player_busy)
+        begin              
+            if (first_cell_step & visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] == 0)
+            begin
+                case ({food[((player_pos_x[8:5] + player_pos_y[8:5] * 10) << 1) + 1], food[(player_pos_x[8:5] + player_pos_y[8:5] * 10) << 1]})
+                    0: score <= score + FOOD_0_COST;
+                    1: score <= score + FOOD_1_COST;
+                    2: score <= score + FOOD_2_COST;
+                    3: score <= score + FOOD_3_COST;
+                endcase
+                visited_cells[player_pos_x[8:5] * 15 + player_pos_y[8:5]] <= 1;
+            end
+        end
+    end
+end
+
+always @(posedge clk)
+begin
+    if (rst)
+    begin
+        player_pos_x <= 0;
+        player_pos_y <= 0;
+        player_counter <= 0;
+    end
+    else
+    begin
+        if (player_enable & ~player_busy)
+        begin
+            if (~first_cell_step)
+            begin
+                player_counter <= player_counter == 0 ? `PLAYER_SPEED_FACTOR - 1 : player_counter - 1;
                 if (player_counter == 0)
                 begin
-                    setting_direction <= 1;
-
                     if (path_free)
                     begin
                         case (direction)
@@ -337,20 +406,23 @@ end
 
 always @(posedge clk)
 begin
-    if (~rst)
+    if (rst)
     begin
-        sub_seconds_counter <= FREQUENCY - 1;
+        sub_seconds_counter <= `FREQUENCY - 1;
         seconds_counter <= 0;
     end
     begin
-        sub_seconds_counter <= sub_seconds_counter == 0 ? FREQUENCY - 1 : sub_seconds_counter - 1;
-        seconds_counter <= sub_seconds_counter == 0 ? seconds_counter + 1 : seconds_counter;
+        if (player_enable)
+        begin
+            sub_seconds_counter <= sub_seconds_counter == 0 ? `FREQUENCY - 1 : sub_seconds_counter - 1;
+            seconds_counter <= sub_seconds_counter == 0 ? seconds_counter + 1 : seconds_counter;
+        end
     end
 end
 
 always @(posedge clk)
 begin
-    if (~rst)
+    if (rst)
     begin
         random_seed <= random_seed + 1;
     end
