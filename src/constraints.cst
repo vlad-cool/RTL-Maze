@@ -1,0 +1,14 @@
+IO_LOC "clk" H11;
+
+IO_LOC "true_rst" T5;
+
+IO_LOC "button_1" C7;
+IO_LOC "button_2" D7;
+IO_LOC "button_3" T2;
+IO_LOC "button_4" T3;
+
+IO_LOC "tft_clk" T6;
+IO_LOC "tft_mosi" T7;
+IO_LOC "tft_dc" R8;
+IO_LOC "tft_rst" P8;
+IO_LOC "tft_cs" T8;

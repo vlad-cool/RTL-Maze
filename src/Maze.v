@@ -12,12 +12,7 @@ module Maze
 	output wire tft_mosi,           // @{GPIO_28}
 	output wire tft_dc,             // @{GPIO_30}
 	output wire tft_rst,            // @{GPIO_32}
-	output wire tft_cs,             // @{GPIO_34}
-
-    output wire[6:0] hex_disp_1,    // @{HEX0}
-    output wire[6:0] hex_disp_2,    // @{HEX1}
-    output wire[6:0] hex_disp_3,    // @{HEX2}
-    output wire[6:0] hex_disp_4     // @{HEX3}
+	output wire tft_cs              // @{GPIO_34}
 );
 
 localparam PLAYER_SPEED_FACTOR = 32;
